@@ -1,0 +1,3418 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-role="manager">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>WayPoint — Custom fields approval mock (CF-B r5)</title>
+    <style>
+/* ==========================================================================
+   WayPoint approval mock — CF-B typed custom fields.
+   Tokens are copied from the app's real stylesheet (src/styles.css); the
+   chrome reproduces the app's real components. Practice controls are marked.
+   Self-contained: no fonts, scripts, images or requests leave this file.
+   ========================================================================== */
+:root {
+  --radius: 0.75rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --background: oklch(0.985 0.003 250);
+  --foreground: oklch(0.21 0.03 264);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.03 264);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.03 264);
+  --primary: oklch(0.55 0.19 277);
+  --primary-foreground: oklch(0.985 0.003 250);
+  --secondary: oklch(0.965 0.008 250);
+  --secondary-foreground: oklch(0.25 0.03 264);
+  --muted: oklch(0.965 0.008 250);
+  --muted-foreground: oklch(0.52 0.03 257);
+  --accent: oklch(0.95 0.02 277);
+  --accent-foreground: oklch(0.3 0.07 277);
+  --destructive: oklch(0.6 0.21 25);
+  --destructive-foreground: oklch(0.985 0.003 250);
+  --border: oklch(0.92 0.008 255);
+  --input: oklch(0.92 0.008 255);
+  --ring: oklch(0.55 0.19 277);
+  --sidebar: oklch(0.98 0.005 255);
+  --sidebar-foreground: oklch(0.3 0.03 264);
+  --sidebar-accent: oklch(0.95 0.015 277);
+  --sidebar-border: oklch(0.92 0.008 255);
+
+  --status-progress: oklch(0.94 0.04 250);
+  --status-progress-foreground: oklch(0.4 0.15 250);
+  --status-planning: oklch(0.95 0.04 90);
+  --status-planning-foreground: oklch(0.45 0.13 75);
+  --status-hold: oklch(0.95 0.02 30);
+  --status-hold-foreground: oklch(0.45 0.12 30);
+  --status-completed: oklch(0.94 0.05 160);
+  --status-completed-foreground: oklch(0.4 0.13 160);
+  --status-blocked: oklch(0.94 0.05 25);
+  --status-blocked-foreground: oklch(0.45 0.18 25);
+  --status-review: oklch(0.94 0.04 300);
+  --status-review-foreground: oklch(0.42 0.15 300);
+
+  --priority-high: oklch(0.94 0.05 25);
+  --priority-high-foreground: oklch(0.45 0.18 25);
+  --priority-medium: oklch(0.95 0.04 75);
+  --priority-medium-foreground: oklch(0.45 0.13 75);
+  --priority-low: oklch(0.95 0.015 250);
+  --priority-low-foreground: oklch(0.45 0.04 257);
+
+  --shadow-soft-value: 0 1px 2px 0 oklch(0.21 0.03 264 / 0.04);
+  --shadow-card-value: 0 1px 3px 0 oklch(0.21 0.03 264 / 0.06), 0 1px 2px -1px oklch(0.21 0.03 264 / 0.04);
+  --shadow-pop: 0 18px 40px -16px oklch(0.21 0.03 264 / 0.28), 0 4px 12px -6px oklch(0.21 0.03 264 / 0.16);
+  --skeleton: oklch(0.55 0.19 277 / 0.11);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+}
+
+[data-theme="dark"] {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.7 0.18 277);
+  --primary-foreground: oklch(0.15 0.04 264);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.7 0.18 277);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --status-progress: oklch(0.3 0.08 250);
+  --status-progress-foreground: oklch(0.85 0.1 250);
+  --status-planning: oklch(0.3 0.07 75);
+  --status-planning-foreground: oklch(0.85 0.1 75);
+  --status-hold: oklch(0.3 0.06 30);
+  --status-hold-foreground: oklch(0.85 0.1 30);
+  --status-completed: oklch(0.3 0.08 160);
+  --status-completed-foreground: oklch(0.85 0.1 160);
+  --status-blocked: oklch(0.3 0.09 25);
+  --status-blocked-foreground: oklch(0.85 0.12 25);
+  --status-review: oklch(0.3 0.08 300);
+  --status-review-foreground: oklch(0.85 0.1 300);
+  --priority-high: oklch(0.3 0.09 25);
+  --priority-high-foreground: oklch(0.85 0.12 25);
+  --priority-medium: oklch(0.3 0.07 75);
+  --priority-medium-foreground: oklch(0.85 0.1 75);
+  --priority-low: oklch(0.28 0.03 257);
+  --priority-low-foreground: oklch(0.78 0.02 257);
+  --shadow-soft-value: 0 1px 2px 0 oklch(0 0 0 / 0.3);
+  --shadow-card-value: 0 1px 3px 0 oklch(0 0 0 / 0.4), 0 1px 2px -1px oklch(0 0 0 / 0.3);
+  --shadow-pop: 0 18px 40px -14px oklch(0 0 0 / 0.6), 0 4px 12px -6px oklch(0 0 0 / 0.4);
+  --skeleton: oklch(0.7 0.18 277 / 0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; border-color: var(--border); }
+html { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, p { margin: 0; }
+button, input, select, textarea { font-family: inherit; font-size: inherit; }
+a { color: inherit; }
+svg { display: block; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.skip-link {
+  position: absolute; left: 8px; top: -48px; z-index: 100;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; color: var(--foreground);
+}
+.skip-link:focus { top: 8px; }
+.muted { color: var(--muted-foreground); }
+.mono { font-family: var(--font-mono); }
+
+/* ---------- Real app chrome: top navigation ---------- */
+.topnav { background: var(--card); border-bottom: 1px solid var(--border); }
+.topnav-inner {
+  max-width: 1400px; margin: 0 auto; padding: 10px 24px;
+  display: flex; align-items: center; gap: 22px;
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 999px; flex: 0 0 auto;
+  background: var(--primary); color: var(--primary-foreground);
+  display: grid; place-items: center; font-weight: 700; font-size: 16px;
+  letter-spacing: -0.02em;
+}
+.brand-name { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+.topnav-tabs { display: flex; align-items: center; gap: 2px; min-width: 0; overflow-x: auto; }
+.topnav-tab {
+  appearance: none; border: 0; background: transparent; cursor: pointer;
+  font-size: 14px; font-weight: 500; color: var(--muted-foreground);
+  padding: 7px 12px; border-radius: var(--radius-md);
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.topnav-tab:hover { background: var(--secondary); color: var(--foreground); }
+.topnav-tab.is-active { background: var(--accent); color: var(--accent-foreground); font-weight: 600; }
+.topnav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.avatar {
+  width: 30px; height: 30px; border-radius: 999px; background: var(--secondary);
+  border: 1px solid var(--border); color: var(--foreground);
+  display: grid; place-items: center; font-size: 11.5px; font-weight: 700;
+}
+
+/* ---------- Real app chrome: project header ---------- */
+.project-head-inner {
+  max-width: 1400px; margin: 0 auto; padding: 26px 24px 16px;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.project-title {
+  font-size: 30px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.15;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.project-meta { margin-top: 6px; color: var(--muted-foreground); font-size: 14px; }
+.back-link { font-size: 13.5px; color: var(--muted-foreground); text-decoration: none; white-space: nowrap; }
+.back-link:hover { color: var(--foreground); }
+
+/* ---------- Real app chrome: project tabs ---------- */
+.app-tabs-wrap { max-width: 1400px; margin: 0 auto; padding: 0 24px 16px; }
+.app-tabs {
+  display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 4px;
+}
+.app-tabs::-webkit-scrollbar { display: none; }
+.app-tab {
+  appearance: none; border: 0; background: transparent; cursor: pointer;
+  white-space: nowrap; font-size: 14px; font-weight: 500; color: var(--muted-foreground);
+  padding: 7px 12px; border-radius: var(--radius-sm);
+}
+.app-tab:hover { color: var(--foreground); }
+.app-tab.is-active {
+  background: var(--background); color: var(--foreground);
+  box-shadow: var(--shadow-soft-value); font-weight: 600;
+}
+
+/* ---------- Practice chrome (not part of the product) ---------- */
+/* R3-4: the practice strip paints above the product dialog backdrop (z-index 60),
+     so the State/Role/Reset/theme/Try-this controls stay pointer-reachable while a
+     product dialog is open. The dialog and its backdrop remain the modal layer. */
+.mock-strip { position: relative; z-index: 40; background: var(--card); border-bottom: 1px solid var(--border); }
+/* R3-4: only while a product dialog is open does the practice strip rise above the
+   dialog backdrop (z-index 60). With no dialog it stays below the Try-this panel. */
+body[data-dialog="open"] .mock-strip { z-index: 70; }
+.mock-strip-inner {
+  max-width: 1400px; margin: 0 auto; padding: 10px 24px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.mock-chip {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--muted); border: 1px solid var(--border);
+  border-radius: 999px; padding: 3px 9px; color: var(--muted-foreground);
+}
+.mock-note { font-size: 12px; color: var(--muted-foreground); margin-right: 4px; }
+.mock-field { display: inline-flex; align-items: center; gap: 6px; }
+.mock-label { font-size: 11.5px; font-weight: 600; color: var(--muted-foreground); }
+.mock-select {
+  height: 31px; font-size: 12.5px; color: var(--foreground); font-family: inherit;
+  border: 1px solid var(--input); border-radius: 8px; background: var(--background);
+  padding: 0 8px; max-width: 320px;
+}
+.mock-btn {
+  height: 31px; padding: 0 10px; font-size: 12.5px; font-weight: 500; font-family: inherit;
+  color: var(--foreground); background: var(--background);
+  border: 1px solid var(--input); border-radius: 8px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.mock-btn:hover { background: var(--accent); color: var(--accent-foreground); }
+.mock-btn.is-on { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+.mock-counter { margin-left: auto; font-size: 11.5px; color: var(--muted-foreground); white-space: nowrap; }
+.mock-disclosure {
+  max-width: 1400px; margin: 0 auto; padding: 0 24px 8px;
+  font-size: 11.5px; line-height: 1.5; color: var(--muted-foreground);
+}
+.mock-scenario {
+  max-width: 1400px; margin: 0 auto; padding: 0 24px 10px;
+  font-size: 12.5px; line-height: 1.5; color: var(--foreground);
+  display: flex; gap: 8px; align-items: baseline;
+}
+.mock-scenario .mock-link {
+  appearance: none; border: 0; background: none; padding: 0; cursor: pointer;
+  color: var(--primary); font: inherit; font-weight: 600; white-space: nowrap;
+}
+.mock-scenario .mock-link:hover { text-decoration: underline; }
+
+/* ---------- Stage ---------- */
+.stage { display: block; }
+.page-wrap { max-width: 1400px; margin: 0 auto; padding: 4px 24px 64px; }
+.practice-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted-foreground); margin-bottom: 6px;
+}
+.practice-tag::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--primary); }
+.mock-footer {
+  max-width: 1400px; margin: 0 auto; padding: 0 24px 30px;
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  font-size: 11.5px; color: var(--muted-foreground); line-height: 1.5;
+}
+
+/* ---------- Shared product primitives (translated from the app's components) ---------- */
+.btn {
+  appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 36px; padding: 0 14px; border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 500; font-family: inherit; line-height: 1; white-space: nowrap;
+  border: 1px solid transparent; cursor: pointer; transition: background 120ms ease, color 120ms ease;
+}
+.btn svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.btn-primary { background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-soft-value); }
+.btn-primary:hover { background: color-mix(in oklch, var(--primary) 90%, var(--foreground)); }
+.btn-outline { background: var(--background); color: var(--foreground); border-color: var(--input); box-shadow: var(--shadow-soft-value); }
+.btn-outline:hover { background: var(--accent); color: var(--accent-foreground); }
+.btn-ghost { background: transparent; color: var(--foreground); }
+.btn-ghost:hover { background: var(--accent); color: var(--accent-foreground); }
+.btn-destructive { background: var(--destructive); color: var(--destructive-foreground); }
+.btn-destructive:hover { background: color-mix(in oklch, var(--destructive) 90%, var(--foreground)); }
+.btn-sm { height: 32px; padding: 0 11px; font-size: 13px; border-radius: 8px; }
+.btn-xs { height: 28px; padding: 0 9px; font-size: 12.5px; border-radius: 7px; }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-icon.btn-sm { width: 32px; height: 32px; }
+.btn:disabled, .btn[aria-disabled="true"] {
+  opacity: 0.5; cursor: not-allowed; pointer-events: none;
+}
+.link-btn {
+  appearance: none; border: 0; background: none; padding: 0; cursor: pointer;
+  font: inherit; font-size: 12.5px; font-weight: 600; color: var(--primary);
+}
+.link-btn:hover { text-decoration: underline; }
+.link-btn:disabled { opacity: 0.5; cursor: not-allowed; text-decoration: none; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px; border-radius: var(--radius-sm);
+  border: 1px solid transparent; padding: 2px 8px;
+  font-size: 11.5px; font-weight: 600; line-height: 1.5; white-space: nowrap;
+}
+.badge-status-progress { background: var(--status-progress); color: var(--status-progress-foreground); }
+.badge-status-planning { background: var(--status-planning); color: var(--status-planning-foreground); }
+.badge-status-blocked { background: var(--status-blocked); color: var(--status-blocked-foreground); }
+.badge-status-completed { background: var(--status-completed); color: var(--status-completed-foreground); }
+.badge-status-review { background: var(--status-review); color: var(--status-review-foreground); }
+.badge-status-hold { background: var(--status-hold); color: var(--status-hold-foreground); }
+.badge-priority-high { background: var(--priority-high); color: var(--priority-high-foreground); }
+.badge-priority-medium { background: var(--priority-medium); color: var(--priority-medium-foreground); }
+.badge-priority-low { background: var(--priority-low); color: var(--priority-low-foreground); }
+.badge-outline { border-color: var(--border); background: var(--card); color: var(--foreground); }
+.badge-type { border-color: var(--border); background: var(--secondary); color: var(--secondary-foreground); font-weight: 600; font-size: 11px; }
+.badge-type-text { background: var(--status-progress); color: var(--status-progress-foreground); border-color: transparent; }
+.badge-type-number { background: var(--status-review); color: var(--status-review-foreground); border-color: transparent; }
+.badge-type-date { background: var(--status-planning); color: var(--status-planning-foreground); border-color: transparent; }
+.badge-type-select { background: var(--status-completed); color: var(--status-completed-foreground); border-color: transparent; }
+.badge-archived { background: var(--status-hold); color: var(--status-hold-foreground); border-color: color-mix(in oklch, var(--status-hold-foreground) 22%, transparent); }
+.badge-repair { background: var(--status-hold); color: var(--status-hold-foreground); border-color: color-mix(in oklch, var(--status-hold-foreground) 22%, transparent); }
+.badge-count { background: var(--muted); color: var(--muted-foreground); border-color: transparent; font-weight: 600; }
+
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-card-value);
+}
+.icon-btn {
+  appearance: none; width: 30px; height: 30px; flex: 0 0 auto;
+  display: inline-grid; place-items: center; cursor: pointer;
+  border: 1px solid transparent; border-radius: 8px;
+  background: transparent; color: var(--muted-foreground);
+}
+.icon-btn svg { width: 15px; height: 15px; }
+.icon-btn:hover { background: var(--accent); color: var(--accent-foreground); }
+.icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.icon-btn.is-danger:hover { background: var(--status-blocked); color: var(--status-blocked-foreground); }
+
+.input, .select {
+  height: 36px; width: 100%; font-family: inherit; font-size: 14px;
+  color: var(--foreground); background: transparent;
+  border: 1px solid var(--input); border-radius: 8px; padding: 0 10px;
+}
+.input::placeholder { color: var(--muted-foreground); opacity: 0.85; }
+.input:disabled, .select:disabled { opacity: 0.5; cursor: not-allowed; }
+.input[aria-invalid="true"] { border-color: var(--destructive); }
+.select { appearance: none; padding-right: 26px; background-image: none; }
+.select-wrap { position: relative; }
+.select-wrap > svg { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--muted-foreground); pointer-events: none; }
+label.field-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.field-help { font-size: 12px; color: var(--muted-foreground); margin-top: 5px; line-height: 1.45; }
+.alert {
+  display: flex; align-items: flex-start; gap: 9px;
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 10px 12px; font-size: 13px; line-height: 1.5;
+  background: var(--card); color: var(--foreground);
+}
+.alert svg { width: 15px; height: 15px; flex: 0 0 auto; margin-top: 2px; }
+.alert-warn { background: color-mix(in oklch, var(--status-planning) 55%, var(--card)); border-color: color-mix(in oklch, var(--status-planning-foreground) 18%, var(--border)); }
+.alert-error { background: color-mix(in oklch, var(--status-blocked) 55%, var(--card)); border-color: color-mix(in oklch, var(--status-blocked-foreground) 20%, var(--border)); }
+.alert-info { background: color-mix(in oklch, var(--status-progress) 45%, var(--card)); border-color: color-mix(in oklch, var(--status-progress-foreground) 16%, var(--border)); }
+.alert .alert-body { flex: 1; min-width: 0; }
+.alert .alert-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
+[data-failed-banner]:focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* ---------- Settings page ---------- */
+.settings-page { display: flex; flex-direction: column; gap: 14px; }
+.settings-card { overflow: hidden; }
+.settings-section-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  padding: 20px 20px 14px;
+}
+.settings-section-head h2 { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+.settings-section-head p { margin-top: 4px; font-size: 13px; color: var(--muted-foreground); max-width: 720px; }
+.settings-body { padding: 0 20px 18px; }
+.settings-empty {
+  border: 1px dashed var(--border); border-radius: var(--radius-lg);
+  padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.settings-empty .empty-icon {
+  width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center;
+  background: var(--accent); color: var(--accent-foreground);
+}
+.settings-empty .empty-icon svg { width: 19px; height: 19px; }
+.settings-empty p { font-size: 13.5px; color: var(--muted-foreground); max-width: 520px; line-height: 1.55; }
+.cf-list { border-top: 1px solid var(--border); }
+/* NB-8: the capped list scrolls inside its card; a fading bottom edge plus a thin
+   scrollbar reads as "more below" instead of a hard clip. */
+.cf-list.is-scroll-list {
+  scrollbar-width: thin; scrollbar-color: var(--muted-foreground) transparent;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
+}
+.cf-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 1px solid var(--border); min-width: 0;
+}
+.cf-row:last-child { border-bottom: 0; }
+.cf-order {
+  width: 22px; flex: 0 0 auto; text-align: right; font-size: 11.5px;
+  color: var(--muted-foreground); font-variant-numeric: tabular-nums;
+}
+.cf-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.cf-label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; font-weight: 600; }
+.cf-label .field-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cf-help { font-size: 12px; color: var(--muted-foreground); }
+.cf-actions { display: flex; align-items: center; gap: 2px; flex: 0 0 auto; }
+.cf-row.is-archived { opacity: 0.92; }
+.cf-row.is-archived .cf-label { font-weight: 550; }
+.cf-row.is-moved { background: color-mix(in oklch, var(--accent) 55%, transparent); border-radius: 8px; }
+.archived-group { border-top: 1px solid var(--border); margin-top: 4px; }
+.archived-toggle {
+  appearance: none; border: 0; background: none; cursor: pointer; font: inherit;
+  display: flex; align-items: center; gap: 7px; padding: 11px 0 4px;
+  font-size: 12.5px; font-weight: 600; color: var(--muted-foreground);
+}
+.archived-toggle:hover { color: var(--foreground); }
+.archived-toggle svg { width: 14px; height: 14px; }
+.archived-note { font-size: 12px; color: var(--muted-foreground); padding: 2px 0 6px; }
+.cf-limit-note { margin-bottom: 12px; }
+
+/* ---------- Task detail (drawer + docked pane side by side) ---------- */
+.compare-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.compare-col { min-width: 0; display: flex; flex-direction: column; }
+.compare-hint { font-size: 11.5px; color: var(--muted-foreground); margin-bottom: 10px; line-height: 1.5; }
+.task-surface {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card-value); overflow: hidden;
+}
+.task-surface-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 16px 18px 14px; border-bottom: 1px solid var(--border);
+}
+.task-surface-head h2 { font-size: 18px; font-weight: 650; letter-spacing: -0.012em; line-height: 1.25; }
+.task-surface-head .priority-row { margin-top: 6px; }
+.task-surface-body { padding: 0 18px 18px; }
+.task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.task-meta .meta-item { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--muted-foreground); }
+.task-meta .meta-item strong { color: var(--foreground); font-weight: 500; }
+.task-meta .meta-avatar {
+  width: 20px; height: 20px; border-radius: 999px; background: var(--secondary);
+  border: 1px solid var(--border); display: inline-grid; place-items: center; font-size: 9px; font-weight: 700;
+}
+.task-section { border-bottom: 1px solid var(--border); }
+.task-section:last-child { border-bottom: 0; }
+.task-section-head {
+  appearance: none; width: 100%; display: flex; align-items: center; gap: 8px;
+  padding: 12px 0; border: 0; background: none; cursor: pointer; font: inherit;
+  font-size: 13.5px; font-weight: 600; color: var(--foreground); text-align: left;
+}
+.task-section-head .chev { width: 14px; height: 14px; color: var(--muted-foreground); transition: transform 120ms ease; }
+.task-section-head[aria-expanded="false"] .chev { transform: rotate(-90deg); }
+.task-section-head .sec-count { margin-left: auto; font-size: 11.5px; font-weight: 500; color: var(--muted-foreground); }
+.task-section-body { padding: 2px 0 14px; }
+.task-section-body.is-open { display: block; }
+.task-section-body[hidden] { display: none; }
+.description-preview { font-size: 13px; color: var(--muted-foreground); line-height: 1.5; }
+.cf-section-busy { position: relative; }
+.cf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+.cf-field { min-width: 0; }
+.cf-field-label { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; font-weight: 600; color: var(--muted-foreground); margin-bottom: 5px; }
+.cf-field-label .req-dot { width: 4px; height: 4px; border-radius: 999px; background: var(--muted-foreground); opacity: 0.6; }
+.cf-value { display: flex; align-items: center; gap: 6px; font-size: 14px; min-height: 34px; padding: 5px 0; line-height: 1.35; overflow-wrap: anywhere; }
+.cf-value.is-unset { color: var(--muted-foreground); }
+.cf-value.is-empty { color: var(--muted-foreground); font-style: italic; }
+.cf-value .archived-option { font-size: 12px; color: var(--muted-foreground); font-style: italic; }
+.cf-edit-row { display: flex; align-items: center; gap: 6px; }
+.cf-edit-row .input, .cf-edit-row .select-wrap { flex: 1; min-width: 0; }
+.cf-save-status { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted-foreground); white-space: nowrap; }
+.spinner {
+  width: 12px; height: 12px; border-radius: 999px; flex: 0 0 auto;
+  border: 2px solid var(--border); border-top-color: var(--primary);
+  animation: spin 700ms linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.cf-note { margin-top: 5px; font-size: 11.5px; color: var(--muted-foreground); line-height: 1.45; }
+.cf-field-error { margin-top: 5px; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--destructive); }
+.cf-field-error svg { width: 13px; height: 13px; }
+.cf-archived-row { grid-column: 1 / -1; }
+.skeleton { background: var(--skeleton); border-radius: 6px; animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+.skeleton-row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; align-items: center; }
+.skeleton-label { height: 11px; }
+.skeleton-input { height: 34px; border-radius: 8px; }
+.cf-skeleton-list { display: flex; flex-direction: column; gap: 14px; padding: 6px 0 4px; }
+.readonly-badge-row { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+
+/* ---------- Task table ---------- */
+.toolbar-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.toolbar-row .spacer { flex: 1; }
+/* R3-6(c): a class (not an inline style) so the narrow breakpoint can give the
+   chip row the full width instead of letting chips collide with the buttons. */
+.toolbar-chips { flex: 1 1 auto; min-width: 0; }
+.view-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card); box-shadow: var(--shadow-soft-value); padding: 8px 10px;
+}
+.view-select {
+  display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 9px;
+  border: 1px solid var(--input); border-radius: 8px; background: var(--background);
+  font: inherit; font-size: 13px; font-weight: 600; color: var(--foreground); cursor: pointer;
+}
+.view-select svg { width: 14px; height: 14px; color: var(--muted-foreground); }
+.view-bar .view-mode { font-size: 11.5px; color: var(--muted-foreground); }
+.view-bar .view-spacer { flex: 1; }
+.view-bar .saved-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted-foreground); }
+.view-actions { margin-top: 12px; }
+.chip-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding-top: 12px; min-width: 0; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px; min-height: 27px; padding: 0 8px; max-width: 100%;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: var(--card); color: var(--foreground); font-size: 12.5px; white-space: nowrap;
+}
+.chip .chip-key { color: var(--muted-foreground); }
+.chip > svg { width: 12px; height: 12px; flex: 0 0 auto; }
+/* R3-6(e): the remove target is 24x24 here and 32x32 below 820px (WCAG 2.2
+   section 2.5.8 minimum is 24x24). The 13px glyph is centred inside it. */
+.chip .chip-x {
+  appearance: none; border: 0; background: none; padding: 0; margin-left: 2px; flex: 0 0 auto;
+  width: 24px; height: 24px; border-radius: 999px; display: inline-grid; place-items: center;
+  color: var(--muted-foreground); cursor: pointer;
+}
+.chip .chip-x:hover { background: var(--muted); color: var(--foreground); }
+.chip .chip-x svg { width: 13px; height: 13px; }
+.chip > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip.is-custom { border-color: color-mix(in oklch, var(--primary) 32%, var(--border)); background: color-mix(in oklch, var(--primary) 6%, var(--card)); }
+.chip.is-disabled { opacity: 0.55; pointer-events: none; }
+.chip.is-repair { border-color: color-mix(in oklch, var(--status-hold-foreground) 30%, var(--border)); background: var(--status-hold); color: var(--status-hold-foreground); }
+.banners { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; }
+.table-card { margin-top: 12px; overflow: hidden; }
+.table-summary {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 11px 16px; border-bottom: 1px solid var(--border);
+  font-size: 12.5px; color: var(--muted-foreground);
+}
+.table-summary strong { color: var(--foreground); font-weight: 600; }
+.table-summary .sep { opacity: 0.65; }
+.table-summary .sort-label { display: inline-flex; align-items: center; gap: 5px; }
+.table-summary .sort-label .dir { font-weight: 600; color: var(--foreground); }
+.table-scroll { overflow-x: auto; }
+/* R4 P7(NB-10): a right-edge fade marks horizontal overflow in addition to the
+   pinned column's shadow, so a first-time reader can discover the scroll. */
+.table-scroll-wrap { position: relative; }
+.table-scroll-fade { display: none; }
+table.tasks { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 980px; }
+table.tasks th {
+  height: 40px; padding: 6px 8px; text-align: left; vertical-align: middle;
+  font-size: 12.5px; font-weight: 500; color: var(--muted-foreground); white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+table.tasks th.col-order { width: 52px; }
+table.tasks th.col-actions { text-align: right; }
+table.tasks td {
+  padding: 9px 8px; vertical-align: middle; border-bottom: 1px solid var(--border);
+  color: var(--foreground); overflow-wrap: anywhere;
+}
+table.tasks tbody tr:last-child td { border-bottom: 0; }
+table.tasks tbody tr:hover td { background: color-mix(in oklch, var(--muted) 55%, transparent); }
+table.tasks td.col-order { color: var(--muted-foreground); font-size: 12px; font-variant-numeric: tabular-nums; }
+table.tasks .cell-order { display: inline-flex; align-items: center; gap: 6px; }
+.grip {
+  width: 8px; height: 14px; flex: 0 0 auto; opacity: 0.32;
+  background-image: radial-gradient(circle, currentColor 0.9px, transparent 1.1px);
+  background-size: 4px 4px; background-position: 0 1px;
+}
+.task-title-cell { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.task-title-cell .task-title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.task-title-cell .task-kind { font-size: 11px; color: var(--muted-foreground); }
+.th-sort {
+  appearance: none; border: 0; background: none; padding: 0; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 5px;
+  font: inherit; color: inherit; font-weight: inherit;
+}
+.th-sort:hover { color: var(--foreground); }
+.th-sort .sort-arrow { font-size: 10px; line-height: 1; color: var(--muted-foreground); }
+.th-sort .sort-arrow.is-active { color: var(--foreground); }
+th.is-sorted { color: var(--foreground); }
+th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); opacity: 0.6; }
+.th-label { display: inline-flex; align-items: center; gap: 6px; }
+.cell-actions { display: inline-flex; align-items: center; gap: 2px; justify-content: flex-end; }
+.row-menu { color: var(--muted-foreground); }
+/**
+ * R3-6(b): the empty state is rendered instead of the table (the same pattern the
+ * app uses in ProjectDetailView), so it is never 964px wide inside a 360px scroller.
+ */
+.table-empty {
+  padding: 44px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  min-height: 180px; justify-content: center;
+}
+.table-empty h3 { font-size: 15px; font-weight: 600; }
+.table-empty p { font-size: 13px; color: var(--muted-foreground); max-width: 460px; line-height: 1.5; }
+.archived-option-note { margin-top: 4px; }
+.cell-unset { color: var(--muted-foreground); }
+.cell-empty { color: var(--muted-foreground); font-style: italic; }
+.col-archived-chip { margin-left: 4px; }
+
+/* ---------- Dialogs ---------- */
+.dialog-backdrop {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 20px;
+  background: oklch(0.21 0.03 264 / 0.45); backdrop-filter: blur(2px);
+}
+.dialog {
+  width: min(540px, 100%); max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow: auto;
+  background: var(--popover); color: var(--popover-foreground);
+  border: 1px solid var(--border); border-radius: var(--radius-xl); box-shadow: var(--shadow-pop);
+}
+.dialog.dialog-narrow { width: min(450px, 100%); }
+.dialog-head { padding: 18px 20px 0; }
+.dialog-head h2 { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+.dialog-head p { margin-top: 4px; font-size: 13px; color: var(--muted-foreground); line-height: 1.5; }
+.dialog-body { padding: 16px 20px; }
+.dialog-foot {
+  display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap;
+  padding: 14px 20px 18px; border-top: 1px solid var(--border);
+}
+.dialog-foot .foot-spacer { flex: 1; }
+.form-row { margin-bottom: 15px; }
+.form-row:last-child { margin-bottom: 0; }
+.form-row .input, .form-row .select-wrap { max-width: none; }
+.type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.type-choice {
+  border: 1px solid var(--input); border-radius: var(--radius-md); background: var(--card);
+  padding: 10px 8px; text-align: center; cursor: pointer; font: inherit;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  font-size: 12.5px; font-weight: 600; color: var(--foreground);
+}
+.type-choice svg { width: 16px; height: 16px; color: var(--muted-foreground); }
+.type-choice:hover { border-color: color-mix(in oklch, var(--primary) 45%, var(--input)); }
+.type-choice.is-selected {
+  border-color: var(--primary); background: color-mix(in oklch, var(--primary) 7%, var(--card));
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+.type-choice.is-selected svg { color: var(--primary); }
+.type-choice:disabled { cursor: not-allowed; opacity: 0.6; }
+.choice-lock { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--muted-foreground); margin-top: 6px; }
+.choice-lock svg { width: 12px; height: 12px; }
+.option-list { border-top: 1px solid var(--border); }
+.option-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.option-row:last-child { border-bottom: 0; }
+.option-order { width: 20px; text-align: right; font-size: 11.5px; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.option-name { flex: 1; min-width: 0; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.option-add-row { display: flex; gap: 8px; padding-top: 12px; }
+.option-add-row .input { flex: 1; }
+.option-count { font-size: 12px; color: var(--muted-foreground); }
+.dialog-loading-hint { display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: var(--muted-foreground); }
+
+/* ---------- Filter editor popover ---------- */
+.filter-editor {
+  margin-top: 12px; background: var(--popover); color: var(--popover-foreground);
+  border: 1px solid var(--border); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pop); overflow: hidden;
+}
+.filter-editor-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 16px 18px 10px; }
+.filter-editor-head h3 { font-size: 15.5px; font-weight: 650; }
+.filter-editor-head p { margin-top: 3px; font-size: 12.5px; color: var(--muted-foreground); }
+.filter-editor-body { padding: 4px 18px 14px; display: flex; flex-direction: column; gap: 10px; }
+.filter-row { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; background: var(--card); }
+.filter-row-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.filter-row-head .filter-index { font-size: 11.5px; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.05em; }
+.filter-fields { display: grid; grid-template-columns: 1.05fr 1fr 1.2fr; gap: 8px; align-items: start; }
+.filter-error { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 12px; color: var(--destructive); line-height: 1.4; }
+.filter-error svg { width: 13px; height: 13px; flex: 0 0 auto; }
+.filter-editor-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+.filter-editor-foot .hint { font-size: 12px; color: var(--muted-foreground); }
+.inline-toast {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px;
+  border-radius: 7px; background: var(--status-completed); color: var(--status-completed-foreground);
+  font-size: 11.5px; font-weight: 600;
+}
+
+/* ---------- Try this panel ---------- */
+.trythis {
+  /* R4 B3: docked to the right at >=1024px, with the page reserving a gutter for it
+     (body[data-trythis="open"]), so it never covers a product control. Below that it
+     docks into the page flow under the practice strip. z-index 45 stays below the
+     dialog backdrop (60). */
+  position: fixed; z-index: 45; right: 16px; top: 16px; bottom: 16px;
+  width: min(440px, calc(100vw - 32px));
+  display: flex; flex-direction: column; gap: 12px;
+  background: var(--popover); color: var(--popover-foreground);
+  border: 1px solid var(--border); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pop); padding: 18px; overflow: hidden;
+}
+@media (min-width: 1024px) {
+  body[data-trythis="open"] { padding-right: 456px; }
+}
+@media (max-width: 1023px) {
+  .trythis {
+    position: relative; right: auto; top: auto; bottom: auto;
+    width: calc(100% - 28px); margin: 8px auto 0; padding: 14px;
+  }
+  .trythis-steps { max-height: none; }
+}
+.trythis[hidden] { display: none; }
+.trythis-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.trythis-head h2 { font-size: 16.5px; font-weight: 650; letter-spacing: -0.01em; }
+.trythis-head p { margin-top: 4px; font-size: 12.5px; color: var(--muted-foreground); line-height: 1.5; }
+.trythis-steps { list-style: none; margin: 0; padding: 0; overflow-y: auto; max-height: 52vh; display: flex; flex-direction: column; gap: 12px; }
+.trythis-step { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; background: var(--card); }
+.trythis-step .step-top { display: flex; gap: 8px; align-items: flex-start; }
+.trythis-step .step-num {
+  width: 20px; height: 20px; border-radius: 999px; flex: 0 0 auto;
+  background: var(--primary); color: var(--primary-foreground);
+  display: grid; place-items: center; font-size: 11px; font-weight: 700;
+}
+.trythis-step .step-title { font-size: 13px; font-weight: 600; line-height: 1.45; }
+.trythis-step .step-body { margin-left: 28px; font-size: 12.5px; color: var(--muted-foreground); line-height: 1.5; margin-top: 2px; }
+.trythis-step .step-actions { margin-left: 28px; margin-top: 7px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.trythis-step.is-done { border-color: color-mix(in oklch, var(--status-completed-foreground) 30%, var(--border)); background: color-mix(in oklch, var(--status-completed) 30%, var(--card)); }
+.trythis-foot { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.trythis-foot .muted { font-size: 11.5px; line-height: 1.5; }
+
+/* ---------- Toast (fake store feedback) ---------- */
+.toast {
+  position: fixed; z-index: 90; left: 50%; bottom: 22px; transform: translateX(-50%);
+  background: var(--popover); color: var(--popover-foreground);
+  border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow-pop);
+  padding: 9px 14px; font-size: 13px; display: flex; align-items: center; gap: 8px;
+  max-width: min(460px, calc(100vw - 28px));
+}
+.toast[hidden] { display: none; }
+.toast .toast-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--status-completed-foreground); flex: 0 0 auto; }
+
+/* ---------- Density fine-tuning ---------- */
+.settings-section-head { padding: 16px 18px 12px; }
+.settings-body { padding: 0 18px 14px; }
+.settings-inert .settings-section-head { padding: 13px 18px 6px; }
+.settings-inert .settings-section-head p { display: none; }
+.settings-inert .settings-body { padding: 0 18px 6px; }
+.settings-inert .cf-row { padding: 6px 0; }
+.cf-row { padding: 8px 0; }
+.task-section-head { padding: 9px 0; }
+.task-meta { padding: 9px 0; }
+.compare-hint { margin-bottom: 6px; }
+.cf-grid { gap: 12px 14px; }
+.task-surface-head { padding: 14px 18px 12px; }
+.cf-save-status { font-size: 11px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1120px) {
+  .compare-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 820px) {
+  .topnav-inner { padding: 8px 14px; gap: 12px; }
+  .brand-name { font-size: 15px; }
+  .project-head-inner { padding: 18px 14px 12px; align-items: flex-start; }
+  .project-title { font-size: 25px; }
+  .project-meta { font-size: 13px; }
+  .app-tabs-wrap, .page-wrap, .mock-strip-inner, .mock-disclosure, .mock-scenario, .mock-footer {
+    padding-left: 14px; padding-right: 14px;
+  }
+  .page-wrap { padding-bottom: 48px; }
+  .mock-strip-inner { gap: 6px; }
+  /* R4 B2: each practice field owns a full row below 820px, with its visible label,
+     so the only state selector is never an unreadable sliver. */
+  .mock-field { flex: 1 1 100%; min-width: 0; }
+  .mock-field .mock-label { display: inline; }
+  .mock-select { flex: 1 1 auto; width: auto; max-width: none; min-width: 140px; }
+  .mock-counter { margin-left: 0; width: 100%; }
+  .settings-section-head { flex-direction: column; align-items: stretch; gap: 10px; }
+  .settings-section-head .btn { align-self: flex-start; }
+  .topnav-tabs { flex: 0 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .topnav-tabs::-webkit-scrollbar { display: none; }
+  .mock-scenario { gap: 6px; }
+  .mock-scenario .mock-chip { white-space: nowrap; }
+  .cf-row { flex-wrap: wrap; }
+  .cf-order { width: 18px; }
+  .cf-actions { width: 100%; justify-content: flex-start; padding-left: 28px; }
+  .cf-grid { grid-template-columns: 1fr; }
+  .task-surface-head { padding: 14px 14px 12px; }
+  .task-surface-body { padding: 0 14px 16px; }
+  .filter-fields { grid-template-columns: 1fr; }
+  .filter-editor-head { padding: 14px 14px 8px; }
+  .filter-editor-body { padding: 4px 14px 12px; }
+  .filter-editor-foot { padding: 10px 14px 14px; }
+  /* R3-6: narrow-layout repairs (measured at 390x844; numbers in the r3 notes and manifest). */
+  /* (a) banner copy takes the first row, actions the second, so the body keeps >=220px. */
+  .alert { flex-wrap: wrap; }
+  .alert .alert-body { flex: 1 1 220px; }
+  .alert .alert-actions { flex: 1 1 100%; }
+  /* (c) the chip row owns the full width so chips can never slide under the buttons. */
+  .toolbar-chips { flex: 1 1 100%; }
+  /* (e) 32x32 remove targets on touch widths. */
+  .chip { min-height: 32px; padding: 0 6px 0 10px; }
+  .chip .chip-x { width: 32px; height: 32px; }
+  /* (d) the Task column stays pinned while the wide table scrolls sideways; its
+     edge shadow is the scroll affordance and the row identity never leaves. */
+  .table-scroll { position: relative; }
+  /* R4 B1: cap the pinned Task column at 160px below 820px so the 360px scroller
+     keeps a 200px window for a scrolled custom column; the title ellipsises. */
+  table.tasks th.col-title, table.tasks td.col-title {
+    position: sticky; left: 0; z-index: 2; background: var(--card);
+    box-shadow: 8px 0 10px -8px oklch(0 0 0 / 0.45);
+    width: 160px; min-width: 160px; max-width: 160px; overflow: hidden;
+  }
+  table.tasks th.col-title .th-sort { display: flex; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  table.tasks td.col-title .task-title-cell { max-width: 100%; }
+  table.tasks tbody tr:hover td.col-title { background: color-mix(in oklch, var(--muted) 55%, var(--card)); }
+  .trythis { width: calc(100% - 28px); margin-top: 8px; padding: 14px; }
+  .trythis-steps { max-height: none; }
+  /* R4 P7(NB-10): right-edge fade plus a thin scrollbar marks the sideways scroll. */
+  .table-scroll { scrollbar-width: thin; scrollbar-color: var(--muted-foreground) transparent; }
+  .table-scroll-fade {
+    display: block; position: absolute; top: 0; right: 0; bottom: 0; width: 18px;
+    pointer-events: none; border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    background: linear-gradient(to right, transparent, var(--card));
+  }
+  /* R4 P7(NB-1): sort headers and inline recovery actions meet a 32px touch target. */
+  .th-sort { min-height: 32px; }
+  .btn-xs { min-height: 32px; }
+  .cf-field-error .link-btn { display: inline-flex; align-items: center; min-height: 32px; }
+  /* R4 P7(NB-3): separators are flex gaps below 820px, so a middot cannot orphan. */
+  .table-summary .sep { display: none; }
+  .table-summary { gap: 2px 10px; }
+  .dialog-backdrop { padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); align-items: end; }
+  .dialog { width: 100%; max-height: calc(100vh - 20px); max-height: calc(100dvh - 20px); }
+  .type-grid { grid-template-columns: repeat(2, 1fr); }
+  .mock-footer { flex-direction: column; gap: 4px; }
+  .view-bar { width: 100%; }
+  .view-bar .view-spacer { display: none; }
+}
+@media (max-width: 620px) {
+  .topnav-tabs { display: none; }
+  .brand-name { display: none; }
+}
+@media (max-width: 480px) {
+  .project-title { font-size: 22px; }
+  .compare-hint { font-size: 11px; }
+  .table-summary { font-size: 12px; }
+  .chip { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton, .spinner { animation: none; }
+  * { transition: none !important; }
+}
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#stage">Skip to the mock state</a>
+
+    <!-- ===== Real app chrome: top navigation ===== -->
+    <header class="topnav">
+      <div class="topnav-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">W</span>
+          <span class="brand-name">WayPoint</span>
+        </div>
+        <nav class="topnav-tabs" aria-label="Primary">
+          <button type="button" class="topnav-tab is-active" aria-current="page">Projects</button>
+          <button type="button" class="topnav-tab" title="Not part of this mock">People</button>
+          <button type="button" class="topnav-tab" title="Not part of this mock">Reports</button>
+        </nav>
+        <div class="topnav-right">
+          <button type="button" class="icon-btn" id="app-theme-toggle" aria-label="Switch colour theme" title="Switch colour theme"></button>
+          <span class="avatar" aria-hidden="true">AR</span>
+          <span class="sr-only">Signed in as Ana Ruiz (fictional persona)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== Real app chrome: project header ===== -->
+    <div class="project-head-inner">
+      <div>
+        <h1 class="project-title">
+          Website Relaunch
+          <span class="badge badge-status-progress">In progress</span>
+        </h1>
+        <p class="project-meta">Northwind Studio · Due 2026-11-21 · 14 tasks · 7 custom fields</p>
+      </div>
+      <a class="back-link" href="#" data-action="noop">← All projects</a>
+    </div>
+
+    <!-- ===== Practice chrome: mock controls (not part of the product) ===== -->
+    <div class="mock-strip" role="region" aria-label="Mock controls">
+      <div class="mock-strip-inner">
+        <span class="mock-chip">Mock controls</span>
+        <span class="mock-note">not part of the product</span>
+        <label class="mock-field">
+          <span class="mock-label">State</span>
+          <select class="mock-select" id="scenario-select" aria-label="Mock state"></select>
+        </label>
+        <label class="mock-field">
+          <span class="mock-label">Role</span>
+          <select class="mock-select" id="role-select" aria-label="Mock role">
+            <option value="manager">Manager</option>
+            <option value="reader">Reader</option>
+          </select>
+        </label>
+        <button type="button" class="mock-btn" id="prev-state" aria-label="Previous state" title="Previous state">‹</button>
+        <button type="button" class="mock-btn" id="next-state" aria-label="Next state" title="Next state">›</button>
+        <button type="button" class="mock-btn" id="reset-scenario">Reset state</button>
+        <button type="button" class="mock-btn" id="theme-toggle" aria-pressed="false">Dark mode</button>
+        <button type="button" class="mock-btn" id="trythis-open" aria-controls="trythis-panel" aria-expanded="false">Try this</button>
+        <span class="mock-counter" id="mock-counter">CF-B custom fields · mock r5</span>
+      </div>
+      <p class="mock-disclosure" id="mock-disclosure">
+        New — not in WayPoint today: custom-field settings, the task custom-fields section, custom columns and
+        filters, and the saved-view repair controls. Practice mock: not the live app, no data is saved, no network.
+        The mock controls stay reachable while a product dialog is open; Try this docks in a reserved right-hand
+        column at 1024px and wider and moves into the page flow below this strip on narrower widths (never over a
+        product control), and always below the dialog layer. On narrow widths the task table scrolls sideways with
+        the Task column pinned at 160px and a right-edge fade.
+      </p>
+      <p class="mock-scenario" id="mock-scenario">
+        <span><span class="mock-chip" style="padding:1px 7px">State notes</span></span>
+        <span id="scenario-note" role="status"></span>
+        <button type="button" class="mock-link" id="scenario-more" hidden>Details</button>
+      </p>
+    </div>
+
+    <!-- ===== Practice chrome: Try this script (docked in the page flow; R4 B3) ===== -->
+    <aside class="trythis" id="trythis-panel" hidden aria-label="Try this — a five-minute check">
+      <div class="trythis-head">
+        <div>
+          <h2>Try this — a five-minute check</h2>
+          <p>Each step describes the behaviour to check. Nothing is saved; use “Show me” to jump to a state that demonstrates it. At 1024px and wider this panel docks in the right-hand column beside the page; below that it sits in the page flow under the mock controls. It never sits over a product control.</p>
+        </div>
+        <button type="button" class="icon-btn" id="trythis-close" aria-label="Close Try this">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <ol class="trythis-steps" id="trythis-steps"></ol>
+      <div class="trythis-foot">
+        <span class="muted">A second pass is in the state menu: invalid date and too-long filters, an archived-field reference, and incomplete data.</span>
+        <button type="button" class="btn btn-outline btn-sm" id="trythis-reset">Start over</button>
+      </div>
+    </aside>
+
+    <!-- ===== Real app chrome: project tabs ===== -->
+    <div class="app-tabs-wrap">
+      <nav class="app-tabs" aria-label="Project sections">
+        <button type="button" class="app-tab" data-tab="overview" title="Not part of this mock">Overview</button>
+        <button type="button" class="app-tab" data-tab="tasks">Tasks</button>
+        <button type="button" class="app-tab" data-tab="workflows" title="Not part of this mock">Workflows</button>
+        <button type="button" class="app-tab" data-tab="board" title="Not part of this mock">Board</button>
+        <button type="button" class="app-tab" data-tab="gantt" title="Not part of this mock">Gantt</button>
+        <button type="button" class="app-tab" data-tab="calendar" title="Not part of this mock">Calendar</button>
+        <button type="button" class="app-tab" data-tab="costs" title="Not part of this mock">Costs</button>
+        <button type="button" class="app-tab" data-tab="roadblocks" title="Not part of this mock">Roadblocks</button>
+        <button type="button" class="app-tab" data-tab="updates" title="Not part of this mock">Updates</button>
+        <button type="button" class="app-tab" data-tab="files" title="Not part of this mock">Files</button>
+        <button type="button" class="app-tab" data-tab="reports" title="Not part of this mock">Reports</button>
+        <button type="button" class="app-tab" data-tab="settings">Settings</button>
+      </nav>
+    </div>
+
+    <!-- ===== The mock surface ===== -->
+    <main class="stage" id="stage" tabindex="-1"></main>
+
+    <div class="mock-footer">
+      <span>WayPoint approval mock · CF-B typed custom fields · r5 · not the live app</span>
+      <span id="footer-meta">evidence screenshots are captured from this exact file</span>
+    </div>
+
+    <div id="dialog-root"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden><span class="toast-dot" aria-hidden="true"></span><span id="toast-text"></span></div>
+
+    <script>
+(function () {
+  "use strict";
+
+  /* =====================================================================
+     CF-B approval mock — inert fake store and renderers.
+     No network, no storage, no product code. Everything below is mock-only.
+     ===================================================================== */
+
+  // ---------- tiny DOM/string helpers ----------
+  function esc(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function clone(value) {
+    return typeof structuredClone === "function"
+      ? structuredClone(value)
+      : JSON.parse(JSON.stringify(value));
+  }
+  const ICONS = {
+    plus: '<path d="M5 12h14M12 5v14"/>',
+    "chevron-down": '<path d="m6 9 6 6 6-6"/>',
+    "chevron-up": '<path d="m18 15-6-6-6 6"/>',
+    "chevron-right": '<path d="m9 18 6-6-6-6"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    pencil: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+    archive: '<rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8M10 12h4"/>',
+    sliders: '<line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/>',
+    columns: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18M15 3v18"/>',
+    filter: '<path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>',
+    refresh: '<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>',
+    "alert-triangle": '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/>',
+    info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+    lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    "more-horizontal": '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    "arrow-up": '<path d="m5 12 7-7 7 7M12 19V5"/>',
+    "arrow-down": '<path d="m19 12-7 7-7-7M12 5v14"/>',
+    dot: '<circle cx="12" cy="12" r="4"/>',
+    "external-link": '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+    text: '<path d="M4 7V5h16v2M9 19h6M12 5v14"/>',
+    number: '<path d="M5 9h14M5 15h14M9 4 7 20M17 4l-2 16"/>',
+    date: '<rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+    select: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="m8 11 4 4 4-4"/>'
+  };
+  function icon(name, cls) {
+    return (
+      '<svg class="' + (cls || "") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      (ICONS[name] || "") + "</svg>"
+    );
+  }
+  function findField(id) {
+    return state.store.fields.find(function (f) { return f.id === id; });
+  }
+  function findOption(field, optionId) {
+    if (!field || !field.options) return null;
+    return field.options.find(function (o) { return o.id === optionId; }) || null;
+  }
+  function activeFields() {
+    return state.store.fields.filter(function (f) { return !f.archived; });
+  }
+  function archivedFields() {
+    return state.store.fields.filter(function (f) { return f.archived; });
+  }
+  function sortedActiveFields() {
+    return activeFields().slice().sort(function (a, b) { return a.position - b.position; });
+  }
+  function findTask(id) {
+    return state.store.tasks.find(function (t) { return t.id === id; });
+  }
+  function valuesFor(taskId) {
+    return state.store.values[taskId] || {};
+  }
+  function displayValue(taskId, field, mode) {
+    const entry = valuesFor(taskId)[field.id];
+    if (!entry) return { kind: "unset" };
+    if (entry.kind === "text") {
+      if (entry.text === "") return { kind: "empty" };
+      return { kind: "text", text: entry.text };
+    }
+    if (entry.kind === "number") return { kind: "number", text: entry.text };
+    if (entry.kind === "date") return { kind: "date", text: entry.text };
+    if (entry.kind === "select") {
+      const option = findOption(field, entry.optionId);
+      return { kind: "select", text: option ? option.label : "Unknown option", archivedOption: Boolean(option && option.archived) };
+    }
+    return { kind: "unset" };
+  }
+
+  // ---------- fixtures (fictional project; no real tenant data) ----------
+  const BASE_FIELDS = [
+    { id: "f_budget", label: "Budget code", type: "text", position: 1, archived: false },
+    {
+      id: "f_stage", label: "Deployment stage", type: "select", position: 2, archived: false,
+      options: [
+        { id: "o_backlog", label: "Backlog", position: 1, archived: false },
+        { id: "o_staging", label: "Staging", position: 2, archived: false },
+        { id: "o_prod", label: "Production", position: 3, archived: false }
+      ]
+    },
+    { id: "f_confidence", label: "Estimate confidence", type: "number", position: 3, archived: false },
+    { id: "f_review", label: "Compliance review date", type: "date", position: 4, archived: false },
+    { id: "f_window", label: "Change window", type: "text", position: 5, archived: false },
+    { id: "f_ticket", label: "Vendor ticket", type: "text", position: 6, archived: false },
+    { id: "f_launch", label: "Launch notes", type: "text", position: 7, archived: true }
+  ];
+  const EXTRA_ARCHIVED = [
+    { id: "f_wave", label: "Migration wave", type: "number", position: 8, archived: true }
+  ];
+  const BASE_TASKS = [
+    { id: "t_hero", order: 1, title: "Homepage hero refresh", status: "progress", statusLabel: "In progress", priority: "high", priorityLabel: "High", due: "2026-11-06" },
+    { id: "t_a11y", order: 2, title: "Accessibility pass on checkout", status: "blocked", statusLabel: "Blocked", priority: "high", priorityLabel: "High", due: "2026-10-20" },
+    { id: "t_pricing", order: 3, title: "Pricing page copy review", status: "progress", statusLabel: "In progress", priority: "medium", priorityLabel: "Medium", due: "2026-11-11" },
+    { id: "t_newsletter", order: 4, title: "Newsletter signup form", status: "planning", statusLabel: "Planning", priority: "low", priorityLabel: "Low", due: "2026-11-18" },
+    { id: "t_analytics", order: 5, title: "Analytics event audit", status: "completed", statusLabel: "Completed", priority: "medium", priorityLabel: "Medium", due: "2026-11-14" },
+    { id: "t_launch", order: 6, title: "Launch checklist", status: "progress", statusLabel: "In progress", priority: "high", priorityLabel: "High", due: "2026-11-21" }
+  ];
+  const BASE_VALUES = {
+    t_hero: {
+      f_budget: { kind: "text", text: "MKT-2026-Q4" },
+      f_stage: { kind: "select", optionId: "o_staging" },
+      f_confidence: { kind: "number", text: "87.5" },
+      f_review: { kind: "date", text: "2026-11-14" },
+      f_window: { kind: "text", text: "" },
+      f_launch: { kind: "text", text: "Client asked for Friday." }
+    },
+    t_a11y: {
+      f_budget: { kind: "text", text: "ACC-100" },
+      f_stage: { kind: "select", optionId: "o_backlog" },
+      f_confidence: { kind: "number", text: "12" },
+      f_review: { kind: "date", text: "2026-12-01" },
+      f_window: { kind: "text", text: "Weeknights only" },
+      f_ticket: { kind: "text", text: "NW-441" },
+      f_launch: { kind: "text", text: "Keep the old hero." }
+    },
+    t_pricing: {
+      f_budget: { kind: "text", text: "" },
+      f_stage: { kind: "select", optionId: "o_staging" },
+      f_window: { kind: "text", text: "" }
+    },
+    t_newsletter: {
+      f_budget: { kind: "text", text: "MKT-2026-Q2" },
+      f_stage: { kind: "select", optionId: "o_prod" },
+      f_confidence: { kind: "number", text: "99.5" },
+      f_review: { kind: "date", text: "2026-11-30" },
+      f_window: { kind: "text", text: "Weekend" },
+      f_ticket: { kind: "text", text: "NW-450" },
+      f_launch: { kind: "text", text: "Ship after pricing." }
+    },
+    t_analytics: {
+      f_budget: { kind: "text", text: "AN-010" },
+      f_stage: { kind: "select", optionId: "o_prod" },
+      f_confidence: { kind: "number", text: "42.125" },
+      f_review: { kind: "date", text: "2026-11-14" },
+      f_window: { kind: "text", text: "Weeknights only" },
+      f_ticket: { kind: "text", text: "NW-455" }
+    },
+    t_launch: {
+      f_ticket: { kind: "text", text: "NW-460" },
+      f_window: { kind: "text", text: "" }
+    }
+  };
+  const BASE_VIEW = {
+    id: "v_sprint",
+    name: "Sprint focus",
+    customFilters: [
+      { id: "p_budget", fieldId: "f_budget", op: "textContains", operand: "MKT" },
+      { id: "p_stage", fieldId: "f_stage", op: "optionIs", optionId: "o_staging" }
+    ],
+    customColumns: ["f_budget", "f_stage"],
+    sort: { fieldId: "f_budget", direction: "asc" }
+  };
+  // NB-8 repair: the first eight entries reuse the base field labels WITH their base
+  // types, so a label never carries a different type at the cap than in the list.
+  const CAP_FIELDS = [
+    { label: "Budget code", type: "text" },
+    { label: "Deployment stage", type: "select" },
+    { label: "Estimate confidence", type: "number" },
+    { label: "Compliance review date", type: "date" },
+    { label: "Change window", type: "text" },
+    { label: "Vendor ticket", type: "text" },
+    { label: "Launch notes", type: "text" },
+    { label: "Migration wave", type: "number" },
+    { label: "Risk area", type: "select" },
+    { label: "Release train", type: "text" },
+    { label: "QA owner", type: "text" },
+    { label: "Rollback plan", type: "text" },
+    { label: "Monitoring link", type: "text" },
+    { label: "Feature flag", type: "text" },
+    { label: "Contacts list", type: "text" },
+    { label: "Data owner", type: "text" },
+    { label: "Security review", type: "date" },
+    { label: "Legal review", type: "date" },
+    { label: "Copy deck", type: "text" },
+    { label: "Design handoff", type: "text" },
+    { label: "Analytics plan", type: "text" },
+    { label: "Accessibility notes", type: "text" },
+    { label: "Localisation status", type: "select" },
+    { label: "Support brief", type: "text" },
+    { label: "Pricing note", type: "text" },
+    { label: "Tracking code", type: "text" },
+    { label: "Privacy review", type: "date" },
+    { label: "Asset link", type: "text" },
+    { label: "Campaign tag", type: "text" },
+    { label: "Review cadence", type: "select" }
+  ];
+
+  // ---------- scenario registry ----------
+  const SCENARIOS = [
+    // Project settings → Custom fields
+    { id: "settings-empty", group: "Project settings · Custom fields", label: "Empty state", surface: "settings", role: "manager",
+      note: "Zero custom fields. The empty state carries copy 1 and the Add field action; readers see it without the action." },
+    { id: "settings-list", group: "Project settings · Custom fields", label: "Field list with type badges", surface: "settings", role: "manager",
+      note: "Active fields in position order with type badges; a select field shows its option count. The archived group is collapsed at the bottom and is read-only." },
+    { id: "settings-add-dialog", group: "Project settings · Custom fields", label: "Add-field dialog", surface: "settings", role: "manager",
+      note: "Add a field: label plus a type chooser that is available only while creating. The type cannot be changed later." },
+    { id: "settings-rename-dialog", group: "Project settings · Custom fields", label: "Rename (type locked)", surface: "settings", role: "manager",
+      note: "Rename keeps the existing type visible and locked, so the one-time choice from the add dialog is never re-opened." },
+    { id: "settings-select-options", group: "Project settings · Custom fields", label: "Select field options", surface: "settings", role: "manager",
+      note: "A select field's options can be added, renamed, moved and archived. The current option order is the order tasks sort in." },
+    { id: "settings-options-cap", group: "Project settings · Custom fields", label: "Options at the 50 limit", surface: "settings", role: "manager",
+      note: "At 50 options the add control is disabled and copy 4 replaces the helper line; existing options stay editable." },
+    { id: "settings-reorder", group: "Project settings · Custom fields", label: "Reorder with Move up", surface: "settings", role: "manager",
+      note: "Move up / Move down are labelled buttons, never drag-only. Estimate confidence moved up from position 3 to 2; the list keeps position order." },
+    { id: "settings-archive-confirm", group: "Project settings · Custom fields", label: "Archive confirmation", surface: "settings", role: "manager",
+      note: "Archiving asks first. Copy 2 says the values already saved are kept; archived fields stay read-only in this version." },
+    { id: "settings-at-cap", group: "Project settings · Custom fields", label: "30-field cap (disabled Add)", surface: "settings", role: "manager",
+      note: "At 30 active fields the Add field control is disabled and copy 3 explains the only route: archive one first." },
+    { id: "settings-reader", group: "Project settings · Custom fields", label: "Reader read-only view", surface: "settings", role: "reader",
+      note: "A reader sees the same definitions and the archived group, with no row actions and no disabled edit controls; copy 5 explains who can change them." },
+    { id: "settings-stale-field", group: "Project settings · Custom fields", label: "Field changed elsewhere", surface: "settings", role: "manager",
+      note: "If someone else changed this field first, the row is not overwritten: copy 10 and a Reload control appear." },
+
+    // Task drawer + docked pane
+    { id: "detail-manager", group: "Task drawer & docked pane", label: "Manager editing (both surfaces)", surface: "detail", role: "manager",
+      note: "The drawer and the docked pane are the same component and the same task. One field is mid-save; the other fields save on blur or with their own Save." },
+    { id: "detail-reader", group: "Task drawer & docked pane", label: "Reader rendering", surface: "detail", role: "reader",
+      note: "Plain text, no inputs and no disabled controls. An unset value is an em dash (announced as Not set); a set-but-empty text value is (empty)." },
+    { id: "detail-archived", group: "Task drawer & docked pane", label: "Archived field and option", surface: "detail", role: "manager",
+      note: "An archived field keeps its row, read-only, with the archived chip. An option archived after a task held it stays shown and is not re-offered." },
+    { id: "detail-failed", group: "Task drawer & docked pane", label: "Values failed to load", surface: "detail", role: "manager",
+      note: "A failed read is never an empty grid: chip copy 19, copy 6 and Retry. Nothing is rendered as unset." },
+    { id: "detail-loading", group: "Task drawer & docked pane", label: "Loading (skeleton rows)", surface: "detail", role: "manager",
+      note: "Skeletons equal the number of fields (6), the section is marked busy, and no value is shown before it is read." },
+    { id: "detail-manager-empty", group: "Task drawer & docked pane", label: "Manager on a task with no values", surface: "detail", role: "manager",
+      note: "Unset values render as empty inputs with placeholders for a manager, not as the text Not set; nothing is invented as a value." },
+    { id: "detail-reader-collapsed", group: "Task drawer & docked pane", label: "Reader, no values (collapsed)", surface: "detail", role: "reader",
+      note: "A reader on a task with no values sees the section collapsed, not six empty rows. The section is still in the same position." },
+    { id: "detail-stale-value", group: "Task drawer & docked pane", label: "Value changed elsewhere", surface: "detail", role: "manager",
+      note: "If someone else changed this value first, copy 11 appears under that field only, with Reload field. The old value stays visible until it reloads." },
+
+    // Task table
+    { id: "table-sort-asc", group: "Task table", label: "Custom columns — sorted ascending", surface: "table", role: "manager",
+      note: "Two custom columns with values. Budget code sorted ascending; a set-but-empty value sorts before text, and unset rows come last in both directions." },
+    { id: "table-sort-desc", group: "Task table", label: "Custom columns — sorted descending", surface: "table", role: "manager",
+      note: "The second click on the same header sorts descending. There is no third state; unset rows stay last in both directions." },
+    { id: "table-filters", group: "Task table", label: "Custom filter chips", surface: "table", role: "manager",
+      note: "Active custom filters appear as removable chips beside the built-in filters. All conditions must match, so the two custom filters leave one task." },
+    { id: "table-filter-editor", group: "Task table", label: "Custom filter editor", surface: "table", role: "manager",
+      note: "The editor adds a condition by field and an operator that suits its type. Text contains is case-sensitive and says so beneath the value." },
+    { id: "table-filter-invalid", group: "Task table", label: "Invalid filter input", surface: "table", role: "manager",
+      note: "Bad values show copy 16, 17 or 18 under that input. Nothing is applied while an input is invalid." },
+    { id: "table-needs-repair", group: "Task table", label: "Needs repair (missing reference)", surface: "table", role: "manager",
+      note: "This state cannot happen through the app; it is shown because the plan specifies it. The filter stays applied and matches nothing, so results are never widened." },
+    { id: "table-archived-ref", group: "Task table", label: "Archived field reference (still works)", surface: "table", role: "manager",
+      note: "Archiving a field after a view saved it is the reachable case: the column and filter keep working on retained values and carry the archived chip. No repair is needed." },
+    { id: "table-incomplete", group: "Task table", label: "Incomplete window data", surface: "table", role: "manager",
+      note: "When the row data failed to load, custom columns are blank, custom controls are disabled and copy 7 offers Retry load. Custom filters are not applied at all." },
+    { id: "table-view-refused", group: "Task table", label: "View settings not supported", surface: "table", role: "manager",
+      note: "A view saved by a newer page shows copy 15 with Reload and nothing is overwritten." },
+    { id: "table-capability-absent", group: "Task table", label: "Feature not on this server", surface: "table", role: "manager",
+      note: "When this server version doesn't include custom fields, the settings block and the detail section render nothing and one note (copy 12) is shown." }
+  ];
+
+  const ROLES = { manager: "Manager", reader: "Reader" };
+
+  // A4 / DeepSeek 5723789145 #9: table-only view flags are parked while a task detail is
+  // open and restored on close, so a refused/incomplete table cannot bleed into it.
+  const TABLE_VIEW_FLAGS = ["capabilityAbsent", "configRefused", "windowIncomplete", "filterEditor", "filterInvalid", "missingRef", "archivedRef", "sort"];
+
+  // DeepSeek 5724294245 #6: a state whose fixture IS a dialog falls back to the state
+  // underneath once the dialog closes, so the note never claims a dialog that is gone.
+  const DIALOG_SCENARIO_FALLBACK = {
+    "settings-add-dialog": "settings-list",
+    "settings-rename-dialog": "settings-list",
+    "settings-archive-confirm": "settings-list",
+    "settings-select-options": "settings-list",
+    "settings-options-cap": "settings-list"
+  };
+
+  // ---------- application state ----------
+  const state = {
+    scenarioId: "settings-list",
+    role: "manager",
+    theme: "light",
+    store: null,
+    flags: {},
+    dialog: null,
+    dialogFocusKey: null,
+    dialogReturn: null,
+    gen: 0,
+    toastTimer: null,
+    tryThisDone: {}
+  };
+
+  function scenarioById(id) {
+    return SCENARIOS.find(function (s) { return s.id === id; }) || SCENARIOS[0];
+  }
+  function resetStore() {
+    state.store = {
+      fields: clone(BASE_FIELDS).concat(clone(EXTRA_ARCHIVED)),
+      tasks: clone(BASE_TASKS),
+      values: clone(BASE_VALUES),
+      view: clone(BASE_VIEW)
+    };
+  }
+
+  // Apply the deterministic fixture for one scenario.
+  function applyScenarioFixtures(id) {
+    state.flags = {
+      archivedGroupOpen: false,
+      appliedBuiltIn: {},
+      applyViewFilters: false,
+      removedFilterRows: [],
+      saving: {},
+      staleField: false,
+      staleValueField: null,
+      readFailed: false,
+      loading: false,
+      windowIncomplete: false,
+      configRefused: false,
+      capabilityAbsent: false,
+      missingRef: false,
+      archivedRef: false,
+      filterEditor: false,
+      filterInvalid: false,
+      optionsCap: false,
+      addDialog: false,
+      renameDialog: false,
+      archiveDialogField: null,
+      editType: "text",
+      extraFilterRows: 0,
+      columnsMenu: false,
+      savedFields: [],
+      savingValue: null
+    };
+    state.dialog = null;
+    const scenario = scenarioById(id);
+    state.role = scenario.role || "manager";
+
+    if (id === "settings-empty") {
+      state.store.fields = [];
+    } else if (id === "settings-at-cap") {
+      state.store.fields = CAP_FIELDS.map(function (entry, index) {
+        const field = { id: "f_cap_" + index, label: entry.label, type: entry.type, position: index + 1, archived: false };
+        if (entry.type === "select") field.options = clone(BASE_FIELDS[1].options);
+        return field;
+      });
+    } else if (id === "settings-select-options") {
+      openOptionsDialog("f_stage");
+    } else if (id === "settings-options-cap") {
+      state.store.fields = state.store.fields.filter(function (f) { return f.id !== "f_launch"; });
+      const stage = findField("f_stage");
+      stage.options = Array.from({ length: 50 }, function (_, index) {
+        return { id: "o_cap_" + index, label: "Option " + (index + 1), position: index + 1, archived: false };
+      });
+      openOptionsDialog("f_stage");
+      state.flags.optionsCap = true;
+    } else if (id === "settings-reorder") {
+      // Real move: Estimate confidence was position 3 in the base list and is
+      // moved up to position 2, swapping Deployment stage down to 3.
+      const order = ["f_budget", "f_stage", "f_confidence", "f_review", "f_window", "f_ticket"];
+      const from = order.indexOf("f_confidence");
+      const to = 1;
+      order.splice(from, 1);
+      order.splice(to, 0, "f_confidence");
+      order.forEach(function (fieldId, index) { findField(fieldId).position = index + 1; });
+      state.flags.movedField = "f_confidence";
+      state.flags.movedFrom = from + 1;
+      state.flags.movedTo = to + 1;
+    } else if (id === "settings-add-dialog") {
+      state.dialog = { kind: "add-field", type: "text", label: "" };
+    } else if (id === "settings-rename-dialog") {
+      state.dialog = { kind: "rename-field", fieldId: "f_budget", label: "Budget code" };
+    } else if (id === "settings-archive-confirm") {
+      state.dialog = { kind: "archive-field", fieldId: "f_review" };
+    } else if (id === "settings-stale-field") {
+      state.flags.staleField = true;
+    } else if (id === "settings-reader") {
+      state.role = "reader";
+    }
+
+    if (id === "detail-reader" || id === "detail-reader-collapsed") state.role = "reader";
+    if (id === "detail-manager-empty" || id === "detail-reader-collapsed") {
+      state.store.values.t_hero = {};
+      state.flags.selectedTaskId = "t_hero";
+      if (id === "detail-reader-collapsed") state.role = "reader";
+    }
+    if (id === "detail-manager") {
+      state.flags.saving = { f_confidence: true };
+      state.flags.savingValue = null;
+    }
+    if (id === "detail-failed") state.flags.readFailed = true;
+    if (id === "detail-loading") state.flags.loading = true;
+    if (id === "detail-archived") {
+      // R3-2: the task shows the retained value of the field the Try-this script
+      // archives (Compliance review date), read-only, with the Archived field chip.
+      findField("f_review").archived = true;
+      const stage = findField("f_stage");
+      if (!stage.options.some(function (o) { return o.id === "o_staging_old"; })) {
+        stage.options = stage.options.filter(function (o) { return o.id !== "o_staging" && o.id !== "o_staging_old"; });
+        stage.options.push({ id: "o_staging_old", label: "Staging (legacy)", position: 4, archived: true });
+      }
+      state.store.values.t_hero.f_stage = { kind: "select", optionId: "o_staging_old" };
+    }
+    if (id === "detail-stale-value") state.flags.staleValueField = "f_budget";
+
+    if (id === "table-filters" || id === "table-filter-editor") {
+      state.flags.applyViewFilters = true;
+      state.flags.appliedBuiltIn = { status: "progress", priority: "high" };
+    }
+    if (id === "table-filter-editor") {
+      state.flags.filterEditor = true;
+    }
+    if (id === "table-filter-invalid") {
+      state.flags.filterEditor = true;
+      state.flags.filterInvalid = true;
+      state.store.view.customFilters = [];
+    }
+    if (id === "table-needs-repair") {
+      state.flags.missingRef = true;
+      state.flags.applyViewFilters = true;
+      state.store.view.customFilters = [
+        { id: "p_missing", fieldId: "f_department", op: "textEquals", operand: "Design" }
+      ];
+      state.store.view.customColumns = ["f_budget", "f_department"];
+      state.store.view.name = "Sprint focus";
+    }
+    if (id === "table-archived-ref") {
+      state.flags.archivedRef = true;
+      state.flags.applyViewFilters = true;
+      state.store.view.customFilters = [
+        { id: "p_launch", fieldId: "f_launch", op: "isSet" }
+      ];
+      state.store.view.customColumns = ["f_budget", "f_launch"];
+      state.store.view.sort = { fieldId: "f_budget", direction: "asc" };
+    }
+    if (id === "table-incomplete") state.flags.windowIncomplete = true;
+    if (id === "table-view-refused") state.flags.configRefused = true;
+    if (id === "table-capability-absent") state.flags.capabilityAbsent = true;
+
+    if (id === "table-sort-asc") state.flags.sort = { fieldId: "f_budget", direction: "asc" };
+    if (id === "table-sort-desc") state.flags.sort = { fieldId: "f_budget", direction: "desc" };
+    if (id === "table-incomplete") state.flags.sort = { fieldId: "f_budget", direction: "asc" };
+  }
+
+  function openOptionsDialog(fieldId) {
+    state.dialog = { kind: "field-options", fieldId: fieldId };
+  }
+
+  // ---------- chrome ----------
+  function badgeType(field) {
+    const map = { text: "Text", number: "Number", date: "Date", select: "Select" };
+    return '<span class="badge badge-type badge-type-' + field.type + '">' + map[field.type] + "</span>";
+  }
+  function badgeStatus(task) {
+    return '<span class="badge badge-status-' + task.status + '">' + esc(task.statusLabel) + "</span>";
+  }
+  function badgePriority(task) {
+    return '<span class="badge badge-priority-' + task.priority + '">' + esc(task.priorityLabel) + "</span>";
+  }
+  function scenarioIndex() {
+    return SCENARIOS.findIndex(function (s) { return s.id === state.scenarioId; });
+  }
+  function currentScenario() {
+    return scenarioById(state.scenarioId);
+  }
+
+  function renderChrome() {
+    const scenario = currentScenario();
+    const select = document.getElementById("scenario-select");
+    if (select.dataset.built !== "yes") {
+      const groups = [];
+      SCENARIOS.forEach(function (s) {
+        let group = groups.find(function (g) { return g.name === s.group; });
+        if (!group) {
+          group = { name: s.group, items: [] };
+          groups.push(group);
+        }
+        group.items.push(s);
+      });
+      select.innerHTML = groups
+        .map(function (group) {
+          return (
+            '<optgroup label="' + esc(group.name) + '">' +
+            group.items
+              .map(function (s) {
+                return '<option value="' + esc(s.id) + '">' + esc(s.label) + "</option>";
+              })
+              .join("") +
+            "</optgroup>"
+          );
+        })
+        .join("");
+      select.dataset.built = "yes";
+    }
+    select.value = state.scenarioId;
+    document.getElementById("role-select").value = state.role;
+    const themeBtn = document.getElementById("theme-toggle");
+    themeBtn.textContent = state.theme === "dark" ? "Light mode" : "Dark mode";
+    themeBtn.setAttribute("aria-pressed", state.theme === "dark" ? "true" : "false");
+    document.getElementById("app-theme-toggle").innerHTML =
+      icon(state.theme === "dark" ? "sun" : "moon");
+    const note = document.getElementById("scenario-note");
+    note.textContent = scenario.note;
+    document.getElementById("mock-counter").textContent =
+      "CF-B custom fields · mock r5 · state " + (scenarioIndex() + 1) + " of " + SCENARIOS.length;
+    document.getElementById("footer-meta").textContent =
+      "State: " + scenario.label + " · role: " + ROLES[state.role] + " · theme: " + state.theme;
+    const activeSurface = scenario.surface;
+    document.querySelectorAll(".app-tab").forEach(function (tab) {
+      const isActive =
+        (activeSurface === "settings" && tab.dataset.tab === "settings") ||
+        (activeSurface !== "settings" && tab.dataset.tab === "tasks");
+      tab.classList.toggle("is-active", isActive);
+      if (isActive) tab.setAttribute("aria-current", "page");
+      else tab.removeAttribute("aria-current");
+    });
+    const meta = document.querySelector(".project-meta");
+    if (meta) {
+      const count = activeFields().length;
+      // R4 P7(NB-9): a server without custom fields must not advertise a custom-field count.
+      meta.textContent =
+        "Northwind Studio · Due 2026-11-21 · " + state.store.tasks.length + " tasks" +
+        (state.flags.capabilityAbsent ? "" : " · " + count + " custom fields");
+    }
+    document.body.dataset.scenario = state.scenarioId;
+    document.body.dataset.role = state.role;
+    document.body.dataset.theme = state.theme;
+  }
+
+  function render() {
+    document.documentElement.dataset.theme = state.theme;
+    // R3-4: the practice strip is lifted above the dialog backdrop only when a dialog is open.
+    document.body.dataset.dialog = state.dialog ? "open" : "closed";
+    renderChrome();
+    const stage = document.getElementById("stage");
+    stage.innerHTML = renderScenario();
+    renderDialog();
+    renderTryThis();
+    restoreFailedBannerFocus();
+  }
+
+  function renderScenario() {
+    const id = state.scenarioId;
+    if (scenarioById(id).surface === "settings") return renderSettings();
+    if (scenarioById(id).surface === "detail") return renderDetail();
+    return renderTable();
+  }
+
+  // ---------- settings surface ----------
+  function fieldActions(field, index, total) {
+    const manages = field.type === "select";
+    return (
+      '<div class="cf-actions" aria-label="Actions for ' + esc(field.label) + '">' +
+        '<button type="button" class="icon-btn" data-action="move-field-up" data-field="' + esc(field.id) + '" ' +
+          'aria-label="Move ' + esc(field.label) + ' up" title="Move up"' + (index === 0 ? " disabled" : "") + ">" + icon("arrow-up") + "</button>" +
+        '<button type="button" class="icon-btn" data-action="move-field-down" data-field="' + esc(field.id) + '" ' +
+          'aria-label="Move ' + esc(field.label) + ' down" title="Move down"' + (index === total - 1 ? " disabled" : "") + ">" + icon("arrow-down") + "</button>" +
+        '<button type="button" class="icon-btn" data-action="rename-field" data-field="' + esc(field.id) + '" ' +
+          'aria-label="Rename ' + esc(field.label) + '" title="Rename">' + icon("pencil") + "</button>" +
+        (manages
+          ? '<button type="button" class="icon-btn" data-action="manage-options" data-field="' + esc(field.id) + '" ' +
+            'aria-label="Manage options for ' + esc(field.label) + '" title="Manage options">' + icon("columns") + "</button>"
+          : "") +
+        '<button type="button" class="icon-btn is-danger" data-action="archive-field" data-field="' + esc(field.id) + '" ' +
+          'aria-label="Archive ' + esc(field.label) + '" title="Archive">' + icon("archive") + "</button>" +
+      "</div>"
+    );
+  }
+  function settingsRow(field, index, total, opts) {
+    const optionCount = field.options ? field.options.filter(function (o) { return !o.archived; }).length : 0;
+    const help =
+      field.type === "select"
+        ? "Select · " + optionCount + " option" + (optionCount === 1 ? "" : "s")
+        : field.type === "date"
+          ? "Date · YYYY-MM-DD"
+          : field.type === "number"
+            ? "Decimal number"
+            : "Single line of text";
+    const moved = state.flags.movedField === field.id;
+    return (
+      '<div class="cf-row' + (moved ? " is-moved" : "") + '" role="listitem" data-field-row="' + esc(field.id) + '">' +
+        '<span class="cf-order" aria-hidden="true">' + (field.position || index + 1) + "</span>" +
+        '<div class="cf-main">' +
+          '<div class="cf-label"><span class="field-name">' + esc(field.label) + "</span>" + badgeType(field) +
+            (field.archived ? '<span class="badge badge-archived">Archived</span>' : "") +
+          "</div>" +
+          '<span class="cf-help">' + esc(help) + (field.archived ? " · read-only" : "") + "</span>" +
+        "</div>" +
+        (opts.readOnly ? "" : fieldActions(field, index, total)) +
+      "</div>"
+    );
+  }
+  function renderArchivedGroup(readOnly) {
+    const archived = archivedFields();
+    if (!archived.length) return "";
+    const open = state.flags.archivedGroupOpen;
+    return (
+      '<div class="archived-group">' +
+        '<button type="button" class="archived-toggle" data-action="toggle-archived" aria-expanded="' + (open ? "true" : "false") + '">' +
+          icon(open ? "chevron-down" : "chevron-right") +
+          "Archived fields (" + archived.length + ")" +
+        "</button>" +
+        (open
+          ? archived
+              .map(function (field, index) {
+                return (
+                  '<div class="cf-row is-archived" role="listitem">' +
+                    '<span class="cf-order" aria-hidden="true">' + (index + 1) + "</span>" +
+                    '<div class="cf-main">' +
+                      '<div class="cf-label"><span class="field-name">' + esc(field.label) + "</span>" + badgeType(field) +
+                        '<span class="badge badge-archived">Archived</span></div>' +
+                      '<span class="cf-help">Read-only</span>' +
+                    "</div>" +
+                  "</div>"
+                );
+              })
+              .join("")
+          : "") +
+      "</div>"
+    );
+  }
+  function inertSettingsCard(title, lines) {
+    return (
+      '<section class="card settings-card settings-inert" aria-label="' + esc(title) + ' (not part of this mock)">' +
+        '<div class="settings-section-head"><div><h2>' + esc(title) + "</h2>" +
+          '<p>Shown for context only — not part of this mock.</p></div></div>' +
+        '<div class="settings-body">' +
+          lines
+            .map(function (line) {
+              return '<div class="cf-row"><span class="cf-main"><span class="cf-label"><span class="field-name">' +
+                esc(line[0]) + '</span></span><span class="cf-help">' + esc(line[1]) + "</span></span></div>";
+            })
+            .join("") +
+        "</div>" +
+      "</section>"
+    );
+  }
+
+  function renderSettings() {
+    const scenario = currentScenario();
+    const isReader = state.role === "reader";
+    const flags = state.flags;
+    const active = sortedActiveFields();
+    // R4 P5: one derived cap source of truth. Archiving below 30 re-enables Add
+    // immediately, and the cap copy disappears with it.
+    const atCap = active.length >= 30;
+    const canAdd = !isReader && !atCap;
+    let inner = "";
+
+    if (flags.capabilityAbsent) {
+      inner =
+        '<div class="alert alert-info" role="status">' + icon("info") +
+          '<div class="alert-body">Custom fields aren&#39;t available on this server version.</div>' +
+        "</div>";
+    } else if (!active.length) {
+      inner =
+        '<div class="settings-empty">' +
+          '<span class="empty-icon">' + icon("sliders") + "</span>" +
+          "<p>No custom fields yet. Add a field to capture information this project needs beyond the built-in task fields.</p>" +
+          (isReader
+            ? ""
+            : '<button type="button" class="btn btn-primary" data-action="open-add-field">' + icon("plus") + "Add field</button>") +
+        "</div>";
+    } else {
+      inner =
+        '<div class="cf-list' + (atCap ? ' is-scroll-list" style="max-height:330px;overflow:auto;padding-right:4px' : "") + '" role="list">' +
+          active.map(function (field, index) { return settingsRow(field, index, active.length, { readOnly: isReader }); }).join("") +
+        "</div>" +
+        renderArchivedGroup();
+    }
+
+    const headerAction =
+      isReader || flags.capabilityAbsent || !active.length
+        ? ""
+        : '<button type="button" class="btn btn-primary" data-action="open-add-field"' + (canAdd ? "" : ' disabled aria-disabled="true"') + ">" +
+          icon("plus") + "Add field</button>";
+
+    return (
+      '<div class="page-wrap" data-surface="settings">' +
+        '<div class="settings-page">' +
+          '<section class="card settings-card" id="custom-fields-card" aria-labelledby="cf-heading">' +
+            '<div class="settings-section-head">' +
+              "<div>" +
+                '<h2 id="cf-heading">Custom fields</h2>' +
+                "<p>Custom fields apply to every task in this project.</p>" +
+              "</div>" +
+              headerAction +
+            "</div>" +
+            '<div class="settings-body">' +
+              (flags.staleField
+                ? '<div class="alert alert-warn cf-limit-note" role="status" style="margin-bottom:12px">' + icon("alert-triangle") +
+                  '<div class="alert-body">This field was changed elsewhere. Reload to see the current version.</div>' +
+                  '<div class="alert-actions"><button type="button" class="btn btn-outline btn-sm" data-action="reload-field">Reload</button></div>' +
+                  "</div>"
+                : "") +
+              (atCap
+                ? '<div class="alert alert-warn cf-limit-note" role="status">' + icon("alert-triangle") +
+                  '<div class="alert-body">This project has 30 custom fields, the maximum. Archive one to add another.</div>' +
+                  "</div>"
+                : "") +
+              inner +
+              (isReader && !flags.capabilityAbsent
+                ? '<p class="cf-note" style="margin-top:14px">Only project owners and managers can change custom fields.</p>'
+                : "") +
+            "</div>" +
+          "</section>" +
+          inertSettingsCard("Project details", [
+            ["Name", "Website Relaunch"],
+            ["Client", "Northwind Studio"],
+            ["Project owner", "Ana Ruiz"]
+          ]) +
+          inertSettingsCard("Access", [
+            ["Project access", "12 people and 2 teams"],
+            ["Members can", "View and edit tasks"]
+          ]) +
+        "</div>" +
+      "</div>"
+    );
+  }
+
+  // ---------- dialogs ----------
+  function dialogFocusables(dialogEl) {
+    return Array.prototype.slice
+      .call(dialogEl.querySelectorAll('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+      .filter(function (el) { return el.offsetParent !== null; });
+  }
+  function syncDialogFocus() {
+    const root = document.getElementById("dialog-root");
+    const dialogEl = root.querySelector(".dialog");
+    if (!state.dialog || !dialogEl) { state.dialogFocusKey = null; return; }
+    const key = state.dialog.kind + "|" + (state.dialog.fieldId || "") + "|" + (state.dialog.optionId || "");
+    if (state.dialogFocusKey !== key || !dialogEl.contains(document.activeElement)) {
+      const list = dialogFocusables(dialogEl);
+      if (list.length) list[0].focus({ preventScroll: true });
+      state.dialogFocusKey = key;
+    }
+  }
+  function renderDialog() {
+    const root = document.getElementById("dialog-root");
+    const dialog = state.dialog;
+    if (!dialog) {
+      root.innerHTML = "";
+      state.dialogFocusKey = null;
+      return;
+    }
+    let html = "";
+    if (dialog.kind === "add-field") {
+      html =
+        '<div class="dialog-backdrop" data-dialog-backdrop>' +
+          '<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">' +
+            '<div class="dialog-head"><h2 id="dlg-title">Add a field</h2></div>' +
+            '<div class="dialog-body">' +
+              '<div class="form-row"><label class="field-label" for="add-label">Label</label>' +
+                '<input class="input" id="add-label" data-dialog-input="label" value="' + esc(dialog.label || "") + '" placeholder="e.g. Budget code" autocomplete="off" />' +
+              "</div>" +
+              '<div class="form-row"><span class="field-label" id="type-label">Type</span>' +
+                '<div class="type-grid" role="radiogroup" aria-labelledby="type-label">' +
+                  typeChoices(dialog.type || "text", false) +
+                "</div>" +
+              "</div>" +
+            "</div>" +
+            '<div class="dialog-foot">' +
+              '<button type="button" class="btn btn-outline" data-action="close-dialog">Cancel</button>' +
+              '<button type="button" class="btn btn-primary" data-action="create-field">Add field</button>' +
+            "</div>" +
+          "</div>" +
+        "</div>";
+    } else if (dialog.kind === "rename-field") {
+      const field = findField(dialog.fieldId);
+      html =
+        '<div class="dialog-backdrop" data-dialog-backdrop>' +
+          '<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">' +
+            '<div class="dialog-head"><h2 id="dlg-title">Rename field</h2></div>' +
+            '<div class="dialog-body">' +
+              '<div class="form-row"><label class="field-label" for="rename-label">Label</label>' +
+                '<input class="input" id="rename-label" data-dialog-input="label" value="' + esc(dialog.label) + '" autocomplete="off" />' +
+              "</div>" +
+              '<div class="form-row"><span class="field-label">Type</span>' +
+                '<div class="type-grid" role="radiogroup" aria-label="Type (locked)">' +
+                  typeChoices(field.type, true) +
+                "</div>" +
+                '<p class="choice-lock">' + icon("lock") + "Locked</p>" +
+              "</div>" +
+            "</div>" +
+            '<div class="dialog-foot">' +
+              '<button type="button" class="btn btn-outline" data-action="close-dialog">Cancel</button>' +
+              '<button type="button" class="btn btn-primary" data-action="save-field-name">Save</button>' +
+            "</div>" +
+          "</div>" +
+        "</div>";
+    } else if (dialog.kind === "rename-option") {
+      const optionField = findField(dialog.fieldId);
+      html =
+        '<div class="dialog-backdrop" data-dialog-backdrop>' +
+          '<div class="dialog dialog-narrow" role="dialog" aria-modal="true" aria-labelledby="dlg-title">' +
+            '<div class="dialog-head"><h2 id="dlg-title">Rename option</h2></div>' +
+            '<div class="dialog-body">' +
+              '<div class="form-row"><label class="field-label" for="rename-option-label">Option</label>' +
+                '<input class="input" id="rename-option-label" data-dialog-input="label" value="' + esc(dialog.label) + '" autocomplete="off" />' +
+              "</div>" +
+            "</div>" +
+            '<div class="dialog-foot">' +
+              '<button type="button" class="btn btn-outline" data-action="close-dialog">Cancel</button>' +
+              '<button type="button" class="btn btn-primary" data-action="save-option-name">Save option</button>' +
+            "</div>" +
+          "</div>" +
+        "</div>";
+    } else if (dialog.kind === "archive-field") {
+      const field = findField(dialog.fieldId);
+      html =
+        '<div class="dialog-backdrop" data-dialog-backdrop>' +
+          '<div class="dialog dialog-narrow" role="alertdialog" aria-modal="true" aria-labelledby="dlg-title" aria-describedby="dlg-desc">' +
+            '<div class="dialog-head"><h2 id="dlg-title">Archive &ldquo;' + esc(field.label) + '&rdquo;?</h2></div>' +
+            '<div class="dialog-body"><p id="dlg-desc" style="font-size:13.5px;line-height:1.55">Archiving a field keeps the values already saved.</p></div>' +
+            '<div class="dialog-foot">' +
+              '<button type="button" class="btn btn-outline" data-action="close-dialog">Cancel</button>' +
+              '<button type="button" class="btn btn-destructive" data-action="confirm-archive-field">Archive field</button>' +
+            "</div>" +
+          "</div>" +
+        "</div>";
+    } else if (dialog.kind === "field-options") {
+      const field = findField(dialog.fieldId);
+      const options = field.options.filter(function (o) { return !o.archived; }).sort(function (a, b) { return a.position - b.position; });
+      const atCap = options.length >= 50;
+      html =
+        '<div class="dialog-backdrop" data-dialog-backdrop>' +
+          '<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">' +
+            '<div class="dialog-head"><h2 id="dlg-title">Options for ' + esc(field.label) + "</h2></div>" +
+            '<div class="dialog-body">' +
+              (atCap
+                ? '<div class="alert alert-warn" role="status" style="margin-bottom:12px">' + icon("alert-triangle") +
+                  '<div class="alert-body">This field has 50 options, the maximum. Archive one to add another.</div></div>'
+                : "") +
+              '<div class="option-count" style="margin-bottom:6px">' + options.length + " of 50 options</div>" +
+              '<div class="option-list' + (options.length > 8 ? '" style="max-height:280px;overflow:auto;padding-right:4px' : "") + '">' +
+                options
+                  .map(function (option, index) {
+                    return (
+                      '<div class="option-row">' +
+                        '<span class="option-order" aria-hidden="true">' + (index + 1) + "</span>" +
+                        '<span class="option-name">' + esc(option.label) + "</span>" +
+                        '<button type="button" class="icon-btn" data-action="move-option-up" data-option="' + esc(option.id) + '" aria-label="Move ' + esc(option.label) + ' up" title="Move up"' + (index === 0 ? " disabled" : "") + ">" + icon("arrow-up") + "</button>" +
+                        '<button type="button" class="icon-btn" data-action="move-option-down" data-option="' + esc(option.id) + '" aria-label="Move ' + esc(option.label) + ' down" title="Move down"' + (index === options.length - 1 ? " disabled" : "") + ">" + icon("arrow-down") + "</button>" +
+                        '<button type="button" class="icon-btn" data-action="rename-option" data-option="' + esc(option.id) + '" aria-label="Rename ' + esc(option.label) + '" title="Rename">' + icon("pencil") + "</button>" +
+                        '<button type="button" class="icon-btn is-danger" data-action="archive-option" data-option="' + esc(option.id) + '" aria-label="Archive ' + esc(option.label) + '" title="Archive">' + icon("archive") + "</button>" +
+                      "</div>"
+                    );
+                  })
+                  .join("") +
+              "</div>" +
+              '<div class="option-add-row">' +
+                '<input class="input" id="option-add-input" placeholder="New option" aria-label="New option" autocomplete="off"' +
+                  (atCap ? " disabled" : "") + " />" +
+                '<button type="button" class="btn btn-outline btn-sm" data-action="add-option"' + (atCap ? " disabled aria-disabled=\"true\"" : "") + ">Add option</button>" +
+              "</div>" +
+            "</div>" +
+            '<div class="dialog-foot">' +
+              '<button type="button" class="btn btn-outline" data-action="close-dialog">Close</button>' +
+            "</div>" +
+          "</div>" +
+        "</div>";
+    }
+    root.innerHTML = html;
+    syncDialogFocus();
+  }
+
+  function typeChoices(selected, disabled) {
+    const types = [
+      { id: "text", label: "Text", icon: "text" },
+      { id: "number", label: "Number", icon: "number" },
+      { id: "date", label: "Date", icon: "date" },
+      { id: "select", label: "Select", icon: "select" }
+    ];
+    return types
+      .map(function (type) {
+        const isSelected = selected === type.id;
+        return (
+          '<button type="button" class="type-choice' + (isSelected ? " is-selected" : "") + '" ' +
+            'role="radio" aria-checked="' + (isSelected ? "true" : "false") + '" data-action="choose-type" data-type="' + type.id + '"' +
+            (disabled ? " disabled" : "") + ">" +
+            icon(type.icon) + "<span>" + type.label + "</span></button>"
+        );
+      })
+      .join("");
+  }
+
+  // ---------- task detail surface (drawer + docked pane share this) ----------
+  function renderValueText(field, entry) {
+    if (!entry) {
+      return '<span class="cf-value is-unset" aria-label="Not set" title="Not set">—</span>';
+    }
+    if (entry.kind === "text") {
+      if (entry.text === "") return '<span class="cf-value is-empty" aria-label="Empty value">(empty)</span>';
+      return '<span class="cf-value">' + esc(entry.text) + "</span>";
+    }
+    if (entry.kind === "number") return '<span class="cf-value">' + esc(entry.text) + "</span>";
+    if (entry.kind === "date") return '<span class="cf-value">' + esc(entry.text) + "</span>";
+    if (entry.kind === "select") {
+      const option = findOption(field, entry.optionId);
+      const label = option ? option.label : "Unknown option";
+      return (
+        '<span class="cf-value">' + esc(label) +
+        (option && option.archived ? ' <span class="archived-option">(no longer available)</span>' : "") +
+        "</span>"
+      );
+    }
+    return '<span class="cf-value is-unset" aria-label="Not set" title="Not set">—</span>';
+  }
+  function renderManagerControl(field, entry, surfaceKey, taskId, opts) {
+    const id = surfaceKey + "-" + field.id;
+    const valueError = state.flags.valueErrors && state.flags.valueErrors[field.id];
+    const baseAttrs =
+      ' class="input" id="' + id + '" data-cf-input data-field="' + esc(field.id) + '" data-task="' + esc(taskId) + '"' +
+      (valueError ? ' aria-invalid="true"' : "");
+    if (field.type === "select") {
+      const options = (field.options || []).filter(function (o) { return !o.archived; });
+      const current = entry && entry.kind === "select" ? findOption(field, entry.optionId) : null;
+      const currentArchived = current && current.archived;
+      // DeepSeek 5724294245 #4/#5: the control carries the app's .select class (so the
+      // native arrow is suppressed) and always offers the empty option, so a set select
+      // can be cleared through the UI, not only through writeValue().
+      const selectAttrs = baseAttrs.replace('class="input"', 'class="input select"');
+      return (
+        '<div class="select-wrap"><select' + selectAttrs + ">" +
+          '<option value=""' + (current ? "" : " selected") + ">Select an option</option>" +
+          (currentArchived ? '<option value="' + esc(current.id) + '" selected>' + esc(current.label) + "</option>" : "") +
+          options
+            .map(function (option) {
+              const selected = current && current.id === option.id ? " selected" : "";
+              return '<option value="' + esc(option.id) + '"' + selected + ">" + esc(option.label) + "</option>";
+            })
+            .join("") +
+        "</select>" + icon("chevron-down") + "</div>"
+      );
+    }
+    let type = "text";
+    let placeholder = "Add a value";
+    let inputmode = "";
+    if (field.type === "number") {
+      type = "text";
+      inputmode = ' inputmode="decimal"';
+      placeholder = "0";
+    } else if (field.type === "date") {
+      type = "date";
+      placeholder = "";
+    }
+    let value = entry && entry.kind === field.type ? entry.text : "";
+    return (
+      "<input" + baseAttrs + ' type="' + type + '" value="' + esc(value) + '" placeholder="' + esc(placeholder) + '" autocomplete="off"' +
+      inputmode + " />"
+    );
+  }
+  function fieldBlock(field, task, mode, surfaceKey) {
+    const entry = valuesFor(task.id)[field.id];
+    const targetId = surfaceKey + "-" + field.id;
+    const archived = Boolean(field.archived);
+    let control = "";
+    let saveAffordance = "";
+    if (archived) {
+      control = renderValueText(field, entry);
+    } else if (mode === "reader") {
+      control = renderValueText(field, entry);
+    } else if (state.flags.staleValueField === field.id) {
+      // DeepSeek 5723710913 #11: "Reload to edit." means the stale value is read-only
+      // until Reload field is used, not an editable input under a warning.
+      control = renderValueText(field, entry);
+    } else {
+      control = renderManagerControl(field, entry, surfaceKey, task.id);
+      if (state.flags.saving && state.flags.saving[field.id]) {
+        saveAffordance = '<span class="cf-save-status" role="status"><span class="spinner" aria-hidden="true"></span>Saving…</span>';
+      } else {
+        saveAffordance =
+          '<button type="button" class="btn btn-outline btn-xs" data-action="save-field" data-field="' + esc(field.id) +
+          '" data-task="' + esc(task.id) + '" aria-label="Save ' + esc(field.label) + '">Save</button>';
+      }
+    }
+    let body;
+    if (mode === "reader" || archived || state.flags.staleValueField === field.id) {
+      body = control;
+    } else {
+      body = '<div class="cf-edit-row">' + control + saveAffordance + "</div>";
+    }
+    let note = "";
+    let archivedOptionNote = "";
+    if (field.type === "select" && entry && entry.kind === "select") {
+      const currentOption = findOption(field, entry.optionId);
+      if (currentOption && currentOption.archived) {
+        // NB-4: the suffix was clipped inside the native select, so it is shown in full below it.
+        archivedOptionNote = '<p class="cf-note archived-option-note">(no longer available)</p>';
+      }
+    }
+    if (state.flags.staleValueField === field.id) {
+      note =
+        '<div class="cf-field-error" role="alert">' + icon("alert-triangle") +
+          "<span>This value changed elsewhere. Reload to edit. " +
+          '<button type="button" class="link-btn" data-action="reload-value" data-field="' + esc(field.id) + '">Reload field</button></span>' +
+        "</div>";
+    }
+    if (state.flags.valueErrors && state.flags.valueErrors[field.id]) {
+      // DeepSeek 5724294245 #7: a refused number value explains itself inline and is
+      // never written to the fake store.
+      note =
+        '<div class="cf-field-error" role="alert">' + icon("alert-triangle") +
+          "<span>" + esc(state.flags.valueErrors[field.id]) + "</span>" +
+        "</div>";
+    }
+    const archivedChip = archived ? '<span class="badge badge-archived">Archived field</span>' : "";
+    const labelTagName = mode === "reader" || archived ? "span" : "label";
+    const labelTag = labelTagName === "label"
+      ? '<label class="cf-field-label" for="' + esc(targetId) + '">'
+      : '<span class="cf-field-label">';
+    return (
+      '<div class="cf-field' + (archived ? " cf-archived-row" : "") + '" data-field-block="' + esc(field.id) + '">' +
+        labelTag + esc(field.label) + archivedChip + "</" + labelTagName + ">" +
+        body +
+        archivedOptionNote +
+        note +
+        (archived
+          ? '<p class="cf-note">Archived field - read-only. Values saved before it was archived are still shown.</p>'
+          : "") +
+      "</div>"
+    );
+  }
+  function renderCustomFieldsSection(task, surfaceKey, mode) {
+    const fields = sortedActiveFields();
+    const archivedWithValue = archivedFields().filter(function (field) {
+      return Boolean(valuesFor(task.id)[field.id]);
+    });
+    let content = "";
+    if (state.flags.capabilityAbsent) return "";
+    if (state.flags.readFailed) {
+      content =
+        '<div class="alert alert-error" tabindex="-1" data-failed-banner role="alert">' +
+          icon("alert-triangle") +
+          '<div class="alert-body">' +
+            '<span class="badge badge-repair">Couldn&#39;t load field values</span>' +
+            '<p style="margin-top:6px">Values are not shown. This is not &#39;unset&#39;.</p>' +
+          "</div>" +
+          '<div class="alert-actions"><button type="button" class="btn btn-outline btn-sm" data-action="retry-load">' + icon("refresh") + "Retry</button></div>" +
+        "</div>";
+    } else if (state.flags.loading) {
+      content =
+        '<div class="cf-section-busy" aria-busy="true" aria-live="polite">' +
+          '<span class="sr-only">Loading custom fields</span>' +
+          '<div class="cf-skeleton-list" aria-hidden="true">' +
+            fields
+              .map(function () {
+                return (
+                  '<div class="skeleton-row">' +
+                    '<div class="skeleton skeleton-label" style="width:110px"></div>' +
+                    '<div class="skeleton skeleton-input"></div>' +
+                  "</div>"
+                );
+              })
+              .join("") +
+          "</div>" +
+        "</div>";
+    } else {
+      content =
+        '<div class="cf-grid">' +
+          fields.map(function (field) { return fieldBlock(field, task, mode, surfaceKey); }).join("") +
+          archivedWithValue.map(function (field) { return fieldBlock(field, task, mode, surfaceKey); }).join("") +
+        "</div>";
+    }
+    const collapsed = state.scenarioId === "detail-reader-collapsed";
+    return (
+      '<section class="task-section" data-cf-section="true" aria-labelledby="' + surfaceKey + '-cf-heading"' + (state.flags.loading ? ' aria-busy="true"' : "") + '>' +
+        '<button type="button" class="task-section-head" aria-expanded="' + (collapsed ? "false" : "true") + '" data-action="toggle-section" data-section="custom_fields" id="' + surfaceKey + '-cf-heading">' +
+          icon("chevron-down", "chev") + "Custom fields" +
+          '<span class="sec-count">' + fields.length + " fields" + (archivedWithValue.length ? " · " + archivedWithValue.length + " archived" : "") + "</span>" +
+        "</button>" +
+        '<div class="task-section-body' + (collapsed ? "" : " is-open") + '"' + (collapsed ? " hidden" : "") + ">" + content + "</div>" +
+      "</section>"
+    );
+  }
+  function renderTaskSections(task, surfaceKey, mode) {
+    const sections = [
+      { key: "description", label: "Description", count: null, body: '<p class="description-preview">Rebuild the hero so the launch message is visible above the fold on every breakpoint, with the new photography.</p>' },
+      { key: "subtasks", label: "Subtasks", count: 2, body: "" },
+      { key: "assignees", label: "Assignees", count: 2, body: "" },
+      { key: "dependencies", label: "Dependencies", count: 1, body: "" },
+      { key: "custom_fields", label: "Custom fields", count: activeFields().length, body: renderCustomFieldsSection(task, surfaceKey, mode) },
+      { key: "checklist", label: "Checklist", count: 3, body: "" },
+      { key: "comments", label: "Comments", count: 2, body: "" }
+    ];
+    return sections
+      .map(function (section) {
+        if (section.key === "custom_fields") {
+          return section.body;
+        }
+        return (
+          '<section class="task-section">' +
+            '<button type="button" class="task-section-head" aria-expanded="false" data-action="toggle-section" data-section="' + section.key + '">' +
+              icon("chevron-down", "chev") + esc(section.label) +
+              (section.count != null ? '<span class="sec-count">' + section.count + "</span>" : "") +
+            "</button>" +
+            '<div class="task-section-body" hidden>' +
+              (section.body || '<p class="description-preview">Shown for context only — not part of this mock.</p>') +
+            "</div>" +
+          "</section>"
+        );
+      })
+      .join("");
+  }
+  function renderTaskSurface(kind, task) {
+    const isPane = kind === "pane";
+    const mode = state.role === "reader" ? "reader" : "manager";
+    const surfaceLabel = isPane ? "Docked pane" : "Task drawer";
+    return (
+      '<section class="task-surface" data-surface-frame="' + kind + '" aria-label="' + surfaceLabel + " — " + esc(task.title) + '">' +
+        '<header class="task-surface-head">' +
+          "<div>" +
+            "<h2>" + esc(task.title) + "</h2>" +
+            '<div class="priority-row">' + badgePriority(task) + " " + badgeStatus(task) + "</div>" +
+          "</div>" +
+          '<button type="button" class="icon-btn" data-action="close-task" aria-label="Close ' + esc(task.title) + '">' + icon("x") + "</button>" +
+        "</header>" +
+        '<div class="task-surface-body">' +
+          '<div class="task-meta">' +
+            '<span class="meta-item">Due <strong>' + esc(task.due) + "</strong></span>" +
+            '<span class="meta-item"><span class="meta-avatar" aria-hidden="true">AR</span> Ana Ruiz</span>' +
+            '<span class="meta-item">' + state.store.tasks.length + " tasks in this project</span>" +
+          "</div>" +
+          renderTaskSections(task, kind, mode) +
+        "</div>" +
+      "</section>"
+    );
+  }
+  function renderDetail() {
+    const task = findTask(state.flags.selectedTaskId || "t_hero");
+    const scenario = currentScenario();
+    const roleNote = state.role === "reader" ? "Reader — no edit controls are rendered." : "Manager — fields save on blur or with the per-field Save.";
+    return (
+      '<div class="page-wrap" data-surface="detail">' +
+        '<div class="compare-layout">' +
+          '<div class="compare-col">' +
+            '<span class="practice-tag">Task drawer (overlay)</span>' +
+            '<p class="compare-hint">Practice label — an overlay in the app; shown beside the docked pane to prove one shared detail. ' + esc(roleNote) + "</p>" +
+            renderTaskSurface("drawer", task) +
+          "</div>" +
+          '<div class="compare-col">' +
+            '<span class="practice-tag">Docked pane (same task)</span>' +
+            '<p class="compare-hint">Practice label — the non-modal pane from the Tasks master–detail layout.</p>' +
+            renderTaskSurface("pane", task) +
+          "</div>" +
+        "</div>" +
+      "</div>"
+    );
+  }
+
+  // ---------- task table surface ----------
+  function compareText(a, b) {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  }
+  function sortValue(task, field, sort) {
+    const value = displayValue(task.id, field);
+    if (value.kind === "unset") return { unset: true };
+    if (field.type === "number") return { key: value.text, numeric: true };
+    if (field.type === "select") {
+      const option = findOption(field, valuesFor(task.id)[field.id].optionId);
+      return { key: option ? option.position : 0, numeric: true, option: true };
+    }
+    if (value.kind === "empty") return { key: "" };
+    return { key: value.text };
+  }
+  function builtInSortValue(task, key) {
+    if (key === "title") return task.title;
+    if (key === "status") return task.statusLabel;
+    if (key === "priority") return task.priorityLabel;
+    if (key === "due") return task.due;
+    return "";
+  }
+  function sortTaskRows(tasks, sort) {
+    if (!sort) return tasks.slice().sort(function (a, b) { return a.order - b.order; });
+    if (sort.fieldId.indexOf("builtin:") === 0) {
+      const key = sort.fieldId.slice(8);
+      if (!BUILT_IN_SORTS[key]) return tasks.slice().sort(function (a, b) { return a.order - b.order; });
+      const builtInDir = sort.direction === "desc" ? -1 : 1;
+      return tasks.slice().sort(function (a, b) {
+        const result = compareText(builtInSortValue(a, key), builtInSortValue(b, key));
+        return result === 0 ? a.order - b.order : result * builtInDir;
+      });
+    }
+    const field = findField(sort.fieldId);
+    if (!field) return tasks.slice().sort(function (a, b) { return a.order - b.order; });
+    const direction = sort.direction === "desc" ? -1 : 1;
+    return tasks.slice().sort(function (a, b) {
+      const av = sortValue(a, field, sort);
+      const bv = sortValue(b, field, sort);
+      if (av.unset !== bv.unset) return av.unset ? 1 : -1;
+      if (av.unset && bv.unset) return a.order - b.order;
+      let result;
+      // R4 P1(#4): compare parsed numbers only, so 12 and 12.0 are equal and the
+      // comparator stays consistent. The unreachable second number branch is gone.
+      if (field.type === "number") result = parseFloat(av.key) < parseFloat(bv.key) ? -1 : parseFloat(av.key) > parseFloat(bv.key) ? 1 : 0;
+      else if (field.type === "select") result = av.key - bv.key;
+      else result = compareText(av.key, bv.key);
+      if (result !== 0) return result * direction;
+      return a.order - b.order;
+    });
+  }
+  function filterTasks(tasks) {
+    const flags = state.flags;
+    if (flags.missingRef) return [];
+    let rows = tasks;
+    const builtIn = flags.appliedBuiltIn || {};
+    if (builtIn.status) {
+      rows = rows.filter(function (task) { return task.status === builtIn.status; });
+    }
+    if (builtIn.priority) {
+      rows = rows.filter(function (task) { return task.priority === builtIn.priority; });
+    }
+    if (flags.applyViewFilters) {
+      (state.store.view.customFilters || []).forEach(function (filter) {
+        const field = findField(filter.fieldId);
+        if (!field) {
+          rows = [];
+          return;
+        }
+        rows = rows.filter(function (task) {
+          const value = displayValue(task.id, field);
+          if (filter.op === "textContains") {
+            return value.kind === "text" && value.text.indexOf(filter.operand) !== -1;
+          }
+          if (filter.op === "optionIs") {
+            const entry = valuesFor(task.id)[filter.fieldId];
+            return Boolean(entry && entry.kind === "select" && entry.optionId === filter.optionId);
+          }
+          if (filter.op === "isSet") return value.kind !== "unset";
+          return true;
+        });
+      });
+    }
+    return rows;
+  }
+  function customColumnsFor(scenario) {
+    if (state.flags.missingRef) return [];
+    if (state.flags.capabilityAbsent) return [];
+    let ids;
+    if (state.flags.archivedRef) ids = ["f_budget", "f_launch"];
+    else ids = state.store.view.customColumns || ["f_budget", "f_stage"];
+    return ids
+      .map(function (id) { return findField(id); })
+      .filter(Boolean)
+      .slice(0, 3);
+  }
+  function customFilterChip(filter) {
+    const field = findField(filter.fieldId);
+    if (!field) return "";
+    let opLabel = "contains";
+    let valueLabel = '"' + filter.operand + '"';
+    if (filter.op === "optionIs") {
+      opLabel = "is";
+      const option = findOption(field, filter.optionId);
+      valueLabel = '"' + (option ? option.label : "Unknown option") + '"';
+    }
+    if (filter.op === "isSet") {
+      opLabel = "is set";
+      valueLabel = "";
+    }
+    const body = esc(field.label) + ' <span class="chip-key">' + esc(opLabel) + "</span>" + (valueLabel ? " " + esc(valueLabel) : "");
+    return (
+      '<span class="chip is-custom">' + icon("filter") + "<span>" + body + "</span>" +
+        '<button type="button" class="chip-x" data-action="remove-custom-filter" data-filter-id="' + esc(filter.id) + '" aria-label="Remove ' + esc(field.label) + ' filter">' + icon("x") + "</button>" +
+      "</span>"
+    );
+  }
+  function renderChips() {
+    const flags = state.flags;
+    const disabled = flags.windowIncomplete || flags.capabilityAbsent;
+    const chips = [];
+    function chipRemove(action, label, filterId) {
+      return '<button type="button" class="chip-x" data-action="' + action + '"' +
+        (filterId ? ' data-filter-id="' + esc(filterId) + '"' : "") +
+        ' aria-label="' + esc(label) + '">' + icon("x") + "</button>";
+    }
+    if (flags.missingRef) {
+      chips.push(
+        '<span class="chip is-repair">' + icon("alert-triangle") + "Needs repair" + chipRemove("remove-missing-filter", "Remove this filter") + "</span>"
+      );
+    }
+    if (flags.appliedBuiltIn && flags.appliedBuiltIn.status) {
+      chips.push(
+        '<span class="chip"><span><span class="chip-key">Status:</span> In progress</span>' + chipRemove("remove-status-filter", "Remove status filter") + "</span>"
+      );
+    }
+    if (flags.appliedBuiltIn && flags.appliedBuiltIn.priority) {
+      chips.push(
+        '<span class="chip"><span><span class="chip-key">Priority:</span> High</span>' + chipRemove("remove-priority-filter", "Remove priority filter") + "</span>"
+      );
+    }
+    if (flags.applyViewFilters) {
+      (state.store.view.customFilters || []).forEach(function (filter) {
+        const chip = customFilterChip(filter);
+        if (chip) chips.push(chip);
+      });
+    }
+    if (!chips.length) return "";
+    return (
+      '<div class="chip-row" aria-label="Active filters">' + chips.join("") +
+        '<button type="button" class="link-btn" data-action="open-filter-editor"' + (disabled ? " disabled" : "") + ">+ Add filter</button>" +
+      "</div>"
+    );
+  }
+  function hasActiveFilters() {
+    const flags = state.flags;
+    return Boolean(
+      flags.missingRef ||
+      (flags.appliedBuiltIn && Object.keys(flags.appliedBuiltIn).length) ||
+      (flags.applyViewFilters && state.store.view.customFilters && state.store.view.customFilters.length)
+    );
+  }
+  function renderFilterEditor() {
+    if (!state.flags.filterEditor) return "";
+    const invalid = state.flags.filterInvalid;
+    function selectWrap(label, options, value) {
+      return (
+        '<div class="select-wrap"><select class="select" aria-label="' + esc(label) + '">' +
+          options.map(function (option) { return "<option" + (option === value ? " selected" : "") + ">" + esc(option) + "</option>"; }).join("") +
+        "</select>" + icon("chevron-down") + "</div>"
+      );
+    }
+    function row(label, fieldOptions, fieldValue, opOptions, opValue, operand, error, helper, type) {
+      return (
+        '<div class="filter-row" data-filter-row data-type="' + esc(type || "text") + '">' +
+          '<div class="filter-row-head"><span class="filter-index">' + esc(label) + "</span>" +
+            '<button type="button" class="icon-btn" data-action="remove-editor-row" data-row-key="' + esc(label) + '" aria-label="Remove filter">' + icon("x") + "</button></div>" +
+          '<div class="filter-fields">' +
+            selectWrap("Field", fieldOptions, fieldValue) +
+            selectWrap("Operator", opOptions, opValue) +
+            '<input class="input" data-filter-operand aria-label="Value" value="' + esc(operand) + '"' + (error ? ' aria-invalid="true" aria-describedby="' + "filter-error-" + label.replace(/\s+/g, "-") + '"' : "") + " />" +
+          "</div>" +
+          (helper ? '<p class="field-help">' + esc(helper) + "</p>" : "") +
+          (error ? '<p class="filter-error" role="alert" id="filter-error-' + esc(label.replace(/\s+/g, "-")) + '">' + icon("alert-triangle") + esc(error) + "</p>" : "") +
+        "</div>"
+      );
+    }
+    const fields = sortedActiveFields().concat(archivedFields());
+    const fieldOptions = fields.map(function (field) { return field.label + (field.archived ? " (archived)" : ""); });
+    const removedRows = state.flags.removedFilterRows || [];
+    const specs = [];
+    if (invalid) {
+      const longOperand = "M".repeat(201);
+      specs.push(
+        { key: "Filter 1", html: row("Filter 1", fieldOptions, "Estimate confidence", ["equals", "is between"], "equals", "1e5", "Enter a number such as 7.5.", "", "number") },
+        { key: "Filter 2", html: row("Filter 2", fieldOptions, "Compliance review date", ["is", "before", "after"], "before", "2026-13-40", "Enter a date as YYYY-MM-DD.", "", "date") },
+        { key: "Filter 3", html: row("Filter 3", fieldOptions, "Budget code", ["contains", "is exactly"], "contains", longOperand, "This filter is too long to save.", "Matches exact case.", "text") }
+      );
+    } else {
+      specs.push(
+        { key: "Filter 1", html: row("Filter 1", fieldOptions, "Budget code", ["contains", "is exactly"], "contains", "MKT", "", "Matches exact case.", "text") },
+        { key: "Filter 2", html: row("Filter 2", fieldOptions, "Deployment stage", ["is"], "is", "Staging", "", "", "select") },
+        { key: "Filter 3", html: row("Filter 3", fieldOptions, "Estimate confidence", ["equals", "is between"], "equals", "7.5", "", "", "number") }
+      );
+      const extraRows = state.flags.extraFilterRows || 0;
+      for (let index = 0; index < extraRows; index += 1) {
+        const label = "Filter " + (4 + index);
+        specs.push({ key: label, html: row(label, fieldOptions, "Vendor ticket", ["contains", "is exactly", "is set", "is not set"], "is set", "", "", "", "text") });
+      }
+    }
+    const body = specs
+      .filter(function (spec) { return removedRows.indexOf(spec.key) === -1; })
+      .map(function (spec) { return spec.html; })
+      .join("");
+    return (
+      '<div class="filter-editor" role="dialog" aria-label="Custom filters" data-filter-editor>' +
+        '<div class="filter-editor-head"><div><h3>Custom filters</h3></div>' +
+          '<button type="button" class="icon-btn" data-action="close-filter-editor" aria-label="Close custom filters">' + icon("x") + "</button></div>" +
+        '<div class="filter-editor-body">' + body + "</div>" +
+        '<div class="filter-editor-foot">' +
+          '<button type="button" class="link-btn" data-action="add-filter-row">+ Add filter</button>' +
+          '<span class="hint">' + (invalid ? "Not applied" : "Draft") + "</span>" +
+          '<span><button type="button" class="btn btn-outline btn-sm" data-action="close-filter-editor">Cancel</button> ' +
+          '<button type="button" class="btn btn-primary btn-sm" data-action="apply-filters">Apply filters</button></span>' +
+        "</div>" +
+      "</div>"
+    );
+  }
+  function renderColumnsMenu() {
+    if (!state.flags.columnsMenu || state.flags.capabilityAbsent) return "";
+    const fields = sortedActiveFields().concat(archivedFields());
+    const chosen = state.store.view.customColumns || [];
+    const atLimit = chosen.length >= 3;
+    const rows = fields
+      .map(function (field) {
+        const checked = chosen.indexOf(field.id) !== -1;
+        const typeLabel = field.type === "select" ? "Select" : field.type === "number" ? "Number" : field.type === "date" ? "Date" : "Text";
+        return (
+          '<label style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;cursor:pointer">' +
+            '<input type="checkbox" data-action="toggle-column" data-field="' + esc(field.id) + '"' + (checked ? " checked" : "") + (!checked && atLimit ? " disabled" : "") + " />" +
+            "<span>" + esc(field.label) + "</span>" +
+            (field.archived ? ' <span class="badge badge-archived">Archived</span>' : "") +
+            ' <span class="muted" style="margin-left:auto;font-size:11.5px">' + typeLabel + "</span>" +
+          "</label>"
+        );
+      })
+      .join("");
+    return (
+      '<div style="margin-top:8px;max-width:360px;background:var(--popover);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-pop);padding:10px 12px" role="group" aria-label="Custom columns">' +
+        '<p style="font-size:12px;font-weight:600;color:var(--muted-foreground);margin-bottom:2px">Custom columns</p>' +
+        '<p style="font-size:11.5px;color:var(--muted-foreground);margin-bottom:4px">Up to three custom columns in this mock</p>' +
+        rows +
+      "</div>"
+    );
+  }
+  const BUILT_IN_SORTS = { title: "Task", status: "Status", priority: "Priority", due: "Due" };
+  function builtInHeader(key, label, sort) {
+    const active = Boolean(sort && sort.fieldId === "builtin:" + key);
+    const direction = active ? sort.direction : null;
+    return (
+      '<th scope="col" class="col-' + key + (active ? " is-sorted" : "") + '"' +
+        (active ? ' aria-sort="' + (direction === "asc" ? "ascending" : "descending") + '"' : "") + ">" +
+        '<button type="button" class="th-sort" data-action="sort-builtin" data-key="' + key + '">' +
+          esc(label) + '<span class="sort-arrow' + (active ? " is-active" : "") + '" aria-hidden="true">' +
+          (active ? (direction === "asc" ? "↑" : "↓") : "↕") + "</span>" +
+        "</button>" +
+      "</th>"
+    );
+  }
+  function renderTable() {
+    const flags = state.flags;
+    const scenario = currentScenario();
+    const incomplete = flags.windowIncomplete;
+    const missingRef = flags.missingRef;
+    const capabilityAbsent = flags.capabilityAbsent;
+    // A2 / UX NB-1: sorting is honoured in every state that renders sort headers.
+    // A sort that needs data this state cannot show is dropped rather than kept silently:
+    // table-incomplete has no custom values, and table-capability-absent has no columns.
+    // table-needs-repair renders no table at all.
+    let sort = flags.sort || state.store.view.sort;
+    if (sort && incomplete && sort.fieldId.indexOf("builtin:") !== 0) sort = null;
+    if (sort && capabilityAbsent && sort.fieldId.indexOf("builtin:") !== 0) sort = null;
+    const columns = customColumnsFor(scenario);
+    let rows = filterTasks(state.store.tasks);
+    if (!missingRef) rows = sortTaskRows(rows, sort);
+    const sortField = sort
+      ? (sort.fieldId.indexOf("builtin:") === 0
+          ? { id: sort.fieldId, label: BUILT_IN_SORTS[sort.fieldId.slice(8)] }
+          : findField(sort.fieldId))
+      : null;
+    const upper = columns
+      .map(function (field) { return renderColumnHeader(field, sort, incomplete); })
+      .join("");
+    const banners = [];
+    if (flags.configRefused) {
+      banners.push(
+        '<div class="alert alert-warn" role="status">' + icon("alert-triangle") +
+          '<div class="alert-body">This view was saved with settings this page doesn&#39;t support. Reload the page, then try again.</div>' +
+          '<div class="alert-actions"><button type="button" class="btn btn-outline btn-sm" data-action="reload-page">Reload</button></div>' +
+        "</div>"
+      );
+    }
+    if (missingRef) {
+      banners.push(
+        '<div class="alert alert-warn" role="status">' + icon("alert-triangle") +
+          '<div class="alert-body">This view uses a custom field that no longer exists. Results are not widened.</div>' +
+          '<div class="alert-actions"><button type="button" class="btn btn-outline btn-sm" data-action="remove-missing-filter">Remove this reference</button>' +
+          '<button type="button" class="btn btn-outline btn-sm" data-action="reset-columns">Reset columns</button></div>' +
+        "</div>"
+      );
+    }
+    if (incomplete) {
+      banners.push(
+        '<div class="alert alert-warn" role="status">' + icon("alert-triangle") +
+          '<div class="alert-body">Custom field values didn&#39;t load, so custom filters are off. Retry to use them.</div>' +
+          '<div class="alert-actions"><button type="button" class="btn btn-outline btn-sm" data-action="retry-window">' + icon("refresh") + "Retry load</button></div>" +
+        "</div>"
+      );
+    }
+    if (capabilityAbsent) {
+      banners.push(
+        '<div class="alert alert-info" role="status">' + icon("info") +
+          '<div class="alert-body">Custom fields aren&#39;t available on this server version.</div>' +
+        "</div>"
+      );
+    }
+    const countLabel = "<strong>" + rows.length + " task" + (rows.length === 1 ? "" : "s") + "</strong>";
+    const sep = '<span class="sep">·</span>';
+    const filtersActive = hasActiveFilters();
+    const filteredNote = filtersActive ? sep + "<span>Reorder paused while filters are on</span>" : "";
+    let summary;
+    const sortedSummary = sortField
+      ? countLabel + sep +
+        '<span class="sort-label">Sorted by <span class="dir">' + esc(sortField.label) + "</span> · " +
+        (sort.direction === "asc" ? "Ascending" : "Descending") + "</span>"
+      : "";
+    if (incomplete) {
+      // A2: built-in sorting still works while custom values are missing; the note
+      // explains why the custom headers are disabled.
+      summary = (sortField && sort.fieldId.indexOf("builtin:") === 0)
+        ? sortedSummary + sep + "<span>Custom columns are unavailable until values load</span>"
+        : countLabel + sep + "<span>Custom columns are unavailable until values load</span>";
+    } else if (sortField) {
+      summary = sortedSummary + filteredNote;
+    } else {
+      summary = countLabel + sep + "<span>Manual order</span>" + filteredNote;
+    }
+    const viewBar =
+      '<div class="view-bar">' +
+        '<button type="button" class="view-select" data-action="noop">' + icon("columns") + esc(state.store.view.name) + icon("chevron-down") + "</button>" +
+        (missingRef ? '<span class="badge badge-repair">Needs repair</span>' : "") +
+        '<span class="view-mode">Saved view</span>' +
+        '<span class="view-spacer"></span>' +
+        (capabilityAbsent ? "" : '<button type="button" class="btn btn-ghost btn-sm" data-action="noop">' + icon("pencil") + "Edit view</button>") +
+      "</div>";
+    const toolbar =
+      '<div class="toolbar-row" style="margin-top:12px">' +
+        '<div class="toolbar-chips">' + renderChips() + "</div>" +
+        (capabilityAbsent
+          ? ""
+          : '<button type="button" class="btn btn-outline btn-sm" data-action="open-filter-editor"' + (incomplete ? " disabled aria-disabled=\"true\"" : "") + ">" + icon("filter") + "Filters</button>" +
+            '<button type="button" class="btn btn-outline btn-sm" data-action="open-columns"' + (incomplete ? " disabled aria-disabled=\"true\"" : "") + ">" + icon("columns") + "Columns</button>") +
+      "</div>";
+    return (
+      '<div class="page-wrap" data-surface="table">' +
+        viewBar +
+        (banners.length ? '<div class="banners">' + banners.join("") + "</div>" : "") +
+        toolbar +
+        renderColumnsMenu() +
+        renderFilterEditor() +
+        '<div class="card table-card" id="tasks-table-card">' +
+          '<div class="table-summary">' + summary +
+            (filtersActive ? '<span class="sep">·</span><button type="button" class="link-btn" data-action="clear-filters">Clear filters</button>' : "") +
+          "</div>" +
+          (rows.length
+            ? '<div class="table-scroll-wrap"><div class="table-scroll">' +
+                '<table class="tasks"><thead><tr>' +
+                  '<th class="col-order" scope="col">#</th>' +
+                  builtInHeader("title", "Task", sort) +
+                  builtInHeader("status", "Status", sort) +
+                  builtInHeader("priority", "Priority", sort) +
+                  upper +
+                  builtInHeader("due", "Due", sort) +
+                  '<th class="col-actions" scope="col">Actions</th>' +
+                "</tr></thead><tbody>" +
+                rows.map(function (task) { return renderTaskRow(task, columns, incomplete); }).join("") +
+                "</tbody></table>" +
+              '</div><span class="table-scroll-fade" aria-hidden="true"></span></div>'
+            : '<div class="table-empty" role="status"><h3>No matching tasks</h3>' +
+                '<button type="button" class="btn btn-outline btn-sm" data-action="clear-filters">Clear filters</button></div>') +
+        "</div>" +
+      "</div>"
+    );
+  }
+  function renderColumnHeader(field, sort, incomplete) {
+    const sorted = sort && sort.fieldId === field.id;
+    const arrow = sorted ? (sort.direction === "asc" ? "↑" : "↓") : "↕";
+    const archivedChip = field.archived ? '<span class="badge badge-archived col-archived-chip">Archived field</span>' : "";
+    const classes = ((sorted ? "is-sorted " : "") + (incomplete ? "is-disabled" : "")).trim();
+    return (
+      '<th scope="col"' + (classes ? ' class="' + classes + '"' : "") +
+        (sorted ? ' aria-sort="' + (sort.direction === "asc" ? "ascending" : "descending") + '"' : "") + ">" +
+        '<button type="button" class="th-sort" data-action="sort-column" data-field="' + esc(field.id) + '"' + (incomplete ? " disabled" : "") + ">" +
+          esc(field.label) + '<span class="sort-arrow' + (sorted ? " is-active" : "") + '" aria-hidden="true">' + arrow + "</span>" + archivedChip +
+        "</button>" +
+      "</th>"
+    );
+  }
+  function renderTaskRow(task, columns, incomplete) {
+    const cells = columns
+      .map(function (field) {
+        if (incomplete) return '<td class="cell-unset" aria-label="Value not loaded"> </td>';
+        const value = displayValue(task.id, field);
+        if (value.kind === "unset") return '<td><span class="cell-unset" aria-label="Not set">—</span></td>';
+        if (value.kind === "empty") return '<td><span class="cell-empty" aria-label="Empty value">(empty)</span></td>';
+        if (value.kind === "select") {
+          const option = findOption(field, valuesFor(task.id)[field.id].optionId);
+          return "<td>" + esc(option ? option.label : "Unknown option") +
+            (option && option.archived ? ' <span class="archived-option">(no longer available)</span>' : "") + "</td>";
+        }
+        return "<td>" + esc(value.text) + "</td>";
+      })
+      .join("");
+    const overdue = task.due < "2026-10-31" && task.status !== "completed";
+    return (
+      "<tr>" +
+        '<td class="col-order"><span class="cell-order"><span class="grip" aria-hidden="true"></span>' + String(task.order).padStart(2, "0") + "</span></td>" +
+        '<td class="col-title"><div class="task-title-cell"><span class="task-title">' + esc(task.title) + "</span></div></td>" +
+        "<td>" + badgeStatus(task) + "</td>" +
+        "<td>" + badgePriority(task) + "</td>" +
+        cells +
+        "<td" + (overdue ? ' style="color:var(--destructive);font-weight:500"' : "") + ">" + esc(task.due) + "</td>" +
+        '<td><div class="cell-actions">' +
+          '<button type="button" class="icon-btn" data-action="open-task" data-task="' + esc(task.id) + '" aria-label="Open ' + esc(task.title) + '" title="Open task">' + icon("external-link") + "</button>" +
+          '<button type="button" class="icon-btn row-menu" data-action="noop" aria-label="More actions for ' + esc(task.title) + '">' + icon("more-horizontal") + "</button>" +
+        "</div></td>" +
+      "</tr>"
+    );
+  }
+
+  // ---------- inert fake store: interactions ----------
+  let draftValues = {};
+  function showToast(message) {
+    const el = document.getElementById("toast");
+    document.getElementById("toast-text").textContent = message;
+    el.hidden = false;
+    clearTimeout(state.toastTimer);
+    state.toastTimer = setTimeout(function () { el.hidden = true; }, 2800);
+  }
+  // ---------- A3: focus-preserving re-render ----------
+  function focusKeyFor(el) {
+    if (!el || el === document.body || !el.dataset) return null;
+    if (el.id) return "id:" + el.id;
+    if (el.dataset.action) {
+      return "act:" + [el.dataset.action, el.dataset.field || "", el.dataset.task || "", el.dataset.step || "", el.dataset.state || "", el.dataset.key || ""].join("|");
+    }
+    return null;
+  }
+  function elementForFocusKey(key) {
+    if (!key) return null;
+    if (key.indexOf("id:") === 0) return document.getElementById(key.slice(3));
+    if (key.indexOf("act:") !== 0) return null;
+    const parts = key.slice(4).split("|");
+    const action = parts[0];
+    let sel = '[data-action="' + action + '"]';
+    if (parts[1]) sel += '[data-field="' + parts[1] + '"]';
+    if (parts[2]) sel += '[data-task="' + parts[2] + '"]';
+    if (parts[3]) sel += '[data-step="' + parts[3] + '"]';
+    if (parts[4]) sel += '[data-state="' + parts[4] + '"]';
+    if (parts[5]) sel += '[data-key="' + parts[5] + '"]';
+    const el = document.querySelector(sel);
+    if (el) return el;
+    // The Save button is replaced by "Saving…" mid-save, so it is not tabbable at that
+    // moment: continue to the next field in the same surface, as the DOM would.
+    if (action === "save-field" && parts[1] && parts[2]) {
+      const self = document.querySelector('[data-cf-input][data-field="' + parts[1] + '"][data-task="' + parts[2] + '"]');
+      if (self) {
+        const surface = String(self.id || "").split("-")[0];
+        const inputs = Array.prototype.slice.call(document.querySelectorAll("[data-cf-input]")).filter(function (node) {
+          return node.dataset.task === parts[2] && String(node.id || "").indexOf(surface + "-") === 0;
+        });
+        const next = inputs[inputs.indexOf(self) + 1];
+        if (next) return next;
+        // Last field in the surface: continue with the next focusable control after the
+        // block (e.g. the next section head) instead of trapping focus in the input.
+        const block = self.closest("[data-field-block]");
+        if (block) {
+          const candidates = Array.prototype.slice.call(document.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+          for (let i = 0; i < candidates.length; i += 1) {
+            // DOCUMENT_POSITION_FOLLOWING only: a descendant (the field's own input or its
+            // Save button) is CONTAINED_BY|FOLLOWING and must not win here.
+            if (!block.contains(candidates[i]) && (block.compareDocumentPosition(candidates[i]) & 4)) return candidates[i];
+          }
+        }
+        return self;
+      }
+    }
+    return null;
+  }
+  function renderPreservingFocus(focusKey) {
+    const key = focusKey != null ? focusKey : focusKeyFor(document.activeElement);
+    render();
+    if (!key) return;
+    const el = elementForFocusKey(key);
+    if (el && !el.disabled && el.isConnected) el.focus({ preventScroll: true });
+  }
+  function storedInputValue(input) {
+    // A3 / DeepSeek 5723789145 #8: a select stores an optionId, not text, so comparing
+    // entry.text made every select blur re-save an unchanged value.
+    const entry = valuesFor(input.dataset.task)[input.dataset.field];
+    if (!entry) return "";
+    if (input.tagName === "SELECT") return entry.kind === "select" ? entry.optionId : "";
+    return entry.text != null ? entry.text : "";
+  }
+  function markSaving(fieldId, focusKey) {
+    state.flags.saving = state.flags.saving || {};
+    state.flags.saving[fieldId] = true;
+    // A3: a blur-save rebuilds #stage, so the control the user was moving to would be
+    // destroyed. Re-render, then put focus back on the intended control.
+    renderPreservingFocus(focusKey);
+    // R4 P1(#3): a save that lands after a state change must not touch the new
+    // scenario's flags or toast. The generation token makes the callback inert.
+    const gen = state.gen;
+    setTimeout(function () {
+      if (gen !== state.gen) return;
+      delete state.flags.saving[fieldId];
+      renderPreservingFocus(null);
+      showToast("Saved in this mock. Nothing leaves this page.");
+    }, 650);
+  }
+  function writeValue(taskId, fieldId, raw) {
+    const field = findField(fieldId);
+    const values = state.store.values[taskId] || (state.store.values[taskId] = {});
+    if (!field) return;
+    if (field.type === "select") {
+      if (!raw) { delete values[fieldId]; return; }
+      values[fieldId] = { kind: "select", optionId: raw };
+      return;
+    }
+    if (field.type === "number") {
+      const trimmed = String(raw).trim();
+      if (trimmed === "") { delete values[fieldId]; return; }
+      values[fieldId] = { kind: "number", text: trimmed };
+      return;
+    }
+    if (field.type === "date") {
+      const trimmed = String(raw).trim();
+      if (trimmed === "") { delete values[fieldId]; return; }
+      values[fieldId] = { kind: "date", text: trimmed };
+      return;
+    }
+    values[fieldId] = { kind: "text", text: String(raw) };
+  }
+  function commitFieldValue(input, raw, focusKey) {
+    const fieldId = input.dataset.field;
+    const taskId = input.dataset.task;
+    const field = findField(fieldId);
+    // DeepSeek 5724294245 #7 / 5723789145 #10: a number field no longer stores arbitrary
+    // text; an invalid value is refused with the mock's own inline message and focus
+    // stays in the field that needs fixing.
+    if (field && field.type === "number" && String(raw).trim() !== "" &&
+        !/^-?(\d+(\.\d*)?|\.\d+)$/.test(String(raw).trim())) {
+      state.flags.valueErrors = state.flags.valueErrors || {};
+      state.flags.valueErrors[fieldId] = "Enter a number such as 7.5.";
+      renderPreservingFocus(focusKeyFor(input));
+      return false;
+    }
+    if (state.flags.valueErrors) delete state.flags.valueErrors[fieldId];
+    writeValue(taskId, fieldId, raw);
+    markSaving(fieldId, focusKey);
+    return true;
+  }
+  function saveFromInput(input, focusKey) {
+    if (!input) return;
+    if (state.role === "reader") return;
+    commitFieldValue(input, input.value, focusKey);
+  }
+  function readDialogLabel(selector) {
+    const input = document.querySelector(selector);
+    return input ? input.value.trim() : "";
+  }
+  function nextFieldPosition() {
+    // R3-3: only ACTIVE positions form the sequence. Archived fields are outside it,
+    // so their (historical) positions can never push a new field's number upwards.
+    const active = sortedActiveFields();
+    return active.reduce(function (max, field) { return Math.max(max, field.position || 0); }, 0) + 1;
+  }
+  function reorderFields(fieldId, direction) {
+    const active = sortedActiveFields();
+    const index = active.findIndex(function (field) { return field.id === fieldId; });
+    const next = index + direction;
+    if (index < 0 || next < 0 || next >= active.length) return;
+    const swap = active[index];
+    active[index] = active[next];
+    active[next] = swap;
+    active.forEach(function (field, position) { field.position = position + 1; });
+  }
+  function reorderOptions(fieldId, optionId, direction) {
+    const field = findField(fieldId);
+    if (!field || !field.options) return;
+    const active = field.options.filter(function (o) { return !o.archived; }).sort(function (a, b) { return a.position - b.position; });
+    const index = active.findIndex(function (o) { return o.id === optionId; });
+    const next = index + direction;
+    if (index < 0 || next < 0 || next >= active.length) return;
+    const swap = active[index];
+    active[index] = active[next];
+    active[next] = swap;
+    active.forEach(function (option, position) { option.position = position + 1; });
+  }
+  function openDialog(dialog) {
+    const opener = document.activeElement;
+    const openerAction = opener && opener.closest ? opener.closest("[data-action]") : null;
+    state.dialogReturn = openerAction ? { action: openerAction.dataset.action, field: openerAction.dataset.field || null } : null;
+    state.dialog = dialog;
+    render();
+  }
+  function closeDialog() {
+    const ret = state.dialogReturn;
+    // DeepSeek 5724294245 #6: a dialog-fixture state must not keep claiming a dialog
+    // after it closes; fall back to the state underneath it.
+    const underneath = DIALOG_SCENARIO_FALLBACK[state.scenarioId];
+    state.dialog = null;
+    state.dialogFocusKey = null;
+    state.dialogReturn = null;
+    if (underneath) state.scenarioId = underneath;
+    render();
+    // R4 P7(NB-7): return focus to the control that opened the dialog when it still exists.
+    if (ret && ret.action) {
+      const selector = '[data-action="' + ret.action + '"]' + (ret.field ? '[data-field="' + ret.field + '"]' : "");
+      const el = document.querySelector(selector);
+      if (el) el.focus({ preventScroll: true });
+    }
+  }
+  function selectedDialogType() {
+    return state.dialog && state.dialog.type ? state.dialog.type : "text";
+  }
+  function createFieldFromDialog() {
+    const label = readDialogLabel("#add-label");
+    const input = document.querySelector("#add-label");
+    if (!label) {
+      if (input) {
+        input.setAttribute("aria-invalid", "true");
+        input.focus();
+        const help = input.parentElement.querySelector(".field-help");
+        if (!help) {
+          const p = document.createElement("p");
+          p.className = "field-help";
+          p.style.color = "var(--destructive)";
+          p.textContent = "Enter a field name.";
+          input.parentElement.appendChild(p);
+        }
+      }
+      return;
+    }
+    const type = selectedDialogType();
+    const id = "f_new_" + Date.now().toString(36);
+    const field = { id: id, label: label, type: type, position: nextFieldPosition(), archived: false };
+    if (type === "select") field.options = [];
+    state.store.fields.push(field);
+    state.flags.savedFields = (state.flags.savedFields || []).concat([id]);
+    closeDialog();
+    state.scenarioId = "settings-list";
+    render();
+    showToast("Field added in this mock. Nothing was saved.");
+  }
+
+  document.addEventListener("click", function (event) {
+    const actionEl = event.target.closest("[data-action]");
+    if (!actionEl) {
+      if (event.target.classList && event.target.classList.contains("dialog-backdrop")) {
+        closeDialog();
+      }
+      return;
+    }
+    const action = actionEl.dataset.action;
+    const fieldId = actionEl.dataset.field;
+    const optionId = actionEl.dataset.option;
+    switch (action) {
+      case "noop":
+        event.preventDefault();
+        return;
+      case "open-add-field":
+        openDialog({ kind: "add-field", type: "text", label: "" });
+        return;
+      case "choose-type":
+        if (actionEl.disabled || !state.dialog) return;
+        state.dialog.type = actionEl.dataset.type;
+        document.querySelectorAll(".type-choice").forEach(function (button) {
+          button.classList.toggle("is-selected", button.dataset.type === actionEl.dataset.type);
+          button.setAttribute("aria-checked", button.dataset.type === actionEl.dataset.type ? "true" : "false");
+        });
+        return;
+      case "close-dialog":
+        closeDialog();
+        return;
+      case "create-field":
+        createFieldFromDialog();
+        return;
+      case "rename-field":
+        openDialog({ kind: "rename-field", fieldId: fieldId, label: findField(fieldId).label });
+        return;
+      case "save-field-name":
+        var newName = readDialogLabel("#rename-label");
+        if (!newName) return;
+        findField(state.dialog.fieldId).label = newName;
+        closeDialog();
+        render();
+        showToast("Field renamed in this mock. Nothing was saved.");
+        return;
+      case "archive-field":
+        openDialog({ kind: "archive-field", fieldId: fieldId });
+        return;
+      case "confirm-archive-field":
+        var archiving = findField(state.dialog.fieldId);
+        archiving.archived = true;
+        // R3-3: an archived field leaves the active position sequence, and the active
+        // fields are renumbered 1..n, so the next Add field is n+1 (never 100+).
+        archiving.position = null;
+        sortedActiveFields().forEach(function (f, i) { f.position = i + 1; });
+        // R4 P5: the cap is derived, so archiving re-labels the state to match the store.
+        // The at-cap note/dropdown can never claim a maximum the store no longer has.
+        if (state.scenarioId === "settings-archive-confirm" || state.scenarioId === "settings-list" || state.scenarioId === "settings-at-cap") {
+          state.scenarioId = sortedActiveFields().length ? "settings-list" : "settings-empty";
+        }
+        closeDialog();
+        render();
+        showToast("Field archived in this mock. Values already saved stay readable.");
+        return;
+      case "move-field-up":
+        reorderFields(fieldId, -1);
+        render();
+        return;
+      case "move-field-down":
+        reorderFields(fieldId, 1);
+        render();
+        return;
+      case "manage-options":
+        openDialog({ kind: "field-options", fieldId: fieldId });
+        return;
+      case "move-option-up":
+        reorderOptions(state.dialog.fieldId, optionId, -1);
+        render();
+        return;
+      case "move-option-down":
+        reorderOptions(state.dialog.fieldId, optionId, 1);
+        render();
+        return;
+      case "add-option":
+        var optionInput = document.querySelector("#option-add-input");
+        if (!optionInput || !optionInput.value.trim() || !state.dialog) return;
+        var optionField = findField(state.dialog.fieldId);
+        var position = (optionField.options || []).reduce(function (max, o) { return Math.max(max, o.position || 0); }, 0) + 1;
+        optionField.options = optionField.options || [];
+        optionField.options.push({ id: "o_new_" + Date.now().toString(36), label: optionInput.value.trim(), position: position, archived: false });
+        render();
+        showToast("Option added in this mock. Nothing was saved.");
+        return;
+      case "archive-option":
+        if (!state.dialog) return;
+        var optField = findField(state.dialog.fieldId);
+        var opt = optField.options.find(function (o) { return o.id === optionId; });
+        if (opt) opt.archived = true;
+        render();
+        showToast("Option archived in this mock. Tasks keep the option they already hold.");
+        return;
+      case "toggle-archived":
+        state.flags.archivedGroupOpen = !state.flags.archivedGroupOpen;
+        render();
+        return;
+      case "save-field":
+        var input = actionEl.parentElement.querySelector("[data-cf-input]");
+        saveFromInput(input);
+        return;
+      case "reload-value":
+        state.flags.staleValueField = null;
+        // R4 P6(#7): the scenario label/note move with the banner, so nothing claims
+        // the value is still stale after the reload.
+        state.scenarioId = state.role === "reader" ? "detail-reader" : "detail-manager";
+        render();
+        showToast("Value reloaded in this mock.");
+        return;
+      case "reload-field":
+        state.flags.staleField = false;
+        state.scenarioId = "settings-list";
+        render();
+        showToast("Field reloaded in this mock.");
+        return;
+      case "retry-load":
+        state.flags.readFailed = false;
+        if (state.scenarioId === "detail-failed") state.scenarioId = "detail-manager";
+        render();
+        showToast("Values loaded in this mock.");
+        return;
+      case "retry-window":
+        state.flags.windowIncomplete = false;
+        if (state.scenarioId === "table-incomplete") state.scenarioId = "table-sort-asc";
+        state.flags.sort = { fieldId: "f_budget", direction: "asc" };
+        render();
+        showToast("Custom field values loaded in this mock.");
+        return;
+      case "reload-page":
+        // R4 P6(#7): a page reload returns to the default view, so the scenario label
+        // and dropdown reset with the banner instead of staying on table-view-refused.
+        setScenario("settings-list");
+        showToast("Reloaded in this mock: the unsupported view is gone and the default view is shown.");
+        return;
+      case "sort-builtin":
+        // A2: the four built-in headers are operable in every table state that renders
+        // them, because built-in columns are loaded even when custom values are not.
+        // They cycle ascending -> descending and expose aria-sort on the sorted th.
+        var builtInKey = "builtin:" + actionEl.dataset.key;
+        // A2: compare against the sort actually in effect (a saved view can carry one).
+        var builtInCurrent = state.flags.sort || state.store.view.sort;
+        if (builtInCurrent && builtInCurrent.fieldId === builtInKey) {
+          if (builtInCurrent.direction !== "desc") state.flags.sort = { fieldId: builtInKey, direction: "desc" };
+        } else {
+          state.flags.sort = { fieldId: builtInKey, direction: "asc" };
+        }
+        render();
+        return;
+      case "sort-column":
+        if (state.flags.windowIncomplete) return;
+        // A2: the first click on an already-sorted header must toggle, so compare against
+        // the sort in effect (flags, or the saved view's own sort).
+        var current = state.flags.sort || state.store.view.sort;
+        if (current && current.fieldId === fieldId) {
+          if (current.direction !== "desc") state.flags.sort = { fieldId: fieldId, direction: "desc" };
+        } else {
+          state.flags.sort = { fieldId: fieldId, direction: "asc" };
+        }
+        // DeepSeek 5723710913 #15: keep a fixture state label aligned with the resulting
+        // direction, and only for the field that state is about.
+        if (state.flags.sort && state.flags.sort.fieldId === "f_budget" &&
+            (state.scenarioId === "table-sort-asc" || state.scenarioId === "table-sort-desc")) {
+          state.scenarioId = state.flags.sort.direction === "desc" ? "table-sort-desc" : "table-sort-asc";
+        }
+        render();
+        return;
+      case "open-filter-editor":
+        // DeepSeek 5724294245 #6: opening the editor no longer re-labels the table as
+        // table-filters (that fixture was never applied, so the note described chips
+        // that were not on screen).
+        state.flags.filterEditor = true;
+        render();
+        return;
+      case "close-filter-editor":
+        state.flags.filterEditor = false;
+        // ...and closing the editor from its own state falls back to the applied-chips view.
+        if (state.scenarioId === "table-filter-editor") state.scenarioId = "table-filters";
+        state.flags.filterInvalid = false;
+        state.flags.removedFilterRows = [];
+        render();
+        return;
+      case "remove-editor-row":
+        state.flags.removedFilterRows = state.flags.removedFilterRows || [];
+        if (actionEl.dataset.rowKey) state.flags.removedFilterRows.push(actionEl.dataset.rowKey);
+        render();
+        return;
+      case "add-filter-row":
+        state.flags.extraFilterRows = (state.flags.extraFilterRows || 0) + 1;
+        render();
+        return;
+      case "apply-filters":
+        var invalidInputs = document.querySelectorAll('[data-filter-operand][aria-invalid="true"]');
+        if (invalidInputs.length) {
+          invalidInputs[0].focus();
+          showToast("Fix the highlighted input first. Nothing was applied.");
+          return;
+        }
+        state.flags.filterEditor = false;
+        state.flags.filterInvalid = false;
+        render();
+        showToast("Demo only: the filter values are not applied in this mock.");
+        return;
+      case "clear-filters":
+        setScenario("table-sort-asc");
+        showToast("Filters cleared in this mock.");
+        return;
+      case "remove-status-filter":
+        if (state.flags.appliedBuiltIn) delete state.flags.appliedBuiltIn.status;
+        render();
+        return;
+      case "remove-priority-filter":
+        if (state.flags.appliedBuiltIn) delete state.flags.appliedBuiltIn.priority;
+        render();
+        return;
+      case "remove-custom-filter":
+        if (state.store.view.customFilters) {
+          state.store.view.customFilters = state.store.view.customFilters.filter(function (filter) {
+            return filter.id !== actionEl.dataset.filterId;
+          });
+        }
+        render();
+        return;
+      case "remove-missing-filter":
+        setScenario("table-sort-asc");
+        showToast("Reference removed in this mock. Nothing was saved.");
+        return;
+      case "reset-columns":
+        setScenario("table-sort-asc");
+        showToast("Custom columns reset in this mock.");
+        return;
+      case "open-columns":
+        state.flags.columnsMenu = !state.flags.columnsMenu;
+        render();
+        return;
+      case "toggle-column":
+        var columnField = actionEl.dataset.field;
+        var columns = state.store.view.customColumns || [];
+        var columnPos = columns.indexOf(columnField);
+        // R4 P1(#5): the picker cannot select a fourth column that the table would slice away.
+        if (columnPos === -1) {
+          if (columns.length >= 3) return;
+          columns.push(columnField);
+        } else columns.splice(columnPos, 1);
+        state.store.view.customColumns = columns;
+        state.flags.columnsMenu = true;
+        render();
+        return;
+      case "rename-option":
+        if (!state.dialog) return;
+        openDialog({ kind: "rename-option", fieldId: state.dialog.fieldId, optionId: optionId, label: (function () {
+          var optionField = findField(state.dialog.fieldId);
+          var opt = optionField.options.find(function (o) { return o.id === optionId; });
+          return opt ? opt.label : "";
+        })() });
+        return;
+      case "save-option-name":
+        var optionNewName = readDialogLabel("#rename-option-label");
+        if (!optionNewName || !state.dialog) return;
+        var targetField = findField(state.dialog.fieldId);
+        var targetOption = targetField.options.find(function (o) { return o.id === state.dialog.optionId; });
+        if (targetOption) targetOption.label = optionNewName;
+        closeDialog();
+        render();
+        showToast("Option renamed in this mock. Nothing was saved.");
+        return;
+      case "open-task":
+        // A4 / DeepSeek 5723789145 #9: opening a task keeps the current role (a reader
+        // stays a reader) and parks the table-only view flags, so a refused or
+        // incomplete table cannot bleed into the detail surface. close-task restores both.
+        state.flags.openedFrom = state.scenarioId;
+        state.flags.tableFlags = {};
+        TABLE_VIEW_FLAGS.forEach(function (key) {
+          if (Object.prototype.hasOwnProperty.call(state.flags, key)) {
+            state.flags.tableFlags[key] = state.flags[key];
+            delete state.flags[key];
+          }
+        });
+        state.flags.selectedTaskId = actionEl.dataset.task;
+        state.scenarioId = state.role === "reader" ? "detail-reader" : "detail-manager";
+        render();
+        window.scrollTo(0, 0);
+        return;
+      case "toggle-section":
+        var head = actionEl;
+        var body = head.parentElement.querySelector(".task-section-body");
+        var expanded = head.getAttribute("aria-expanded") === "true";
+        head.setAttribute("aria-expanded", expanded ? "false" : "true");
+        if (body) body.hidden = expanded;
+        return;
+      case "show-state":
+        setScenario(actionEl.dataset.state);
+        return;
+      case "toggle-step":
+        state.tryThisDone = state.tryThisDone || {};
+        state.tryThisDone[actionEl.dataset.step] = !state.tryThisDone[actionEl.dataset.step];
+        renderTryThis();
+        return;
+      case "close-task":
+        // A4: closing returns to the table state the task was opened from, with that
+        // state's own view flags, so no stale banner survives the round trip.
+        state.scenarioId = state.flags.openedFrom || "table-sort-asc";
+        if (state.flags.tableFlags) {
+          Object.keys(state.flags.tableFlags).forEach(function (key) {
+            state.flags[key] = state.flags.tableFlags[key];
+          });
+        }
+        state.flags.openedFrom = null;
+        state.flags.tableFlags = null;
+        render();
+        return;
+      default:
+        return;
+    }
+  });
+
+  document.addEventListener("input", function (event) {
+    const target = event.target;
+    if (target.matches("[data-cf-input]")) {
+      draftValues[target.dataset.field] = target.value;
+      return;
+    }
+    if (target.matches("[data-filter-operand]")) {
+      const row = target.closest("[data-filter-row]");
+      validateFilterRow(row, target);
+    }
+  });
+  document.addEventListener("change", function (event) {
+    const target = event.target;
+    // A3 / DeepSeek 5723789145 #8: a select commits when its value changes (not on a
+    // blur that cannot tell whether anything changed), so choosing the empty option
+    // clears a set select and a re-render cannot silently undo the choice.
+    if (target.tagName === "SELECT" && target.matches("[data-cf-input]")) {
+      if (state.role !== "reader" && target.value !== storedInputValue(target)) {
+        saveFromInput(target, focusKeyFor(target));
+      }
+      return;
+    }
+    if (target.id === "scenario-select") {
+      setScenario(target.value);
+      return;
+    }
+    if (target.id === "role-select") {
+      state.role = target.value;
+      render();
+      return;
+    }
+  });
+  document.addEventListener("focusout", function (event) {
+    const target = event.target;
+    if (!target.matches || !target.matches("[data-cf-input]")) return;
+    if (state.role === "reader") return;
+    if (target.value === storedInputValue(target)) return;
+    // A3: commit AFTER the browser has finished moving focus, so the save's re-render
+    // can hand focus to the control the user moved to instead of losing it to <body>.
+    const value = target.value;
+    const destination = focusKeyFor(event.relatedTarget);
+    const gen = state.gen;
+    setTimeout(function () {
+      if (gen !== state.gen || !target.isConnected) return;
+      commitFieldValue(target, value, destination);
+    }, 0);
+  });
+  document.addEventListener("keydown", function (event) {
+    // R4 P7(NB-7): while a product dialog is open, Tab cycles inside it (no escape
+    // to the inert background); Escape still closes it.
+    if (event.key === "Tab" && state.dialog) {
+      const dialogEl = document.querySelector("#dialog-root .dialog");
+      if (dialogEl) {
+        const list = dialogFocusables(dialogEl);
+        if (list.length) {
+          const first = list[0];
+          const last = list[list.length - 1];
+          if (!dialogEl.contains(document.activeElement)) {
+            first.focus();
+            event.preventDefault();
+            return;
+          }
+          if (event.shiftKey && document.activeElement === first) {
+            last.focus();
+            event.preventDefault();
+            return;
+          }
+          if (!event.shiftKey && document.activeElement === last) {
+            first.focus();
+            event.preventDefault();
+            return;
+          }
+        }
+      }
+    }
+    if (event.key === "Escape") {
+      if (state.dialog) { closeDialog(); return; }
+      const panel = document.getElementById("trythis-panel");
+      if (!panel.hidden) {
+        // A1: Escape takes the SAME close path as the close button, so
+        // body[data-trythis] clears (releasing the 456px gutter) and focus returns.
+        closeTryThis();
+        return;
+      }
+    }
+  });
+
+  function validateFilterRow(row, input) {
+    if (!row) return;
+    const type = row.dataset.type;
+    const value = input.value;
+    let message = "";
+    if (type === "number" && value !== "") {
+      const valid = /^-?(\d+(\.\d*)?|\.\d+)$/.test(value);
+      if (!valid) message = "Enter a number such as 7.5.";
+    } else if (type === "date" && value !== "") {
+      const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+      let valid = false;
+      if (match) {
+        const year = Number(match[1]);
+        const month = Number(match[2]);
+        const day = Number(match[3]);
+        const date = new Date(Date.UTC(year, month - 1, day));
+        valid = date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+      }
+      if (!valid) message = "Enter a date as YYYY-MM-DD.";
+    } else if (type === "text" && Array.from(value).length > 200) {
+      message = "This filter is too long to save.";
+    }
+    let errorEl = row.querySelector(".filter-error");
+    if (message) {
+      input.setAttribute("aria-invalid", "true");
+      if (!errorEl) {
+        errorEl = document.createElement("p");
+        errorEl.className = "filter-error";
+        errorEl.setAttribute("role", "alert");
+        row.querySelector(".filter-fields").insertAdjacentElement("afterend", errorEl);
+      }
+      // DeepSeek 5724294245 #10: the dynamically inserted message is associated with the
+      // input it describes, exactly like the static invalid rows in this editor.
+      const rowLabel = (row.querySelector(".filter-index") || { textContent: "Filter" }).textContent.trim();
+      errorEl.id = "filter-error-" + rowLabel.replace(/\s+/g, "-");
+      input.setAttribute("aria-describedby", errorEl.id);
+      errorEl.innerHTML = icon("alert-triangle") + esc(message);
+    } else {
+      input.removeAttribute("aria-invalid");
+      input.removeAttribute("aria-describedby");
+      if (errorEl) errorEl.remove();
+    }
+  }
+
+  // ---------- practice chrome: Try this ----------
+  const TRY_STEPS = [
+    { id: "1", title: "Add a text field.", state: "settings-add-dialog",
+      body: "Settings → Custom fields → Add field. Type a label, keep Text, and add it." },
+    { id: "2", title: "Open a task and set a value.", state: "detail-manager",
+      body: "Open Homepage hero refresh. Type a value in one custom field and move focus away; it saves." },
+    { id: "3", title: "Switch to the docked pane and confirm the same value.", state: "detail-manager",
+      body: "The drawer and the docked pane show the same task from the same store, so both already show it." },
+    { id: "4", title: "Add a custom column and sort by it.", state: "table-sort-asc",
+      body: "In the table, use Columns to add the field, then click its header once for ascending and twice for descending." },
+    { id: "5", title: "Archive the field and confirm the value is still shown read-only with the chip.", state: "detail-archived",
+      body: "Settings → Archive asks first. The field you archive keeps its saved value on every task, read-only, with the Archived field chip." },
+    { id: "6", title: "As a reader, confirm no edit control appears.", state: "detail-reader",
+      body: "Change Role to Reader. Values stay visible as text; there are no inputs and no disabled controls." },
+    { id: "7", title: "Type an invalid number into a custom filter and confirm the inline message with no save.", state: "table-filter-invalid",
+      body: "In the table, open Filters and type 1e5 into the number condition. The inline message appears and nothing is applied." }
+  ];
+  function renderTryThis() {
+    const ol = document.getElementById("trythis-steps");
+    if (!ol) return;
+    const done = state.tryThisDone || {};
+    ol.innerHTML = TRY_STEPS.map(function (step) {
+      return (
+        '<li class="trythis-step' + (done[step.id] ? " is-done" : "") + '">' +
+          '<div class="step-top"><span class="step-num">' + step.id + "</span>" +
+            '<div><div class="step-title">' + esc(step.title) + "</div>" +
+            '<div class="step-body">' + esc(step.body) + "</div></div></div>" +
+          '<div class="step-actions">' +
+            '<button type="button" class="btn btn-outline btn-xs" data-action="show-state" data-state="' + esc(step.state) + '">Show me</button>' +
+            '<button type="button" class="btn btn-ghost btn-xs" data-action="toggle-step" data-step="' + step.id + '">' +
+              (done[step.id] ? "Mark not done" : "Mark done") +
+            "</button>" +
+          "</div>" +
+        "</li>"
+      );
+    }).join("");
+  }
+
+  // ---------- public control surface for evidence capture ----------
+  function setScenario(id) {
+    // A5 / DeepSeek 5723789145 #11: an unknown id is never a silent no-op. The public
+    // mock API reports what happened, refuses the change and stays deterministic.
+    if (!SCENARIOS.some(function (scene) { return scene.id === id; })) {
+      const message = 'Unknown mock scenario id "' + String(id) + '". No state change was made. Use window.__mock.scenarios for the 29 valid ids.';
+      console.error("[CF-B mock r5] " + message);
+      showToast("Mock: " + message);
+      throw new Error(message);
+    }
+    // B1: every transition starts from a deep-cloned base store. Nothing from
+    // the previous state (fields, tasks, values or view) can leak into this one.
+    state.scenarioId = id;
+    state.gen += 1;
+    clearTimeout(state.toastTimer);
+    const toast = document.getElementById("toast");
+    if (toast) toast.hidden = true;
+    resetStore();
+    applyScenarioFixtures(id);
+    state.theme = state.theme || "light";
+    render();
+    focusFailedBanner();
+    window.scrollTo(0, 0);
+  }
+  function focusFailedBanner() {
+    if (!state.flags.readFailed) return;
+    const banner = document.querySelector("[data-failed-banner]");
+    if (banner) banner.focus({ preventScroll: true });
+  }
+  function restoreFailedBannerFocus() {
+    // R4 P4: a full re-render (theme or role change) replaces the banner node and drops
+    // focus to BODY. Re-apply it then — but never steal focus from a control the user
+    // genuinely moved it to (e.g. the theme button outside the re-rendered stage).
+    if (!state.flags.readFailed || state.dialog) return;
+    const active = document.activeElement;
+    const stage = document.getElementById("stage");
+    if (active && active !== document.body && active !== stage && !stage.contains(active)) return;
+    focusFailedBanner();
+  }
+  function setTheme(theme) {
+    state.theme = theme === "dark" ? "dark" : "light";
+    render();
+  }
+  function setRole(role) {
+    state.role = role === "reader" ? "reader" : "manager";
+    render();
+  }
+  window.__mock = {
+    setScenario: setScenario,
+    setTheme: setTheme,
+    setRole: setRole,
+    reset: function () { setScenario(state.scenarioId); },
+    scenarios: SCENARIOS.map(function (s) { return { id: s.id, label: s.label, group: s.group, surface: s.surface, role: s.role }; }),
+    snapshot: function () {
+      return {
+        scenarioId: state.scenarioId,
+        role: state.role,
+        theme: state.theme,
+        dialog: state.dialog ? state.dialog.kind : null,
+        flags: JSON.parse(JSON.stringify(state.flags)),
+        fields: state.store.fields.map(function (f) { return { id: f.id, label: f.label, type: f.type, position: f.position, archived: !!f.archived }; }),
+        values: JSON.parse(JSON.stringify(state.store.values)),
+        view: JSON.parse(JSON.stringify(state.store.view))
+      };
+    }
+  };
+
+  // ---------- boot ----------
+  document.getElementById("theme-toggle").addEventListener("click", function () {
+    setTheme(state.theme === "dark" ? "light" : "dark");
+  });
+  document.getElementById("app-theme-toggle").addEventListener("click", function () {
+    setTheme(state.theme === "dark" ? "light" : "dark");
+  });
+  document.getElementById("prev-state").addEventListener("click", function () {
+    const index = scenarioIndex();
+    setScenario(SCENARIOS[(index - 1 + SCENARIOS.length) % SCENARIOS.length].id);
+  });
+  document.getElementById("next-state").addEventListener("click", function () {
+    const index = scenarioIndex();
+    setScenario(SCENARIOS[(index + 1) % SCENARIOS.length].id);
+  });
+  document.getElementById("reset-scenario").addEventListener("click", function () {
+    setScenario(state.scenarioId);
+  });
+  function setTryThisOpen(open) {
+    const panel = document.getElementById("trythis-panel");
+    const openBtn = document.getElementById("trythis-open");
+    panel.hidden = !open;
+    document.body.dataset.trythis = open ? "open" : "closed";
+    openBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    // The panel is a fixed right dock at >=1024px; below that it is in the flow, so
+    // bring it into view when it opens.
+    if (open && window.matchMedia("(max-width: 1023px)").matches) panel.scrollIntoView({ block: "nearest" });
+  }
+  document.getElementById("trythis-open").addEventListener("click", function () {
+    // Practice chrome: opening the panel closes any product dialog, so the panel is
+    // never hidden underneath one (it stays below the dialog layer).
+    state.dialog = null;
+    render();
+    setTryThisOpen(true);
+  });
+  function closeTryThis() {
+    // A1: one close path for the close button and for Escape.
+    setTryThisOpen(false);
+    document.getElementById("trythis-open").focus({ preventScroll: true });
+  }
+  document.getElementById("trythis-close").addEventListener("click", closeTryThis);
+  document.getElementById("trythis-reset").addEventListener("click", function () {
+    state.tryThisDone = {};
+    renderTryThis();
+    showToast("Steps reset in this mock.");
+  });
+  document.querySelectorAll("[data-action='noop']").forEach(function (el) {
+    el.addEventListener("click", function (event) { event.preventDefault(); });
+  });
+
+  resetStore();
+  setScenario("settings-list");
+})();
+    </script>
+  </body>
+</html>
