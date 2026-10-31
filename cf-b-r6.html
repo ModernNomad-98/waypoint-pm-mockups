@@ -712,6 +712,19 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
 .trythis-head h2 { font-size: 16.5px; font-weight: 650; letter-spacing: -0.01em; }
 .trythis-head p { margin-top: 4px; font-size: 12.5px; color: var(--muted-foreground); line-height: 1.5; }
 .trythis-steps { list-style: none; margin: 0; padding: 0; overflow-y: auto; max-height: 52vh; display: flex; flex-direction: column; gap: 12px; }
+/* UX NB-1 / A5: at the evidence viewport the capped list shows steps 1-4 of 7. The same
+   fading bottom edge and thin scrollbar used on .cf-list.is-scroll-list and .table-scroll
+   mark that more content exists below the fold; the fade is removed at the bottom of the
+   list so step 7 is never permanently dimmed. The class is applied only while the list
+   actually scrolls, so the 390 layout (no cap) is unchanged. */
+.trythis-steps.is-scroll-list {
+  scrollbar-width: thin; scrollbar-color: var(--muted-foreground) transparent;
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 22px), transparent);
+}
+.trythis-steps.is-scroll-list.is-at-bottom {
+  -webkit-mask-image: none; mask-image: none;
+}
 .trythis-step { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; background: var(--card); }
 .trythis-step .step-top { display: flex; gap: 8px; align-items: flex-start; }
 .trythis-step .step-num {
@@ -1298,7 +1311,10 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
 
   // A4 / DeepSeek 5723789145 #9: table-only view flags are parked while a task detail is
   // open and restored on close, so a refused/incomplete table cannot bleed into it.
-  const TABLE_VIEW_FLAGS = ["capabilityAbsent", "configRefused", "windowIncomplete", "filterEditor", "filterInvalid", "missingRef", "archivedRef", "sort"];
+  // F BLK-3 / A1: capabilityAbsent is NOT a table view flag. It is a server capability, so
+  // it follows the task into the detail (which then renders no custom-fields section at all)
+  // instead of being parked and letting the detail render fields the server cannot have.
+  const TABLE_VIEW_FLAGS = ["configRefused", "windowIncomplete", "filterEditor", "filterInvalid", "missingRef", "archivedRef", "sort"];
 
   // DeepSeek 5724294245 #6: a state whose fixture IS a dialog falls back to the state
   // underneath once the dialog closes, so the note never claims a dialog that is gone.
@@ -1308,6 +1324,14 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     "settings-archive-confirm": "settings-list",
     "settings-select-options": "settings-list",
     "settings-options-cap": "settings-list"
+  };
+
+  // F MAJ-1 / A3: the filter editor is not a dialog fixture, so it needs its own fallback.
+  // Once Apply closes the editor the rendered table is the applied-chips view, which is the
+  // state the note must describe (and whose fixture must own the store again).
+  const FILTER_EDITOR_SCENARIO_FALLBACK = {
+    "table-filter-editor": "table-filters",
+    "table-filter-invalid": "table-filters"
   };
 
   // ---------- application state ----------
@@ -1474,6 +1498,38 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     if (id === "table-sort-asc") state.flags.sort = { fieldId: "f_budget", direction: "asc" };
     if (id === "table-sort-desc") state.flags.sort = { fieldId: "f_budget", direction: "desc" };
     if (id === "table-incomplete") state.flags.sort = { fieldId: "f_budget", direction: "asc" };
+  }
+
+  // F BLK-3 / A1: detail-only state (a loading skeleton, a failed read, a stale value, an
+  // in-flight save, a refused number and its draft) belongs to ONE task session. It is
+  // cleared when a task is opened and when it is closed, so a fresh detail-manager can
+  // never render the previous task's skeletons, banners, errors or drafts.
+  function clearDetailState() {
+    if (!state.flags) return;
+    state.flags.readFailed = false;
+    state.flags.loading = false;
+    state.flags.staleValueField = null;
+    state.flags.saving = {};
+    state.flags.valueErrors = {};
+    draftValues = {};
+    pendingBlur = null;
+  }
+
+  // F BLK-3 / A1: enter a state together with its own store fixture. Used by the close
+  // paths that must leave a store-mutating fixture behind (detail-archived archives a
+  // field, re-links an option and rewrites t_hero.f_stage) or a dialog fixture whose store
+  // cannot be the state underneath (settings-options-cap installs 50 options).
+  function enterScenarioState(id, options) {
+    const keepRole = options && options.keepRole ? state.role : null;
+    state.scenarioId = id;
+    state.gen += 1;
+    draftValues = {};
+    pendingBlur = null;
+    resetStore();
+    applyScenarioFixtures(id);
+    if (keepRole) state.role = keepRole;
+    render();
+    focusFailedBanner();
   }
 
   function openOptionsDialog(fieldId) {
@@ -2037,10 +2093,12 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
           '<button type="button" class="link-btn" data-action="reload-value" data-field="' + esc(field.id) + '">Reload field</button></span>' +
         "</div>";
     }
-    if (state.flags.valueErrors && state.flags.valueErrors[field.id]) {
+    if (mode === "manager" && state.flags.valueErrors && state.flags.valueErrors[field.id]) {
       // DeepSeek 5724294245 #7 / F4: a refused number value explains itself inline and is
       // never written to the fake store. The typed text stays visible (F1 draft render)
       // and the message is associated with the input by aria-describedby (N2), politely.
+      // F BLK-4 / A2: only the manager surface renders this note. The reader renders no
+      // editable control, so it must not render the error of one it does not show.
       note =
         '<div class="cf-field-error" id="' + esc(surfaceKey + "-" + field.id + "-error") + '" role="status">' + icon("alert-triangle") +
           "<span>" + esc(state.flags.valueErrors[field.id]) + "</span>" +
@@ -2669,7 +2727,10 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     if (!el || el === document.body || !el.dataset) return null;
     if (el.id) return "id:" + el.id;
     if (el.dataset.action) {
-      return "act:" + [el.dataset.action, el.dataset.field || "", el.dataset.task || "", el.dataset.step || "", el.dataset.state || "", el.dataset.key || ""].join("|");
+      // F MAJ-2 / A4: every section disclosure shares data-action="toggle-section", so the
+      // section key must be part of the focus identity. Without it the restore matched the
+      // FIRST section head (Description) and keyboard focus jumped backwards from Checklist.
+      return "act:" + [el.dataset.action, el.dataset.field || "", el.dataset.task || "", el.dataset.step || "", el.dataset.state || "", el.dataset.key || "", el.dataset.section || ""].join("|");
     }
     return null;
   }
@@ -2685,6 +2746,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     if (parts[3]) sel += '[data-step="' + parts[3] + '"]';
     if (parts[4]) sel += '[data-state="' + parts[4] + '"]';
     if (parts[5]) sel += '[data-key="' + parts[5] + '"]';
+    if (parts[6]) sel += '[data-section="' + parts[6] + '"]';
     const el = document.querySelector(sel);
     if (el) return el;
     // The Save button is replaced by "Saving…" mid-save, so it is not tabbable at that
@@ -3131,7 +3193,13 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
         }
         state.flags.filterEditor = false;
         state.flags.filterInvalid = false;
-        render();
+        // F MAJ-1 / A3: the editor is gone the instant Apply runs. A state named after the
+        // editor cannot stay labelled, and its fixture (table-filter-invalid clears the
+        // saved custom filters) must not outlive it, so fall back to the applied-chips view
+        // with that state's own fixture.
+        var editorUnderneath = FILTER_EDITOR_SCENARIO_FALLBACK[state.scenarioId];
+        if (editorUnderneath) enterScenarioState(editorUnderneath, { keepRole: true });
+        else render();
         showToast("Demo only: the filter values are not applied in this mock.");
         return;
       case "clear-filters":
@@ -3209,6 +3277,10 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
             delete state.flags[key];
           }
         });
+        // F BLK-3 / A1: a task always opens with a clean detail state. No loading skeleton,
+        // failed-read banner, stale-value notice, in-flight save, refused value or draft can
+        // survive from the task (or fixture) that was open before this one.
+        clearDetailState();
         state.flags.selectedTaskId = actionEl.dataset.task;
         state.scenarioId = state.role === "reader" ? "detail-reader" : "detail-manager";
         render();
@@ -3232,15 +3304,28 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
       case "close-task":
         // A4: closing returns to the table state the task was opened from, with that
         // state's own view flags, so no stale banner survives the round trip.
-        state.scenarioId = state.flags.openedFrom || "table-sort-asc";
-        if (state.flags.tableFlags) {
-          Object.keys(state.flags.tableFlags).forEach(function (key) {
-            state.flags[key] = state.flags.tableFlags[key];
-          });
-        }
+        var openedFrom = state.flags.openedFrom;
+        var parkedTableFlags = state.flags.tableFlags;
         state.flags.openedFrom = null;
         state.flags.tableFlags = null;
-        render();
+        // F BLK-3 / A1: closing ends the task session; the detail-only state is cleared so
+        // it cannot leak into the next task that is opened.
+        clearDetailState();
+        if (openedFrom) {
+          state.scenarioId = openedFrom;
+          if (parkedTableFlags) {
+            Object.keys(parkedTableFlags).forEach(function (key) {
+              state.flags[key] = parkedTableFlags[key];
+            });
+          }
+          render();
+        } else {
+          // A member of the State menu is its own fixture. detail-archived mutates the
+          // shared store (archives Compliance review date, re-links Deployment stage and
+          // rewrites t_hero.f_stage), so closing it must restore the default table state
+          // AND that state's fixture; otherwise the archive leaks into the next task.
+          enterScenarioState("table-sort-asc", { keepRole: true });
+        }
         return;
       default:
         return;
@@ -3403,6 +3488,16 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     { id: "7", title: "Type an invalid number into a custom filter and confirm the inline message with no save.", state: "table-filter-invalid",
       body: "In the table, open Filters and type 1e5 into the number condition. The inline message appears and nothing is applied." }
   ];
+  // UX NB-1 / A5: the list is capped at 52vh at the evidence viewport, which hid steps 5-7
+  // behind an overlay scrollbar with no visible cue. The fade + thin scrollbar treatment
+  // matches the other two scrollers and is applied only while the list really scrolls.
+  function syncStepsAffordance() {
+    const ol = document.getElementById("trythis-steps");
+    if (!ol) return;
+    const scrollable = ol.scrollHeight - ol.clientHeight > 2;
+    ol.classList.toggle("is-scroll-list", scrollable);
+    ol.classList.toggle("is-at-bottom", scrollable && ol.scrollTop + ol.clientHeight >= ol.scrollHeight - 2);
+  }
   function renderTryThis() {
     const ol = document.getElementById("trythis-steps");
     if (!ol) return;
@@ -3422,6 +3517,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
         "</li>"
       );
     }).join("");
+    syncStepsAffordance();
   }
 
   // ---------- public control surface for evidence capture ----------
@@ -3478,6 +3574,12 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     flushPendingBlurCommit();
     flushActiveDraftInput();
     state.role = role === "reader" ? "reader" : "manager";
+    // F BLK-4 / A2: the reader surface has no editable controls, so a refused value and its
+    // draft must not survive into it (and must not reappear when the role returns).
+    if (state.role === "reader") {
+      state.flags.valueErrors = {};
+      draftValues = {};
+    }
     render();
   }
   window.__mock = {
@@ -3527,6 +3629,9 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     // The panel is a fixed right dock at >=1024px; below that it is in the flow, so
     // bring it into view when it opens.
     if (open && window.matchMedia("(max-width: 1023px)").matches) panel.scrollIntoView({ block: "nearest" });
+    // A5: the fade/thin-scrollbar affordance depends on the rendered box, so it is
+    // re-evaluated after the panel is shown or hidden.
+    syncStepsAffordance();
   }
   document.getElementById("trythis-open").addEventListener("click", function () {
     // F2: the open re-renders the stage; commit any just-blurred edit first.
@@ -3534,8 +3639,17 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     flushActiveDraftInput();
     // Practice chrome: opening the panel closes any product dialog, so the panel is
     // never hidden underneath one (it stays below the dialog layer).
-    state.dialog = null;
-    render();
+    // F MAJ-1 / A3: a state named after a dialog cannot stay labelled once the panel has
+    // removed that dialog. Fall back to the state actually rendered underneath it —
+    // through the same map closeDialog uses — and re-apply that state's fixture, so a
+    // fixture store (settings-options-cap's 50 options) cannot outlive its dialog either.
+    var dialogUnderneath = DIALOG_SCENARIO_FALLBACK[state.scenarioId];
+    if (dialogUnderneath) {
+      enterScenarioState(dialogUnderneath, { keepRole: true });
+    } else {
+      state.dialog = null;
+      render();
+    }
     setTryThisOpen(true);
   });
   function closeTryThis() {
@@ -3544,6 +3658,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     document.getElementById("trythis-open").focus({ preventScroll: true });
   }
   document.getElementById("trythis-close").addEventListener("click", closeTryThis);
+  document.getElementById("trythis-steps").addEventListener("scroll", syncStepsAffordance);
   document.getElementById("trythis-reset").addEventListener("click", function () {
     state.tryThisDone = {};
     renderTryThis();
