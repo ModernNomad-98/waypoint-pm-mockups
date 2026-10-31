@@ -1348,6 +1348,10 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     dialog: null,
     dialogFocusKey: null,
     dialogReturn: null,
+    // F-04 / ninth DeepSeek review 5724969390 #2: a dialog opened from inside another
+    // dialog (Rename option in the options dialog) keeps its parent here, so closing the
+    // child returns to the parent surface instead of tearing it down.
+    dialogStack: [],
     gen: 0,
     toastTimer: null,
     pendingSaveTimers: [],
@@ -1396,6 +1400,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
       savingValue: null
     };
     state.dialog = null;
+    state.dialogStack = [];
     const scenario = scenarioById(id);
     state.role = scenario.role || "manager";
 
@@ -1569,6 +1574,19 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
   function currentScenario() {
     return scenarioById(state.scenarioId);
   }
+  // F-07 / ninth DeepSeek review 5724969390 #1 (secondary): after "archive all" the surface
+  // stays settings-list — settings-empty is reserved for a project that never had a field —
+  // so its fixed note ("Active fields in position order …") would describe a list that is now
+  // empty. The practice note is derived from the rendered store instead.
+  function scenarioNoteFor(scenario) {
+    if (state.scenarioId === "settings-list" && state.store.fields && !sortedActiveFields().length) {
+      const archivedCount = archivedFields().length;
+      if (archivedCount) {
+        return "No active fields: all " + archivedCount + " custom fields are archived and read-only. Their saved values stay readable on tasks, and the archived group at the bottom lists them.";
+      }
+    }
+    return scenario.note;
+  }
 
   function renderChrome() {
     const scenario = currentScenario();
@@ -1606,7 +1624,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     document.getElementById("app-theme-toggle").innerHTML =
       icon(state.theme === "dark" ? "sun" : "moon");
     const note = document.getElementById("scenario-note");
-    note.textContent = scenario.note;
+    note.textContent = scenarioNoteFor(scenario);
     document.getElementById("mock-counter").textContent =
       "CF-B custom fields · mock r6 · state " + (scenarioIndex() + 1) + " of " + SCENARIOS.length;
     document.getElementById("footer-meta").textContent =
@@ -2761,12 +2779,18 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
   // ---------- A3: focus-preserving re-render ----------
   function focusKeyFor(el) {
     if (!el || el === document.body || !el.dataset) return null;
+    // F-05 / ninth DeepSeek review 5724969390 #3: the drawer and the docked pane render the
+    // same action attributes for the same field, so an action key must also name the surface
+    // frame it came from. Without it a restore inside the pane matched the FIRST (drawer)
+    // twin in document order and keyboard focus jumped out of the pane.
+    const frameEl = el.closest ? el.closest("[data-surface-frame]") : null;
+    const frame = frameEl ? frameEl.dataset.surfaceFrame : "";
     if (el.id) return "id:" + el.id;
     if (el.dataset.action) {
       // F MAJ-2 / A4: every section disclosure shares data-action="toggle-section", so the
       // section key must be part of the focus identity. Without it the restore matched the
       // FIRST section head (Description) and keyboard focus jumped backwards from Checklist.
-      return "act:" + [el.dataset.action, el.dataset.field || "", el.dataset.task || "", el.dataset.step || "", el.dataset.state || "", el.dataset.key || "", el.dataset.section || ""].join("|");
+      return "act:" + [el.dataset.action, el.dataset.field || "", el.dataset.task || "", el.dataset.step || "", el.dataset.state || "", el.dataset.key || "", el.dataset.section || "", frame].join("|");
     }
     return null;
   }
@@ -2776,6 +2800,13 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     if (key.indexOf("act:") !== 0) return null;
     const parts = key.slice(4).split("|");
     const action = parts[0];
+    // F-05 / ninth DeepSeek review 5724969390 #3: resolve the control inside the surface
+    // frame the key was built from, so a pane key can never restore the drawer's twin. A key
+    // with no frame (dialog, practice chrome, page chrome) resolves against the document as
+    // before.
+    const frame = parts[7] || "";
+    const root = frame ? document.querySelector('[data-surface-frame="' + frame + '"]') : document;
+    if (!root) return null;
     let sel = '[data-action="' + action + '"]';
     if (parts[1]) sel += '[data-field="' + parts[1] + '"]';
     if (parts[2]) sel += '[data-task="' + parts[2] + '"]';
@@ -2783,24 +2814,26 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     if (parts[4]) sel += '[data-state="' + parts[4] + '"]';
     if (parts[5]) sel += '[data-key="' + parts[5] + '"]';
     if (parts[6]) sel += '[data-section="' + parts[6] + '"]';
-    const el = document.querySelector(sel);
+    const el = root.querySelector(sel);
     if (el) return el;
     // The Save button is replaced by "Saving…" mid-save, so it is not tabbable at that
     // moment: continue to the next field in the same surface, as the DOM would.
     if (action === "save-field" && parts[1] && parts[2]) {
-      const self = document.querySelector('[data-cf-input][data-field="' + parts[1] + '"][data-task="' + parts[2] + '"]');
+      const self = root.querySelector('[data-cf-input][data-field="' + parts[1] + '"][data-task="' + parts[2] + '"]');
       if (self) {
-        const surface = String(self.id || "").split("-")[0];
-        const inputs = Array.prototype.slice.call(document.querySelectorAll("[data-cf-input]")).filter(function (node) {
+        const surface = frame || String(self.id || "").split("-")[0];
+        const inputs = Array.prototype.slice.call(root.querySelectorAll("[data-cf-input]")).filter(function (node) {
           return node.dataset.task === parts[2] && String(node.id || "").indexOf(surface + "-") === 0;
         });
         const next = inputs[inputs.indexOf(self) + 1];
         if (next) return next;
         // Last field in the surface: continue with the next focusable control after the
-        // block (e.g. the next section head) instead of trapping focus in the input.
+        // block (e.g. the next section head) instead of trapping focus in the input — and
+        // inside the same frame, so the pane's last field hands off to the pane's own
+        // Checklist head rather than the drawer's.
         const block = self.closest("[data-field-block]");
         if (block) {
-          const candidates = Array.prototype.slice.call(document.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+          const candidates = Array.prototype.slice.call(root.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'));
           for (let i = 0; i < candidates.length; i += 1) {
             // DOCUMENT_POSITION_FOLLOWING only: a descendant (the field's own input or its
             // Save button) is CONTAINED_BY|FOLLOWING and must not win here.
@@ -2967,12 +3000,22 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
   function openDialog(dialog) {
     const opener = document.activeElement;
     const openerAction = opener && opener.closest ? opener.closest("[data-action]") : null;
-    state.dialogReturn = openerAction ? { action: openerAction.dataset.action, field: openerAction.dataset.field || null } : null;
+    const openerReturn = openerAction
+      ? { action: openerAction.dataset.action, field: openerAction.dataset.field || null, option: openerAction.dataset.option || null }
+      : null;
+    // F-04 / ninth DeepSeek review 5724969390 #2: a dialog opened from inside another dialog
+    // pushes its parent instead of replacing it, so Rename option -> Save/Cancel returns to
+    // the "Options for <field>" dialog the user was editing in.
+    if (state.dialog) {
+      state.dialogStack.push({ dialog: state.dialog, returnInfo: state.dialogReturn, focusKey: state.dialogFocusKey });
+    }
+    state.dialogReturn = openerReturn;
     state.dialog = dialog;
     render();
   }
   function closeDialog() {
     const ret = state.dialogReturn;
+    const parent = state.dialogStack.length ? state.dialogStack.pop() : null;
     // DeepSeek 5724294245 #6: a dialog-fixture state must not keep claiming a dialog
     // after it closes; fall back to the state underneath it.
     const underneath = DIALOG_SCENARIO_FALLBACK[state.scenarioId];
@@ -2981,18 +3024,30 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     // A normal close must re-apply the state underneath, not just re-label it. Add /
     // rename / archive are user-edit flows: they keep their edits and only re-label.
     const restoresFixture = state.scenarioId === "settings-options-cap";
-    state.dialog = null;
-    state.dialogFocusKey = null;
-    state.dialogReturn = null;
-    if (restoresFixture && underneath) {
-      enterScenarioState(underneath, { keepRole: true });
-    } else {
-      if (underneath) state.scenarioId = underneath;
+    if (parent) {
+      // F-04: restore the parent dialog over the store exactly as the user left it. The
+      // options-cap fixture is NOT re-applied here — the parent dialog keeps its 50 options
+      // — and only closing the parent takes the normal close path.
+      state.dialog = parent.dialog;
+      state.dialogFocusKey = parent.focusKey;
+      state.dialogReturn = parent.returnInfo;
       render();
+    } else {
+      state.dialog = null;
+      state.dialogFocusKey = null;
+      state.dialogReturn = null;
+      if (restoresFixture && underneath) {
+        enterScenarioState(underneath, { keepRole: true });
+      } else {
+        if (underneath) state.scenarioId = underneath;
+        render();
+      }
     }
     // R4 P7(NB-7): return focus to the control that opened the dialog when it still exists.
+    // F-04: the option's own row action is in the restored parent dialog, so data-option is
+    // part of the selector and the nested edit returns to the row it came from.
     if (ret && ret.action) {
-      const selector = '[data-action="' + ret.action + '"]' + (ret.field ? '[data-field="' + ret.field + '"]' : "");
+      const selector = '[data-action="' + ret.action + '"]' + (ret.field ? '[data-field="' + ret.field + '"]' : "") + (ret.option ? '[data-option="' + ret.option + '"]' : "");
       const el = document.querySelector(selector);
       if (el) el.focus({ preventScroll: true });
     }
@@ -3323,8 +3378,9 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
         var targetField = findField(state.dialog.fieldId);
         var targetOption = targetField.options.find(function (o) { return o.id === state.dialog.optionId; });
         if (targetOption) targetOption.label = optionNewName;
+        // closeDialog() restores the parent options dialog and re-renders; a second render
+        // here would move focus off the row's Rename button (F-04).
         closeDialog();
-        render();
         showToast("Option renamed in this mock. Nothing was saved.");
         return;
       case "open-task":
@@ -3662,6 +3718,9 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
         state.dialog = null;
         state.dialogFocusKey = null;
         state.dialogReturn = null;
+        // The whole nested chain goes with the dialog: a Reader can never be left with a
+        // stacked parent to return to.
+        state.dialogStack = [];
         if (underneath && underneath !== state.scenarioId) {
           enterScenarioState(underneath, { keepRole: true });
         }
@@ -3731,6 +3790,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     // through the same map closeDialog uses — and re-apply that state's fixture, so a
     // fixture store (settings-options-cap's 50 options) cannot outlive its dialog either.
     var dialogUnderneath = DIALOG_SCENARIO_FALLBACK[state.scenarioId];
+    state.dialogStack = [];
     if (dialogUnderneath) {
       enterScenarioState(dialogUnderneath, { keepRole: true });
     } else {
