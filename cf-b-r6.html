@@ -216,13 +216,13 @@ svg { display: block; }
 }
 
 /* ---------- Practice chrome (not part of the product) ---------- */
-/* R3-4: the practice strip paints above the product dialog backdrop (z-index 60),
-     so the State/Role/Reset/theme/Try-this controls stay pointer-reachable while a
-     product dialog is open. The dialog and its backdrop remain the modal layer. */
+/* UX B-1: the practice strip never paints over the product dialog backdrop. While a
+     dialog is open it is lifted only to z-index 50 — above the Try-this dock (45) and
+     BELOW the dialog backdrop (60) — so the dialog and its backdrop own the modal layer
+     and no dialog title, label or first option can be covered. The strip stays visible
+     (dimmed by the backdrop) and is pointer-reachable again when the dialog closes. */
 .mock-strip { position: relative; z-index: 40; background: var(--card); border-bottom: 1px solid var(--border); }
-/* R3-4: only while a product dialog is open does the practice strip rise above the
-   dialog backdrop (z-index 60). With no dialog it stays below the Try-this panel. */
-body[data-dialog="open"] .mock-strip { z-index: 70; }
+body[data-dialog="open"] .mock-strip { z-index: 50; }
 .mock-strip-inner {
   max-width: 1400px; margin: 0 auto; padding: 10px 24px;
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
@@ -258,12 +258,6 @@ body[data-dialog="open"] .mock-strip { z-index: 70; }
   font-size: 12.5px; line-height: 1.5; color: var(--foreground);
   display: flex; gap: 8px; align-items: baseline;
 }
-.mock-scenario .mock-link {
-  appearance: none; border: 0; background: none; padding: 0; cursor: pointer;
-  display: inline-flex; align-items: center; min-height: 24px;
-  color: var(--primary); font: inherit; font-weight: 600; white-space: nowrap;
-}
-.mock-scenario .mock-link:hover { text-decoration: underline; }
 
 /* ---------- Stage ---------- */
 .stage { display: block; }
@@ -888,7 +882,6 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
   .skip-link { display: inline-flex; align-items: center; }
   .mock-select { height: 44px; }
   .mock-btn { height: 44px; min-width: 44px; padding: 0 12px; }
-  .mock-scenario .mock-link { min-height: 44px; min-width: 44px; justify-content: center; }
   .table-summary { padding-top: 2px; padding-bottom: 2px; }
   .cf-actions { gap: 6px; padding-left: 18px; }
   .cf-field-error .link-btn { min-height: 44px; }
@@ -938,7 +931,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
           Website Relaunch
           <span class="badge badge-status-progress">In progress</span>
         </h1>
-        <p class="project-meta">Northwind Studio · Due 2026-11-21 · 14 tasks · 7 custom fields</p>
+        <p class="project-meta">Northwind Studio · Due 2026-11-21 · 6 tasks · 6 custom fields</p>
       </div>
       <a class="back-link" href="#" data-action="noop">← All projects</a>
     </div>
@@ -969,15 +962,15 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
       <p class="mock-disclosure" id="mock-disclosure">
         New — not in WayPoint today: custom-field settings, the task custom-fields section, custom columns and
         filters, and the saved-view repair controls. Practice mock: not the live app, no data is saved, no network.
-        The mock controls stay reachable while a product dialog is open; Try this docks in a reserved right-hand
-        column at 1024px and wider and moves into the page flow below this strip on narrower widths (never over a
-        product control), and always below the dialog layer. On narrow widths the task table scrolls sideways with
-        the Task column pinned at 160px and a right-edge fade.
+        The mock controls stay visible but move behind the dialog backdrop while a product dialog is open, so a
+        dialog title, label or first option is never covered; close the dialog to change state, role or theme.
+        Try this docks in a reserved right-hand column at 1024px and wider and moves into the page flow below this
+        strip on narrower widths (never over a product control), and always below the dialog layer. On narrow
+        widths the task table scrolls sideways with the Task column pinned at 160px and a right-edge fade.
       </p>
       <p class="mock-scenario" id="mock-scenario">
         <span><span class="mock-chip" style="padding:1px 7px">State notes</span></span>
         <span id="scenario-note" role="status"></span>
-        <button type="button" class="mock-link" id="scenario-more" hidden>Details</button>
       </p>
     </div>
 
@@ -1326,6 +1319,17 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     "settings-options-cap": "settings-list"
   };
 
+  // F-B2 / DeepSeek 5724825211 #2: every action that mutates custom fields (or opens the
+  // manager-only dialog) is gated on the manager role at the delegated handler, so a
+  // stale control or a programmatic role switch can never create/rename/archive a field
+  // as a Reader. The Reader surface renders none of these controls to begin with.
+  const MANAGER_ONLY_ACTIONS = [
+    "open-add-field", "rename-field", "archive-field", "manage-options",
+    "create-field", "save-field-name", "confirm-archive-field",
+    "add-option", "archive-option", "save-option-name", "move-option-up", "move-option-down",
+    "choose-type"
+  ];
+
   // F MAJ-1 / A3: the filter editor is not a dialog fixture, so it needs its own fallback.
   // Once Apply closes the editor the rendered table is the applied-chips view, which is the
   // state the note must describe (and whose fixture must own the store again).
@@ -1346,6 +1350,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     dialogReturn: null,
     gen: 0,
     toastTimer: null,
+    pendingSaveTimers: [],
     tryThisDone: {}
   };
 
@@ -1500,12 +1505,22 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     if (id === "table-incomplete") state.flags.sort = { fieldId: "f_budget", direction: "asc" };
   }
 
+  // F-B4 / QA F-06: a pending 650 ms save belongs to the generation it started in. Every
+  // task-session and state boundary bumps the generation and cancels the outstanding
+  // handles, so no callback can toast in a later session (or clear its spinner).
+  function invalidatePendingSaves() {
+    state.gen += 1;
+    (state.pendingSaveTimers || []).forEach(function (handle) { clearTimeout(handle); });
+    state.pendingSaveTimers = [];
+  }
+
   // F BLK-3 / A1: detail-only state (a loading skeleton, a failed read, a stale value, an
   // in-flight save, a refused number and its draft) belongs to ONE task session. It is
   // cleared when a task is opened and when it is closed, so a fresh detail-manager can
   // never render the previous task's skeletons, banners, errors or drafts.
   function clearDetailState() {
     if (!state.flags) return;
+    invalidatePendingSaves();
     state.flags.readFailed = false;
     state.flags.loading = false;
     state.flags.staleValueField = null;
@@ -1522,8 +1537,9 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
   function enterScenarioState(id, options) {
     const keepRole = options && options.keepRole ? state.role : null;
     state.scenarioId = id;
-    state.gen += 1;
+    invalidatePendingSaves();
     draftValues = {};
+    filterDrafts = {};
     pendingBlur = null;
     resetStore();
     applyScenarioFixtures(id);
@@ -1607,10 +1623,15 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     const meta = document.querySelector(".project-meta");
     if (meta) {
       const count = activeFields().length;
+      const archivedCount = archivedFields().length;
       // R4 P7(NB-9): a server without custom fields must not advertise a custom-field count.
+      // F-B5 / QA F-07: an all-archived project must not read "0 custom fields" with the
+      // archived fields invisible; the archived count is stated beside the active count.
       meta.textContent =
         "Northwind Studio · Due 2026-11-21 · " + state.store.tasks.length + " tasks" +
-        (state.flags.capabilityAbsent ? "" : " · " + count + " custom fields");
+        (state.flags.capabilityAbsent
+          ? ""
+          : " · " + count + " custom fields" + (archivedCount ? " · " + archivedCount + " archived" : ""));
     }
     document.body.dataset.scenario = state.scenarioId;
     document.body.dataset.role = state.role;
@@ -1743,14 +1764,23 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
           '<div class="alert-body">Custom fields aren&#39;t available on this server version.</div>' +
         "</div>";
     } else if (!active.length) {
+      // F-B5 / QA F-07 / DeepSeek 5724825211 #5: "archive all" must not assert "No custom
+      // fields yet" while archived fields exist. The all-archived variant states the truth
+      // and still renders the archived group, so their labels and types are reachable.
+      const archivedCount = archivedFields().length;
       inner =
         '<div class="settings-empty">' +
           '<span class="empty-icon">' + icon("sliders") + "</span>" +
-          "<p>No custom fields yet. Add a field to capture information this project needs beyond the built-in task fields.</p>" +
+          (archivedCount
+            ? "<p>" + (archivedCount === 1
+                ? "No active custom fields. The remaining custom field is archived; its saved value stays readable on tasks and it is listed below."
+                : "No active custom fields. All " + archivedCount + " custom fields are archived; their saved values stay readable on tasks and they are listed below.") + "</p>"
+            : "<p>No custom fields yet. Add a field to capture information this project needs beyond the built-in task fields.</p>") +
           (isReader
             ? ""
             : '<button type="button" class="btn btn-primary" data-action="open-add-field">' + icon("plus") + "Add field</button>") +
-        "</div>";
+        "</div>" +
+        (archivedCount ? renderArchivedGroup() : "");
     } else {
       inner =
         '<div class="cf-list' + (atCap ? ' is-scroll-list" style="max-height:330px;overflow:auto;padding-right:4px' : "") + '" role="list">' +
@@ -2441,7 +2471,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
           '<div class="filter-fields">' +
             selectWrap("Field", fieldOptions, fieldValue) +
             selectWrap("Operator", opOptions, opValue) +
-            '<input class="input" data-filter-operand aria-label="Value" value="' + esc(operand) + '"' + (error ? ' aria-invalid="true" aria-describedby="' + "filter-error-" + label.replace(/\s+/g, "-") + '"' : "") + " />" +
+            '<input class="input" data-filter-operand aria-label="Value" value="' + esc(filterDrafts[label] != null ? filterDrafts[label] : operand) + '"' + (error ? ' aria-invalid="true" aria-describedby="' + "filter-error-" + label.replace(/\s+/g, "-") + '"' : "") + " />" +
           "</div>" +
           (helper ? '<p class="field-help">' + esc(helper) + "</p>" : "") +
           (error ? '<p class="filter-error" role="alert" id="filter-error-' + esc(label.replace(/\s+/g, "-")) + '">' + icon("alert-triangle") + esc(error) + "</p>" : "") +
@@ -2465,11 +2495,14 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
         { key: "Filter 2", html: row("Filter 2", fieldOptions, "Deployment stage", ["is"], "is", "Staging", "", "", "select") },
         { key: "Filter 3", html: row("Filter 3", fieldOptions, "Estimate confidence", ["equals", "is between"], "equals", "7.5", "", "", "number") }
       );
-      const extraRows = state.flags.extraFilterRows || 0;
-      for (let index = 0; index < extraRows; index += 1) {
-        const label = "Filter " + (4 + index);
-        specs.push({ key: label, html: row(label, fieldOptions, "Vendor ticket", ["contains", "is exactly", "is set", "is not set"], "is set", "", "", "", "text") });
-      }
+    }
+    // F-B6 / QA F-03 / DeepSeek 5724825211 #7: the extra-row loop runs for BOTH branches,
+    // so "+ Add filter" is never an enabled no-op in table-filter-invalid. Apply still
+    // refuses while any row is invalid.
+    const extraRows = state.flags.extraFilterRows || 0;
+    for (let index = 0; index < extraRows; index += 1) {
+      const label = "Filter " + (4 + index);
+      specs.push({ key: label, html: row(label, fieldOptions, "Vendor ticket", ["contains", "is exactly", "is set", "is not set"], "is set", "", "", "", "text") });
     }
     const body = specs
       .filter(function (spec) { return removedRows.indexOf(spec.key) === -1; })
@@ -2713,6 +2746,9 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
   // ---------- inert fake store: interactions ----------
   // F1: in-flight input text keyed by the input's unique DOM id; read by the renderer.
   let draftValues = {};
+  // F-B3 / DeepSeek 5724825211 #2: in-flight filter-editor values keyed by row label, so a
+  // theme/role re-render cannot reset a typed operand to the fixture value.
+  let filterDrafts = {};
   // F2: the one deferred blur commit (setTimeout 0) that may be flushed early.
   let pendingBlur = null;
   function showToast(message) {
@@ -2809,12 +2845,15 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     // R4 P1(#3): a save that lands after a state change must not touch the new
     // scenario's flags or toast. The generation token makes the callback inert.
     const gen = state.gen;
-    setTimeout(function () {
+    const handle = setTimeout(function () {
+      state.pendingSaveTimers = (state.pendingSaveTimers || []).filter(function (h) { return h !== handle; });
       if (gen !== state.gen) return;
       delete state.flags.saving[fieldId];
       renderPreservingFocus(null);
       showToast("Saved in this mock. Nothing leaves this page.");
     }, 650);
+    state.pendingSaveTimers = state.pendingSaveTimers || [];
+    state.pendingSaveTimers.push(handle);
   }
   function writeValue(taskId, fieldId, raw) {
     const field = findField(fieldId);
@@ -2937,11 +2976,20 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     // DeepSeek 5724294245 #6: a dialog-fixture state must not keep claiming a dialog
     // after it closes; fall back to the state underneath it.
     const underneath = DIALOG_SCENARIO_FALLBACK[state.scenarioId];
+    // F-B1 / QA F-04 / DeepSeek 5724825211 #4: settings-options-cap is a fixture-only
+    // dialog whose fixture mutates the store (f_launch removed, 50 options installed).
+    // A normal close must re-apply the state underneath, not just re-label it. Add /
+    // rename / archive are user-edit flows: they keep their edits and only re-label.
+    const restoresFixture = state.scenarioId === "settings-options-cap";
     state.dialog = null;
     state.dialogFocusKey = null;
     state.dialogReturn = null;
-    if (underneath) state.scenarioId = underneath;
-    render();
+    if (restoresFixture && underneath) {
+      enterScenarioState(underneath, { keepRole: true });
+    } else {
+      if (underneath) state.scenarioId = underneath;
+      render();
+    }
     // R4 P7(NB-7): return focus to the control that opened the dialog when it still exists.
     if (ret && ret.action) {
       const selector = '[data-action="' + ret.action + '"]' + (ret.field ? '[data-field="' + ret.field + '"]' : "");
@@ -2953,6 +3001,9 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     return state.dialog && state.dialog.type ? state.dialog.type : "text";
   }
   function createFieldFromDialog() {
+    // F-B2 / QA F-05: dialog actions are manager-only. The store can never grow through an
+    // already-open dialog while the practice role is Reader.
+    if (state.role !== "manager") return;
     const label = readDialogLabel("#add-label");
     const input = document.querySelector("#add-label");
     if (!label) {
@@ -2996,6 +3047,12 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     const action = actionEl.dataset.action;
     const fieldId = actionEl.dataset.field;
     const optionId = actionEl.dataset.option;
+    // F-B2 / DeepSeek 5724825211 #2: manager-only actions are gated at the one delegated
+    // handler, so no dialog or stale control can mutate the store as a Reader.
+    if (state.role !== "manager" && MANAGER_ONLY_ACTIONS.indexOf(action) !== -1) {
+      showToast("Only project owners and managers can change custom fields.");
+      return;
+    }
     switch (action) {
       case "noop":
         event.preventDefault();
@@ -3041,7 +3098,10 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
         // R4 P5: the cap is derived, so archiving re-labels the state to match the store.
         // The at-cap note/dropdown can never claim a maximum the store no longer has.
         if (state.scenarioId === "settings-archive-confirm" || state.scenarioId === "settings-list" || state.scenarioId === "settings-at-cap") {
-          state.scenarioId = sortedActiveFields().length ? "settings-list" : "settings-empty";
+          // F-B5 / QA F-07: after "archive all" the settings list stays the rendered surface
+          // and its empty branch lists the archived group; settings-empty means a genuinely
+          // empty project, so the label is never borrowed for an all-archived store.
+          state.scenarioId = "settings-list";
         }
         closeDialog();
         render();
@@ -3173,6 +3233,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
         if (state.scenarioId === "table-filter-editor") state.scenarioId = "table-filters";
         state.flags.filterInvalid = false;
         state.flags.removedFilterRows = [];
+        filterDrafts = {};
         render();
         return;
       case "remove-editor-row":
@@ -3193,6 +3254,7 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
         }
         state.flags.filterEditor = false;
         state.flags.filterInvalid = false;
+        filterDrafts = {};
         // F MAJ-1 / A3: the editor is gone the instant Apply runs. A state named after the
         // editor cannot stay labelled, and its fixture (table-filter-invalid clears the
         // saved custom filters) must not outlive it, so fall back to the applied-chips view
@@ -3340,8 +3402,18 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
       if (target.id) draftValues[target.id] = target.value;
       return;
     }
+    if (target.matches("[data-dialog-input]")) {
+      // F-B3 / DeepSeek 5724825211 #2: the dialog label lives in the dialog state, so a
+      // theme/role re-render restores exactly what the user typed instead of "".
+      if (state.dialog) state.dialog.label = target.value;
+      return;
+    }
     if (target.matches("[data-filter-operand]")) {
       const row = target.closest("[data-filter-row]");
+      if (row) {
+        const labelEl = row.querySelector(".filter-index");
+        if (labelEl) filterDrafts[labelEl.textContent.trim()] = target.value;
+      }
       validateFilterRow(row, target);
     }
   });
@@ -3533,9 +3605,11 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     // B1: every transition starts from a deep-cloned base store. Nothing from
     // the previous state (fields, tasks, values or view) can leak into this one.
     state.scenarioId = id;
-    state.gen += 1;
-    // F1/F2: a state change resets the store, so no draft or pending commit may cross it.
+    invalidatePendingSaves();
+    // F1/F2: a state change resets the store, so no draft, filter draft or pending commit
+    // may cross it.
     draftValues = {};
+    filterDrafts = {};
     pendingBlur = null;
     clearTimeout(state.toastTimer);
     const toast = document.getElementById("toast");
@@ -3579,6 +3653,19 @@ th.is-disabled .th-sort { cursor: not-allowed; color: var(--muted-foreground); o
     if (state.role === "reader") {
       state.flags.valueErrors = {};
       draftValues = {};
+      filterDrafts = {};
+      // F-B2/F-B3 / DeepSeek 5724825211 #2: a Reader cannot use a manager-only dialog, so a
+      // role change closes it and re-applies the state underneath (a dialog-fixture label is
+      // never left behind). The typed label is discarded with the dialog.
+      if (state.dialog) {
+        const underneath = DIALOG_SCENARIO_FALLBACK[state.scenarioId];
+        state.dialog = null;
+        state.dialogFocusKey = null;
+        state.dialogReturn = null;
+        if (underneath && underneath !== state.scenarioId) {
+          enterScenarioState(underneath, { keepRole: true });
+        }
+      }
     }
     render();
   }
