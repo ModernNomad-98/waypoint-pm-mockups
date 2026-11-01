@@ -1,0 +1,2500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WayPoint — Workflows &amp; project templates UX mockup · Direction B</title>
+<meta name="description" content="Static interactive mockup of Direction B (in-place save-as-template) for WayPoint project workflows and project templates. Synthetic data only.">
+<style>
+/* ============ Tokens ============ */
+:root{
+  --radius:0.75rem; --radius-sm:0.5rem;
+  --background:oklch(0.985 0.003 250);
+  --foreground:oklch(0.21 0.03 264);
+  --card:oklch(1 0 0);
+  --card-foreground:oklch(0.21 0.03 264);
+  --popover:oklch(1 0 0);
+  --popover-foreground:oklch(0.21 0.03 264);
+  --primary:#4f46e5;
+  --primary-hover:#4338ca;
+  --primary-soft:oklch(0.95 0.02 277);
+  --primary-foreground:oklch(0.985 0.003 250);
+  --secondary:oklch(0.965 0.008 250);
+  --secondary-foreground:oklch(0.25 0.03 264);
+  --muted:oklch(0.965 0.008 250);
+  --muted-foreground:oklch(0.52 0.03 257);
+  --accent:oklch(0.95 0.02 277);
+  --accent-foreground:oklch(0.3 0.07 277);
+  --destructive:#dc2626;
+  --destructive-foreground:#fff;
+  --border:oklch(0.92 0.008 255);
+  --input:oklch(0.92 0.008 255);
+  --ring:oklch(0.55 0.19 277);
+  --sidebar:oklch(0.985 0.005 255);
+  --sidebar-foreground:oklch(0.3 0.03 264);
+  --sidebar-accent:oklch(0.95 0.015 277);
+  --sidebar-border:oklch(0.92 0.008 255);
+  --skeleton:oklch(0.55 0.19 277 / 0.12);
+  --shadow-soft:0 1px 2px 0 oklch(0.21 0.03 264 / 0.05);
+  --shadow-card:0 1px 3px 0 oklch(0.21 0.03 264 / 0.07), 0 1px 2px -1px oklch(0.21 0.03 264 / 0.05);
+  --shadow-pop:0 18px 40px -16px oklch(0.21 0.03 264 / 0.30), 0 4px 12px -6px oklch(0.21 0.03 264 / 0.18);
+  /* status chips */
+  --st-progress-bg:oklch(0.94 0.04 250); --st-progress-fg:oklch(0.4 0.15 250);
+  --st-planning-bg:oklch(0.95 0.04 90);  --st-planning-fg:oklch(0.45 0.13 75);
+  --st-hold-bg:oklch(0.95 0.02 30);      --st-hold-fg:oklch(0.45 0.12 30);
+  --st-done-bg:oklch(0.94 0.05 160);     --st-done-fg:oklch(0.4 0.13 160);
+  --st-blocked-bg:oklch(0.94 0.05 25);   --st-blocked-fg:oklch(0.45 0.18 25);
+  --st-review-bg:oklch(0.94 0.04 300);   --st-review-fg:oklch(0.42 0.15 300);
+  --st-neutral-bg:oklch(0.96 0.004 257); --st-neutral-fg:oklch(0.45 0.03 257);
+  --warn-bg:oklch(0.97 0.02 80); --warn-fg:oklch(0.45 0.11 60); --warn-border:oklch(0.9 0.06 80);
+  --danger-bg:oklch(0.97 0.02 25); --danger-fg:oklch(0.5 0.15 25); --danger-border:oklch(0.9 0.05 25);
+  --info-bg:oklch(0.97 0.015 277); --info-fg:oklch(0.4 0.1 277); --info-border:oklch(0.9 0.04 277);
+  --font-sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+}
+[data-theme="dark"]{
+  --background:oklch(0.129 0.042 264.7);
+  --foreground:oklch(0.984 0.003 247.9);
+  --card:oklch(0.208 0.042 265.8);
+  --card-foreground:oklch(0.984 0.003 247.9);
+  --popover:oklch(0.208 0.042 265.8);
+  --popover-foreground:oklch(0.984 0.003 247.9);
+  --primary:oklch(0.7 0.18 277);
+  --primary-hover:oklch(0.75 0.18 277);
+  --primary-soft:oklch(0.3 0.09 277);
+  --primary-foreground:oklch(0.15 0.04 264);
+  --secondary:oklch(0.279 0.041 260);
+  --secondary-foreground:oklch(0.984 0.003 247.9);
+  --muted:oklch(0.279 0.041 260);
+  --muted-foreground:oklch(0.704 0.04 256.8);
+  --accent:oklch(0.279 0.041 260);
+  --accent-foreground:oklch(0.984 0.003 247.9);
+  --destructive:oklch(0.704 0.191 22.2);
+  --destructive-foreground:oklch(0.984 0.003 247.9);
+  --border:oklch(1 0 0 / 0.11);
+  --input:oklch(1 0 0 / 0.16);
+  --sidebar:oklch(0.179 0.042 265);
+  --sidebar-foreground:oklch(0.984 0.003 247.9);
+  --sidebar-accent:oklch(0.279 0.041 260);
+  --sidebar-border:oklch(1 0 0 / 0.11);
+  --skeleton:oklch(0.7 0.18 277 / 0.18);
+  --st-progress-bg:oklch(0.3 0.08 250); --st-progress-fg:oklch(0.85 0.1 250);
+  --st-planning-bg:oklch(0.3 0.07 75);  --st-planning-fg:oklch(0.85 0.1 75);
+  --st-hold-bg:oklch(0.3 0.06 30);      --st-hold-fg:oklch(0.85 0.1 30);
+  --st-done-bg:oklch(0.3 0.08 160);     --st-done-fg:oklch(0.85 0.1 160);
+  --st-blocked-bg:oklch(0.3 0.09 25);   --st-blocked-fg:oklch(0.85 0.12 25);
+  --st-review-bg:oklch(0.3 0.08 300);   --st-review-fg:oklch(0.85 0.1 300);
+  --st-neutral-bg:oklch(0.3 0.02 264);  --st-neutral-fg:oklch(0.8 0.03 264);
+  --warn-bg:oklch(0.25 0.05 80); --warn-fg:oklch(0.85 0.12 80); --warn-border:oklch(0.5 0.1 80 / 0.4);
+  --danger-bg:oklch(0.25 0.06 25); --danger-fg:oklch(0.85 0.14 25); --danger-border:oklch(0.55 0.14 25 / 0.4);
+  --info-bg:oklch(0.24 0.05 277); --info-fg:oklch(0.85 0.08 277); --info-border:oklch(0.5 0.12 277 / 0.4);
+  --shadow-soft:0 1px 2px 0 oklch(0 0 0 / 0.3);
+  --shadow-card:0 1px 3px 0 oklch(0 0 0 / 0.4);
+  --shadow-pop:0 18px 40px -16px oklch(0 0 0 / 0.6);
+}
+/* ============ Base ============ */
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%}
+body{margin:0;font-family:var(--font-sans);font-size:14px;line-height:1.5;color:var(--foreground);background:var(--background);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,p,ul,ol,dl,dd,figure{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+img,svg{display:inline-block;vertical-align:middle}
+:focus-visible{outline:2px solid var(--ring);outline-offset:2px;border-radius:4px}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip-link{position:absolute;left:12px;top:-44px;z-index:200;background:var(--primary);color:var(--primary-foreground);padding:8px 14px;border-radius:8px;font-weight:500;transition:top .15s}
+.skip-link:focus{top:12px}
+.ic{width:16px;height:16px;flex:none}
+.ic-sm{width:14px;height:14px}
+.ic-lg{width:20px;height:20px}
+.muted{color:var(--muted-foreground)}
+.text-xs{font-size:12px}
+.text-sm{font-size:13px}
+.flex{display:flex}
+.gap-2{gap:8px}
+.gap-3{gap:12px}
+.items-center{align-items:center}
+.fw-500{font-weight:500}
+.fw-600{font-weight:600}
+.mt-2{margin-top:8px}
+.mt-3{margin-top:12px}
+.mt-4{margin-top:16px}
+.mb-2{margin-bottom:8px}
+.mb-3{margin-bottom:12px}
+.mb-4{margin-bottom:16px}
+.nowrap{white-space:nowrap}
+/* ============ App layout ============ */
+.app{display:flex;min-height:100dvh}
+.sidebar{width:232px;flex:none;background:var(--sidebar);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;position:sticky;top:0;height:100dvh;z-index:40}
+.side-head{padding:14px 14px 8px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--sidebar-foreground);text-decoration:none}
+.brand:hover{text-decoration:none}
+.brand-mark{width:28px;height:28px;border-radius:8px}
+.brand-mark .fill-primary{fill:var(--primary)}
+.brand-mark .fill-primary-foreground{fill:var(--primary-foreground)}
+.brand-name{display:flex;flex-direction:column;line-height:1.15;font-size:14px;font-weight:600}
+.brand-name small{font-size:9.5px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--muted-foreground)}
+.side-nav{flex:1;overflow-y:auto;padding:6px 8px;display:flex;flex-direction:column;gap:2px}
+.side-item{display:flex;align-items:center;gap:12px;padding:7px 10px;border-radius:8px;color:var(--sidebar-foreground);font-size:13.5px;width:100%;text-align:left}
+.side-item:hover{background:var(--sidebar-accent)}
+.side-item.active{background:var(--accent);color:var(--accent-foreground);font-weight:500}
+.side-item .ic{color:var(--muted-foreground)}
+.side-item.active .ic{color:var(--accent-foreground)}
+.side-foot{border-top:1px solid var(--sidebar-border);padding:10px;display:flex;flex-direction:column;gap:10px}
+.tenant-block{display:flex;align-items:center;gap:8px;padding:7px 8px;border:1px solid var(--sidebar-border);border-radius:8px;background:var(--sidebar-accent)}
+.tenant-logo{width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:7px;background:var(--card);border:1px solid var(--sidebar-border);font-size:11px;font-weight:600;color:var(--sidebar-foreground)}
+.tenant-meta{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.tenant-meta b{font-size:12px;font-weight:600;color:var(--sidebar-foreground)}
+.tenant-meta i{font-size:10.5px;font-style:normal;color:var(--muted-foreground);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.user-block{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-size:11.5px;font-weight:600;flex:none}
+.user-meta{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.user-meta b{font-size:13px;font-weight:500;color:var(--sidebar-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-meta i{font-size:11px;font-style:normal;color:var(--muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side-backdrop{position:fixed;inset:0;background:oklch(0 0 0 / 0.35);z-index:35}
+/* collapsed (desktop) */
+body.sb-collapsed .sidebar{width:60px}
+body.sb-collapsed .brand-name,body.sb-collapsed .tenant-meta,body.sb-collapsed .user-meta,body.sb-collapsed .side-item span{display:none}
+body.sb-collapsed .side-item{justify-content:center;padding:9px 0}
+body.sb-collapsed .side-head{padding:14px 16px 8px}
+body.sb-collapsed .tenant-block{justify-content:center;border:0;background:none;padding:4px 0}
+/* ============ Top nav ============ */
+.main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.topnav{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;height:56px;padding:0 16px;background:var(--card);border-bottom:1px solid var(--border)}
+.btn-icon{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:8px;color:var(--muted-foreground)}
+.btn-icon:hover{background:var(--muted);color:var(--foreground)}
+.search-wrap{flex:1;min-width:0;max-width:420px;display:flex;align-items:center;gap:8px;height:36px;padding:0 10px;border:1px solid var(--input);border-radius:8px;background:var(--background);color:var(--muted-foreground)}
+.search-input{border:0;outline:0;background:transparent;flex:1;min-width:0;font-size:13.5px}
+.search-input::placeholder{color:var(--muted-foreground)}
+.tenant-name{font-size:12.5px;color:var(--muted-foreground)}
+.topnav-right{margin-left:auto;display:flex;align-items:center;gap:8px;position:relative}
+.avatar-btn{border-radius:50%}
+.avatar-btn:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+/* menu popovers */
+.wrap{position:relative}
+.menu{position:absolute;top:calc(100% + 6px);right:0;z-index:60;min-width:220px;background:var(--popover);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-pop);padding:6px;color:var(--popover-foreground)}
+.menu-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:7px 10px;border-radius:7px;font-size:13.5px}
+.menu-item:hover{background:var(--muted)}
+.menu-item .ic{color:var(--muted-foreground)}
+.menu-item[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
+.menu-sep{height:1px;background:var(--border);margin:5px 4px}
+.menu-label{padding:6px 10px 4px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-foreground);font-weight:600}
+/* ============ Mock strip ============ */
+.mock-strip{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 16px;border-bottom:1px solid var(--border);background:var(--accent);font-size:12px}
+.mock-chip{font-weight:600;color:var(--accent-foreground)}
+.mock-note{color:var(--muted-foreground)}
+.mock-field{display:flex;align-items:center;gap:6px}
+.mock-field label{color:var(--muted-foreground);font-size:12px}
+.mock-select{height:30px;border:1px solid var(--input);border-radius:7px;background:var(--card);padding:0 8px;font-size:12px;color:var(--foreground)}
+.sim-chip{background:var(--st-hold-bg);color:var(--st-hold-fg);border-radius:99px;padding:2px 10px;font-size:11px;font-weight:600}
+.mock-spacer{margin-left:auto}
+/* ============ Breadcrumbs ============ */
+.breadcrumbs{display:flex;align-items:center;gap:6px;padding:8px 24px 0;font-size:12.5px;color:var(--muted-foreground);min-height:26px}
+.breadcrumbs a{color:var(--muted-foreground)}
+.breadcrumbs a:hover{color:var(--primary)}
+.bcrumb-sep{opacity:.6}
+/* ============ Main ============ */
+main{flex:1;padding:12px 24px 40px;outline:none}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.page-title{font-size:22px;font-weight:600;letter-spacing:-0.01em}
+.page-sub{color:var(--muted-foreground);margin-top:3px;font-size:13.5px;max-width:640px}
+.page-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+/* ============ Buttons ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 14px;border-radius:8px;font-size:13.5px;font-weight:500;border:1px solid transparent;transition:background .12s,color .12s,border-color .12s;white-space:nowrap}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:var(--primary-foreground)}
+.btn-primary:hover:not(:disabled){background:var(--primary-hover)}
+.btn-outline{border-color:var(--border);background:var(--card);color:var(--foreground)}
+.btn-outline:hover:not(:disabled){background:var(--muted)}
+.btn-ghost{color:var(--muted-foreground)}
+.btn-ghost:hover:not(:disabled){background:var(--muted);color:var(--foreground)}
+.btn-destructive{background:var(--destructive);color:var(--destructive-foreground)}
+.btn-destructive:hover:not(:disabled){filter:brightness(0.92)}
+.btn-sm{height:30px;padding:0 10px;font-size:12.5px;border-radius:7px}
+.btn-lg{height:40px;padding:0 18px;font-size:14px}
+.btn-link{color:var(--primary);padding:0;height:auto}
+.btn-link:hover{text-decoration:underline}
+/* ============ Forms ============ */
+.label{display:block;font-size:13px;font-weight:500;margin-bottom:5px;color:var(--foreground)}
+.hint{font-size:12px;color:var(--muted-foreground);margin-top:4px}
+.field-error{font-size:12px;color:var(--destructive);margin-top:4px;display:flex;align-items:center;gap:5px}
+.input,.select,.textarea{width:100%;height:36px;border:1px solid var(--input);border-radius:8px;background:var(--card);padding:0 11px;font-size:13.5px;color:var(--foreground);outline:none}
+.textarea{height:auto;min-height:76px;padding:8px 11px;resize:vertical}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--ring);box-shadow:0 0 0 3px var(--skeleton)}
+.input[aria-invalid="true"],.textarea[aria-invalid="true"]{border-color:var(--destructive)}
+.input:disabled,.select:disabled,.textarea:disabled{opacity:.55;cursor:not-allowed}
+.checkbox-row{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--foreground);cursor:pointer}
+.checkbox-row input{margin-top:2.5px;accent-color:var(--primary);width:15px;height:15px;flex:none}
+.radio-card{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--input);border-radius:10px;padding:11px 12px;cursor:pointer}
+.radio-card:hover{border-color:var(--ring)}
+.radio-card.checked{border-color:var(--primary);background:var(--primary-soft)}
+.radio-card input{margin-top:3px;accent-color:var(--primary);flex:none}
+.radio-card b{font-size:13.5px;font-weight:500}
+.radio-card p{font-size:12px;color:var(--muted-foreground);margin-top:2px}
+.radio-stack{display:flex;flex-direction:column;gap:8px}
+.team-chips{display:flex;flex-wrap:wrap;gap:6px}
+.team-chip{border:1px solid var(--input);border-radius:99px;padding:5px 12px;font-size:12.5px;background:var(--card)}
+.team-chip:hover{border-color:var(--ring)}
+.team-chip.on{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+/* ============ Cards ============ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-card)}
+.card-head{padding:14px 16px;border-bottom:1px solid var(--border)}
+.card-head.no-border{border-bottom:0}
+.card-body{padding:16px}
+.card-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card-title{font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:8px}
+.card-desc{font-size:12.5px;color:var(--muted-foreground);margin-top:3px}
+.stack{display:flex;flex-direction:column;gap:14px}
+/* ============ Chips ============ */
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:99px;padding:2px 9px;font-size:11.5px;font-weight:500;white-space:nowrap}
+.chip-progress{background:var(--st-progress-bg);color:var(--st-progress-fg)}
+.chip-planning{background:var(--st-planning-bg);color:var(--st-planning-fg)}
+.chip-hold{background:var(--st-hold-bg);color:var(--st-hold-fg)}
+.chip-done{background:var(--st-done-bg);color:var(--st-done-fg)}
+.chip-blocked{background:var(--st-blocked-bg);color:var(--st-blocked-fg)}
+.chip-review{background:var(--st-review-bg);color:var(--st-review-fg)}
+.chip-neutral{background:var(--st-neutral-bg);color:var(--st-neutral-fg)}
+.chip-archived{background:var(--st-neutral-bg);color:var(--st-neutral-fg)}
+.chip-primary{background:var(--primary-soft);color:var(--primary)}
+/* ============ Tables ============ */
+.table-scroll{overflow-x:auto;border-radius:10px}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-foreground);padding:8px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:var(--muted)}
+.tbl .cell-main{display:flex;flex-direction:column;gap:1px;min-width:0}
+.tbl .cell-main b{font-size:13px;font-weight:500;color:var(--foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbl .cell-main span{font-size:12px;color:var(--muted-foreground);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-actions{display:flex;gap:4px;justify-content:flex-end;align-items:center}
+.link-btn{color:var(--primary);font-size:12.5px;font-weight:500;padding:4px 6px;border-radius:6px}
+.link-btn:hover{background:var(--primary-soft);text-decoration:none}
+.link-btn[aria-disabled="true"]{color:var(--muted-foreground);cursor:not-allowed}
+.link-btn.danger{color:var(--destructive)}
+.link-btn.danger:hover{background:var(--danger-bg)}
+/* ============ Segmented ============ */
+.seg{display:inline-flex;background:var(--muted);border-radius:10px;padding:3px;gap:2px}
+.seg-btn{border-radius:8px;padding:6px 14px;font-size:13px;font-weight:500;color:var(--muted-foreground);display:inline-flex;align-items:center;gap:7px}
+.seg-btn:hover{color:var(--foreground)}
+.seg-btn[aria-pressed="true"]{background:var(--card);color:var(--foreground);box-shadow:var(--shadow-soft)}
+.seg-count{font-size:11px;background:var(--muted);border-radius:99px;padding:1px 7px;color:var(--muted-foreground)}
+.seg-btn[aria-pressed="true"] .seg-count{background:var(--primary-soft);color:var(--primary)}
+/* ============ Project tab row ============ */
+.tabrow{display:flex;gap:2px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:thin;margin:0 -4px;padding:0 4px}
+.ptab{position:relative;padding:10px 13px;font-size:13px;color:var(--muted-foreground);border-bottom:2px solid transparent;white-space:nowrap;border-radius:8px 8px 0 0}
+.ptab:hover{color:var(--foreground);background:var(--muted)}
+.ptab[aria-current="page"]{color:var(--primary);border-bottom-color:var(--primary);font-weight:500}
+.ptab[aria-disabled="true"]{opacity:.45}
+.ptab-out{opacity:.5}
+/* ============ Wizard stepper ============ */
+.stepper{display:flex;align-items:center;gap:0;padding:4px 0 2px}
+.step-item{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.step-item:last-child{flex:0 0 auto}
+.step-dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;background:var(--muted);color:var(--muted-foreground);flex:none}
+.step-item.current .step-dot{background:var(--primary);color:var(--primary-foreground)}
+.step-item.done .step-dot{background:var(--st-done-bg);color:var(--st-done-fg)}
+.step-name{font-size:12.5px;font-weight:500;color:var(--muted-foreground);white-space:nowrap}
+.step-item.current .step-name{color:var(--foreground)}
+.step-line{height:2px;flex:1;min-width:12px;background:var(--border);margin:0 10px}
+.step-item.done .step-line{background:var(--primary)}
+/* ============ Dialogs ============ */
+.overlay{position:fixed;inset:0;z-index:80;background:oklch(0 0 0 / 0.45);display:flex;align-items:flex-start;justify-content:center;padding:48px 16px 16px;overflow:auto}
+.dialog{width:100%;max-width:520px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-pop);display:flex;flex-direction:column;max-height:calc(100dvh - 64px);animation:pop .14s ease-out}
+.dialog.wide{max-width:640px}
+.dialog.wizard-dialog{max-width:760px}
+.dialog-head{padding:16px 18px 10px;display:flex;gap:12px;align-items:flex-start}
+.dialog-title{font-size:15.5px;font-weight:600;flex:1}
+.dialog-desc{font-size:13px;color:var(--muted-foreground);margin-top:3px}
+.dialog-close{width:28px;height:28px;display:grid;place-items:center;border-radius:7px;color:var(--muted-foreground);flex:none}
+.dialog-close:hover{background:var(--muted);color:var(--foreground)}
+.dialog-body{padding:6px 18px 14px;overflow:auto}
+.dialog-foot{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;align-items:center;flex-wrap:wrap}
+.dialog-foot .spacer{margin-right:auto}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.985)}to{opacity:1;transform:none}}
+/* ============ Toasts ============ */
+.toasts{position:fixed;bottom:16px;right:16px;z-index:120;display:flex;flex-direction:column;gap:8px;width:min(360px,calc(100vw - 32px))}
+.toast{display:flex;gap:10px;align-items:flex-start;background:var(--popover);color:var(--popover-foreground);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow-pop);padding:11px 12px;animation:slidein .18s ease-out}
+.toast.out{animation:fadeout .18s ease-in forwards}
+@keyframes slidein{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+@keyframes fadeout{to{opacity:0;transform:translateY(4px)}}
+.toast-ic{width:18px;height:18px;flex:none;margin-top:1px}
+.toast-success .toast-ic{color:var(--st-done-fg)}
+.toast-error .toast-ic{color:var(--destructive)}
+.toast-info .toast-ic{color:var(--primary)}
+.toast-warning{border-color:var(--warn-border)}
+.toast-warning .toast-ic{color:var(--warn-fg)}
+.toast-body{flex:1;min-width:0}
+.toast-title{font-size:13px;font-weight:600}
+.toast-desc{font-size:12.5px;color:var(--muted-foreground);margin-top:1px}
+.toast-x{color:var(--muted-foreground);width:24px;height:24px;display:grid;place-items:center;border-radius:6px;flex:none}
+.toast-x:hover{background:var(--muted)}
+/* ============ Banners / helpers ============ */
+.banner{display:flex;gap:10px;align-items:flex-start;border:1px solid;border-radius:10px;padding:11px 12px;font-size:13px}
+.banner-warn{background:var(--warn-bg);color:var(--warn-fg);border-color:var(--warn-border)}
+.banner-danger{background:var(--danger-bg);color:var(--danger-fg);border-color:var(--danger-border)}
+.banner-info{background:var(--info-bg);color:var(--info-fg);border-color:var(--info-border)}
+.banner .ic{margin-top:1.5px}
+.banner b{display:block;font-weight:600}
+.banner-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.helper{display:flex;gap:8px;align-items:flex-start;background:var(--info-bg);color:var(--info-fg);border:1px solid var(--info-border);border-radius:10px;padding:10px 12px;font-size:12.5px}
+.helper .ic{margin-top:1.5px}
+.perm-note{border:1px dashed var(--border);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--muted-foreground);background:var(--muted);display:flex;gap:8px;align-items:flex-start}
+.perm-note .ic{margin-top:1px}
+/* ============ Empty / error / skeleton ============ */
+.empty{padding:34px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.empty-ic{width:40px;height:40px;border-radius:12px;background:var(--muted);display:grid;place-items:center;color:var(--muted-foreground);margin-bottom:4px}
+.empty h3{font-size:14px;font-weight:600}
+.empty p{font-size:12.5px;color:var(--muted-foreground);max-width:380px}
+.skeleton{background:var(--skeleton);border-radius:6px;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+/* ============ Steps editor ============ */
+.step-row{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--border);border-radius:10px;padding:8px;background:var(--background)}
+.step-row.invalid{border-color:var(--destructive)}
+.step-num{width:24px;height:24px;flex:none;border-radius:7px;background:var(--muted);display:grid;place-items:center;font-size:11.5px;font-weight:600;color:var(--muted-foreground);margin-top:6px}
+.step-inputs{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.step-controls{display:flex;flex-direction:column;gap:2px;flex:none}
+.mini-btn{width:26px;height:26px;display:grid;place-items:center;border-radius:6px;color:var(--muted-foreground)}
+.mini-btn:hover{background:var(--muted);color:var(--foreground)}
+.mini-btn:disabled{opacity:.35;cursor:not-allowed}
+.mini-btn.danger:hover{background:var(--danger-bg);color:var(--destructive)}
+/* ============ Template picker ============ */
+.picker-search{margin-bottom:10px}
+.picker-grid{display:grid;grid-template-columns:1fr;gap:8px;max-height:46vh;overflow:auto;padding-right:2px}
+@media (min-width:640px){.picker-grid{grid-template-columns:1fr 1fr}}
+.picker-card{border:1px solid var(--border);border-radius:11px;padding:12px;cursor:pointer;text-align:left;background:var(--card);display:flex;flex-direction:column;gap:8px}
+.picker-card:hover{border-color:var(--primary);box-shadow:var(--shadow-soft)}
+.picker-card.selected{border-color:var(--primary);background:var(--primary-soft)}
+.picker-card h4{font-size:13.5px;font-weight:600;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.picker-card p{font-size:12px;color:var(--muted-foreground);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.picker-meta{display:flex;gap:5px;flex-wrap:wrap}
+.picker-foot{font-size:11.5px;color:var(--muted-foreground);display:flex;justify-content:space-between;gap:8px}
+/* ============ Review ============ */
+.dl{display:flex;flex-direction:column}
+.dl-row{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.dl-row:last-child{border-bottom:0}
+.dl-row dt{color:var(--muted-foreground)}
+.dl-row dd{text-align:right;font-weight:500;max-width:60%}
+.from-tpl-card{border:1px solid var(--ring);background:var(--primary-soft);border-radius:10px;padding:12px}
+.from-tpl-card h4{font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center;color:var(--accent-foreground)}
+.from-tpl-card p{font-size:12.5px;margin-top:4px}
+/* ============ History ============ */
+.hist-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.hist-row:last-child{border-bottom:0}
+.hist-ic{width:30px;height:30px;flex:none;border-radius:8px;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center}
+.hist-ic.failed{background:var(--danger-bg);color:var(--destructive)}
+.hist-body{flex:1;min-width:0}
+.hist-body b{font-size:13px;font-weight:500}
+.hist-body .sub{font-size:12px;color:var(--muted-foreground);margin-top:1px}
+/* ============ Drawer ============ */
+.drawer-overlay{position:fixed;inset:0;z-index:85;background:oklch(0 0 0 / 0.4);display:flex;justify-content:flex-end}
+.drawer{width:min(460px,100vw);height:100%;background:var(--card);border-left:1px solid var(--border);box-shadow:var(--shadow-pop);display:flex;flex-direction:column;animation:drawerin .18s ease-out}
+@keyframes drawerin{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+.drawer-body{flex:1;overflow:auto;padding:14px 18px 24px}
+.drawer-body h3{font-size:14px;font-weight:600;margin:16px 0 6px}
+.drawer-body p,.drawer-body li{font-size:13px;color:var(--foreground)}
+.drawer-body ul{padding-left:18px;margin:4px 0}
+.drawer-body li{margin:3px 0}
+.drawer-body .muted{font-size:12.5px}
+/* ============ Project overview ============ */
+.ov-grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:900px){.ov-grid{grid-template-columns:1fr 1fr}}
+.metric{background:var(--muted);border-radius:10px;padding:12px}
+.metric b{font-size:18px;font-weight:600}
+.metric span{display:block;font-size:12px;color:var(--muted-foreground)}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+/* ============ Two-column ============ */
+.cols{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+@media (min-width:1020px){.cols-2{grid-template-columns:minmax(0,1fr) 340px}}
+/* ============ Responsive ============ */
+@media (max-width:900px){
+  .tenant-name{display:none}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-105%);transition:transform .18s ease;box-shadow:none}
+  body.sb-open .sidebar{transform:none;box-shadow:var(--shadow-pop)}
+  body.sb-collapsed .sidebar{width:232px}
+  body.sb-collapsed .brand-name,body.sb-collapsed .tenant-meta,body.sb-collapsed .user-meta,body.sb-collapsed .side-item span{display:inline}
+  body.sb-collapsed .side-item{justify-content:flex-start;padding:7px 10px}
+  body.sb-collapsed .tenant-block{justify-content:flex-start;border:1px solid var(--sidebar-border);background:var(--sidebar-accent);padding:7px 8px}
+  main{padding:12px 16px 32px}
+  .breadcrumbs{padding:8px 16px 0}
+}
+@media (max-width:560px){
+  .hide-sm{display:none}
+  .topnav .btn-primary.btn-sm{width:38px;padding:0;gap:0}
+  .search-wrap{max-width:none}
+  .topnav{gap:6px;padding:0 10px}
+  .page-title{font-size:19px}
+  .overlay{padding:8px;align-items:flex-end}
+  .dialog{max-height:calc(100dvh - 16px);border-radius:14px}
+  .dialog.wizard-dialog{max-width:100%}
+  .toasts{bottom:10px;right:10px;width:calc(100vw - 20px)}
+  .mock-strip{padding:8px 10px}
+  .stepper .step-name{display:none}
+  .step-item{flex:0 0 auto}
+  .step-line{width:18px;min-width:18px;margin:0 6px}
+}
+@media (max-width:390px){
+  main{padding:10px 12px 28px}
+  .seg{width:100%}
+  .seg-btn{flex:1;justify-content:center}
+  .dialog-head,.dialog-body{padding-left:14px;padding-right:14px}
+}
+</style>
+</head>
+<body data-theme="light">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="app">
+  <div class="side-backdrop" id="side-backdrop" hidden></div>
+  <aside class="sidebar" id="sidebar" aria-label="Sidebar">
+    <div class="side-head">
+      <a class="brand" href="#/projects" aria-label="WayPoint — go to Projects">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" class="fill-primary"/><path d="M10 21L16 9L22 21L16 17.5L10 21Z" class="fill-primary-foreground"/></svg>
+        <span class="brand-name">WayPoint<small>by Brigara</small></span>
+      </a>
+    </div>
+    <nav class="side-nav" id="side-nav" aria-label="Main navigation"></nav>
+    <div class="side-foot">
+      <div class="tenant-block" title="Acme Studio">
+        <span class="tenant-logo" aria-hidden="true">AS</span>
+        <span class="tenant-meta"><b>Acme Studio</b><i>Build projects that ship.</i></span>
+      </div>
+      <div class="user-block" id="side-user"></div>
+    </div>
+  </aside>
+  <div class="main-col">
+    <header class="topnav">
+      <button class="btn-icon" id="sb-trigger" aria-label="Toggle sidebar" aria-expanded="false"></button>
+      <div class="search-wrap">
+        <span id="search-ic" aria-hidden="true"></span>
+        <input id="global-search" class="search-input" type="search" placeholder="Search projects, tasks, people…" aria-label="Search projects, tasks, people">
+      </div>
+      <span class="tenant-name">Acme Studio</span>
+      <div class="topnav-right">
+        <div class="wrap" id="create-wrap">
+          <button class="btn btn-primary btn-sm" id="create-btn" aria-haspopup="menu" aria-expanded="false"></button>
+          <div class="menu" id="create-menu" role="menu" hidden></div>
+        </div>
+        <button class="btn-icon" id="bell-btn" aria-label="Notifications (not part of this mock)"></button>
+        <button class="btn-icon" id="theme-btn" aria-label="Switch colour theme"></button>
+        <button class="avatar-btn" id="avatar-btn" aria-label="Account menu" aria-haspopup="menu" aria-expanded="false"></button>
+        <div class="menu" id="avatar-menu" role="menu" hidden></div>
+      </div>
+    </header>
+    <div class="mock-strip" role="region" aria-label="Mock controls">
+      <span class="mock-chip">Mock controls</span>
+      <span class="mock-note">not part of the product</span>
+      <label class="mock-field">Persona
+        <select class="mock-select" id="persona-select" aria-label="Persona">
+          <option value="ana">Ana Ruiz — admin (manage + create)</option>
+          <option value="marcus">Marcus Lee — member (create, no manage)</option>
+          <option value="dana">Dana Kim — viewer (no create, no manage)</option>
+        </select>
+      </label>
+      <label class="mock-field">Scenario
+        <select class="mock-select" id="scenario-select" aria-label="Scenario">
+          <option value="default">Default data</option>
+          <option value="loading">Loading templates (skeleton)</option>
+          <option value="first-run">First run — no templates yet</option>
+          <option value="error">Error loading templates</option>
+          <option value="simfail">Partial failure on create — SIMULATED</option>
+        </select>
+      </label>
+      <span class="sim-chip" id="sim-chip" hidden>Partial failure ON · SIMULATED</span>
+      <span class="mock-spacer"></span>
+      <button class="btn btn-outline btn-sm" id="notes-btn">Mockup notes</button>
+      <button class="btn btn-outline btn-sm" id="reset-btn">Reset data</button>
+    </div>
+    <nav class="breadcrumbs" id="breadcrumbs" aria-label="Breadcrumb"></nav>
+    <main id="main-content" tabindex="-1"></main>
+  </div>
+</div>
+<div id="dialog-root"></div>
+<div id="toast-root" class="toasts" role="status" aria-live="polite" aria-atomic="false"></div>
+<div id="drawer-root"></div>
+<script>
+'use strict';
+/* ================== Part 2: utilities, icons, seed data, persistence ================== */
+function $(sel, root) { return (root || document).querySelector(sel); }
+function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function uid(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 8); }
+function fmtDate(iso) {
+  if (!iso) return '—';
+  var d = new Date(iso + 'T00:00:00');
+  if (isNaN(d.getTime())) return '—';
+  var m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+  return m + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+function relAgo(iso) {
+  if (!iso) return '';
+  var d = new Date(iso + 'T00:00:00').getTime();
+  var now = new Date().getTime();
+  var days = Math.round((now - d) / 86400000);
+  if (days <= 0) return 'today';
+  if (days === 1) return 'yesterday';
+  return days + ' days ago';
+}
+/* ---------- inline SVG icons (lucide-style paths, stroke=currentColor) ---------- */
+var ICONS = {
+  menu: '<line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>',
+  search: '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/>',
+  plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  help: '<circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  chevronDown: '<polyline points="6 9 12 15 18 9"/>',
+  chevronLeft: '<polyline points="15 18 9 12 15 6"/>',
+  chevronRight: '<polyline points="9 18 15 12 9 6"/>',
+  chevronUp: '<polyline points="18 15 12 9 6 15"/>',
+  arrowLeft: '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
+  arrowRight: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+  pencil: '<path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+  archive: '<rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><line x1="10" y1="12" x2="14" y2="12"/>',
+  restore: '<path d="M3 12a9 9 0 1 0 2.64-6.36L3 8"/><polyline points="8 3 3 8 8 8"/>',
+  refresh: '<path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/>',
+  folder: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+  layers: '<path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>',
+  info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  alert: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  sparkles: '<path d="M12 3l1.9 5.8 5.8 1.9-5.8 1.9L12 18l-1.9-5.4-5.8-1.9 5.8-1.9Z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9Z"/>',
+  external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  building: '<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"/>',
+  users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  briefcase: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  checkSquare: '<polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  gauge: '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
+  layout: '<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>',
+  calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  chart: '<line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>',
+  activity: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/>',
+  home: '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  fileText: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/>',
+  moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  eye: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  template: '<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>',
+  dot: '<circle cx="12" cy="12" r="4"/>',
+  listChecks: '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><line x1="13" y1="6" x2="21" y2="6"/><line x1="13" y1="12" x2="21" y2="12"/><line x1="13" y1="18" x2="21" y2="18"/>'
+};
+function icon(name, cls) {
+  return '<svg class="' + (cls || 'ic') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS.dot) + '</svg>';
+}
+/* ---------- lookup maps ---------- */
+var METHODOLOGIES = { blank: 'No methodology yet', scrum: 'Scrum', waterfall: 'Waterfall', hybrid: 'Hybrid' };
+var VIS = { private: 'Private', workspace: 'Company wide', teams: 'Teams' };
+var STATUS = { planning: 'Planning', progress: 'In progress', hold: 'On hold', done: 'Completed' };
+var STATUS_CHIP = { planning: 'chip-planning', progress: 'chip-progress', hold: 'chip-hold', done: 'chip-done' };
+var TEAMS = [{ id: 't1', name: 'Acme Design' }, { id: 't2', name: 'Acme Engineering' }, { id: 't3', name: 'Acme Operations' }];
+var PERSONAS = {
+  ana: { id: 'ana', name: 'Ana Ruiz', initials: 'AR', email: 'ana@acme.example', title: 'Workspace admin', perms: { manage: true, create: true }, managerEverywhere: true },
+  marcus: { id: 'marcus', name: 'Marcus Lee', initials: 'ML', email: 'marcus@acme.example', title: 'Member · can create projects', perms: { manage: false, create: true }, managerEverywhere: false, managerProjects: ['p1'] },
+  dana: { id: 'dana', name: 'Dana Kim', initials: 'DK', email: 'dana@acme.example', title: 'Member · view-only', perms: { manage: false, create: false }, managerEverywhere: false, managerProjects: [] }
+};
+function persona() { return PERSONAS[DB.persona] || PERSONAS.ana; }
+function canManageTemplates() { return persona().perms.manage; }
+function canCreateProjects() { return persona().perms.create; }
+function isProjectManager(projectId) {
+  var p = persona();
+  return p.managerEverywhere || (p.managerProjects || []).indexOf(projectId) > -1;
+}
+/* ---------- seed data (synthetic only) ---------- */
+function seedDB() {
+  return {
+    persona: 'ana', scenario: 'default', theme: 'light',
+    projects: [
+      { id: 'p1', name: 'Website Redesign', client: 'Acme Studio', status: 'progress', visibility: 'private', methodology: 'scrum', tasks: 14, due: '2026-11-14', desc: 'Redesign the studio marketing site end to end — IA, visual refresh and content rewrite.', fromTemplate: null, bannerFailures: [] },
+      { id: 'p2', name: 'Mobile App Launch', client: 'Northwind', status: 'planning', visibility: 'workspace', methodology: 'hybrid', tasks: 8, due: '2026-12-05', desc: 'Ship v1.0 of the Northwind companion app to both stores.', fromTemplate: null, bannerFailures: [] },
+      { id: 'p3', name: 'Client Portal', client: 'Brigara', status: 'done', visibility: 'private', methodology: 'waterfall', tasks: 42, due: '2026-10-02', desc: 'Self-service portal for Brigara clients to track deliverables.', fromTemplate: null, bannerFailures: [] },
+      { id: 'p4', name: 'Brand Refresh', client: 'Acme Studio', status: 'hold', visibility: 'private', methodology: 'blank', tasks: 3, due: '', desc: 'On hold pending the new brand guidelines.', fromTemplate: null, bannerFailures: [] },
+      { id: 'p5', name: 'Northwind Migration', client: 'Northwind', status: 'progress', visibility: 'workspace', methodology: 'waterfall', tasks: 27, due: '2026-12-19', desc: 'Migrate Northwind legacy systems to the new platform.', fromTemplate: null, bannerFailures: [] }
+    ],
+    wfTemplates: [
+      { id: 'wf1', name: 'Project Kickoff', desc: 'Align the team on goals, stakeholders and roles before work begins.', status: 'active', updatedBy: 'Ana Ruiz', updatedAt: '2026-10-21', steps: [
+        { title: 'Define goals and scope', notes: 'One paragraph; agree what is in and out.' },
+        { title: 'Identify stakeholders', notes: '' },
+        { title: 'Schedule kickoff meeting', notes: 'Book within the first week.' },
+        { title: 'Assign roles and owners', notes: '' },
+        { title: 'Publish project brief', notes: 'Share in the project Files tab.' }
+      ] },
+      { id: 'wf2', name: 'Design Review', desc: 'A structured review at every design milestone.', status: 'active', updatedBy: 'Marcus Lee', updatedAt: '2026-10-08', steps: [
+        { title: 'Prepare design spec', notes: 'Include screens and states.' },
+        { title: 'Run internal critique', notes: '' },
+        { title: 'Log review outcomes', notes: 'Decisions and open items.' }
+      ] },
+      { id: 'wf3', name: 'Launch Checklist', desc: 'The standard go-live checklist for client-facing releases.', status: 'active', updatedBy: 'Ana Ruiz', updatedAt: '2026-09-30', steps: [
+        { title: 'Freeze scope', notes: '' },
+        { title: 'Run regression tests', notes: 'Full pass on staging.' },
+        { title: 'Prepare release notes', notes: '' },
+        { title: 'Schedule deploy window', notes: '' },
+        { title: 'Announce launch', notes: 'Client + internal channels.' },
+        { title: 'Run post-launch retro', notes: '' }
+      ] },
+      { id: 'wf4', name: 'Legacy QA Sprint', desc: 'Older template kept for reference; no longer used for new work.', status: 'archived', updatedBy: 'Ana Ruiz', updatedAt: '2026-06-12', steps: [
+        { title: 'Triage legacy defects', notes: '' },
+        { title: 'Regression pass', notes: '' }
+      ] }
+    ],
+    projTemplates: [
+      { id: 'pt1', name: 'Website Project (Scrum)', desc: 'Standard client website engagement with kickoff and design reviews.', visibility: 'private', methodology: 'scrum', wfIds: ['wf1', 'wf2'], status: 'active', updatedBy: 'Ana Ruiz', updatedAt: '2026-10-28' },
+      { id: 'pt2', name: 'Client Delivery (Waterfall)', desc: 'Waterfall delivery with the standard go-live checklist.', visibility: 'workspace', methodology: 'waterfall', wfIds: ['wf3'], status: 'active', updatedBy: 'Ana Ruiz', updatedAt: '2026-09-18' },
+      { id: 'pt3', name: 'Mobile App (Hybrid)', desc: 'Incremental app build with the launch checklist. Superseded.', visibility: 'private', methodology: 'hybrid', wfIds: ['wf3'], status: 'archived', updatedBy: 'Marcus Lee', updatedAt: '2026-07-30' }
+    ],
+    history: [
+      { id: 'h1', projectId: 'p1', wfId: 'wf1', wfName: 'Project Kickoff', startedAt: '2026-11-01', by: 'Ana Ruiz', status: 'started', tasks: [
+        { id: 't1', title: 'Define goals and scope' }, { id: 't2', title: 'Identify stakeholders' }, { id: 't3', title: 'Schedule kickoff meeting' }, { id: 't4', title: 'Assign roles and owners' }, { id: 't5', title: 'Publish project brief' }
+      ] },
+      { id: 'h2', projectId: 'p1', wfId: 'wf2', wfName: 'Design Review', startedAt: '2026-10-29', by: 'Marcus Lee', status: 'started', tasks: [
+        { id: 't6', title: 'Prepare design spec' }, { id: 't7', title: 'Run internal critique' }, { id: 't8', title: 'Log review outcomes' }
+      ] },
+      { id: 'h3', projectId: 'p2', wfId: 'wf3', wfName: 'Launch Checklist', startedAt: '2026-10-25', by: 'Ana Ruiz', status: 'started', tasks: [
+        { id: 't9', title: 'Freeze scope' }, { id: 't10', title: 'Run regression tests' }, { id: 't11', title: 'Prepare release notes' }, { id: 't12', title: 'Schedule deploy window' }, { id: 't13', title: 'Announce launch' }, { id: 't14', title: 'Run post-launch retro' }
+      ] },
+      { id: 'h4', projectId: 'p5', wfId: 'wf1', wfName: 'Project Kickoff', startedAt: '2026-10-14', by: 'Ana Ruiz', status: 'started', tasks: [
+        { id: 't15', title: 'Define goals and scope' }, { id: 't16', title: 'Identify stakeholders' }, { id: 't17', title: 'Schedule kickoff meeting' }, { id: 't18', title: 'Assign roles and owners' }, { id: 't19', title: 'Publish project brief' }
+      ] }
+    ],
+    nextProjectNum: 6
+  };
+}
+var LS_KEY = 'waypoint-mock-B-db-v1';
+function loadDB() {
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    if (!raw) return seedDB();
+    var parsed = JSON.parse(raw);
+    if (!parsed || !parsed.projects || !parsed.wfTemplates || !parsed.projTemplates) return seedDB();
+    return parsed;
+  } catch (err) { return seedDB(); }
+}
+var DB = loadDB();
+function saveDB() { try { localStorage.setItem(LS_KEY, JSON.stringify(DB)); } catch (err) { /* storage unavailable — session-only mock */ } }
+function resetAll() {
+  localStorage.removeItem(LS_KEY);
+  sessionStorage.removeItem('waypoint-mock-B-draft');
+  DB = seedDB();
+  saveDB();
+  simErrorOverride = false;
+}
+var simErrorOverride = false;
+/* ---------- lookups ---------- */
+function getProject(id) { for (var i = 0; i < DB.projects.length; i++) if (DB.projects[i].id === id) return DB.projects[i]; return null; }
+function getWf(id) { for (var i = 0; i < DB.wfTemplates.length; i++) if (DB.wfTemplates[i].id === id) return DB.wfTemplates[i]; return null; }
+function getPt(id) { for (var i = 0; i < DB.projTemplates.length; i++) if (DB.projTemplates[i].id === id) return DB.projTemplates[i]; return null; }
+function activeWfs() { return DB.wfTemplates.filter(function (w) { return w.status === 'active'; }); }
+function activePts() { return DB.projTemplates.filter(function (p) { return p.status === 'active'; }); }
+function ptStepCount(pt) {
+  var n = 0;
+  (pt.wfIds || []).forEach(function (id) { var w = getWf(id); if (w) n += w.steps.length; });
+  return n;
+}
+function projectHistory(projectId) {
+  return DB.history.filter(function (h) { return h.projectId === projectId; })
+    .sort(function (a, b) { return (b.startedAt || '').localeCompare(a.startedAt || ''); });
+}
+function totalTasks(historyRows) {
+  var n = 0;
+  historyRows.forEach(function (h) { n += (h.tasks || []).length; });
+  return n;
+}
+/* ---------- spin style (injected once) ---------- */
+(function () {
+  var st = document.createElement('style');
+  st.textContent = '.spin{width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex:none}@keyframes spin{to{transform:rotate(360deg)}}';
+  document.head.appendChild(st);
+})();
+/* ---------- toast (exactly one per action — mockup discipline) ---------- */
+function toast(type, title, desc, opts) {
+  opts = opts || {};
+  var root = $('#toast-root');
+  var node = document.createElement('div');
+  node.className = 'toast toast-' + type;
+  node.setAttribute('role', 'status');
+  var ic = type === 'success' ? 'check' : (type === 'error' || type === 'warning' ? 'alert' : 'info');
+  node.innerHTML = '<span class="toast-ic">' + icon(ic, 'toast-ic') + '</span>' +
+    '<span class="toast-body"><span class="toast-title" style="display:block">' + esc(title) + '</span>' +
+    (desc ? '<span class="toast-desc" style="display:block">' + esc(desc) + '</span>' : '') + '</span>' +
+    '<button class="toast-x" aria-label="Dismiss notification">' + icon('x', 'ic-sm') + '</button>';
+  node.querySelector('.toast-x').addEventListener('click', function () { dismiss(); });
+  var dismissed = false;
+  function dismiss() {
+    if (dismissed) return; dismissed = true;
+    node.classList.add('out');
+    setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 180);
+  }
+  root.appendChild(node);
+  var ttl = opts.ttl || 4200;
+  setTimeout(dismiss, ttl);
+}
+/* ---------- dialog shell (ConfirmDialogShell-style: title + description + actions) ---------- */
+var activeDialog = null;
+function describeFocusTarget(el) {
+  if (!el || !el.getAttribute) return null;
+  var attrs = [];
+  for (var i = 0; i < el.attributes.length; i++) {
+    var a = el.attributes[i];
+    if (a.name.indexOf('data-') === 0 && a.name !== 'data-autofocus' && a.name !== 'data-dialog-overlay') attrs.push([a.name, a.value]);
+  }
+  return { id: el.id || '', tag: el.tagName, attrs: attrs };
+}
+function attrSelector(name, value) {
+  return '[' + name + '="' + String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"]';
+}
+function findFocusReplacement(desc) {
+  if (!desc) return null;
+  if (desc.id) {
+    var byId = document.getElementById(desc.id);
+    if (byId) return byId;
+  }
+  var swap = { 'data-archive': 'data-restore', 'data-restore': 'data-archive', 'data-wf-archive': 'data-wf-restore', 'data-wf-restore': 'data-wf-archive' };
+  for (var i = 0; i < desc.attrs.length; i++) {
+    var pair = desc.attrs[i];
+    var other = swap[pair[0]];
+    if (other) {
+      var swapped = document.querySelector(attrSelector(other, pair[1]));
+      if (swapped) return swapped;
+    }
+  }
+  if (desc.attrs.length) {
+    var sel = desc.tag.toLowerCase();
+    for (var j = 0; j < desc.attrs.length; j++) sel += attrSelector(desc.attrs[j][0], desc.attrs[j][1]);
+    var exact = document.querySelector(sel);
+    if (exact) return exact;
+  }
+  return null;
+}
+function openDialog(opts) {
+  if (activeDialog) activeDialog.close('superseded');
+  var root = $('#dialog-root');
+  root.innerHTML = '';
+  var titleId = uid('dlg-t');
+  var descId = uid('dlg-d');
+  var overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.setAttribute('data-dialog-overlay', '1');
+  var wide = opts.wide ? ' wide' : '';
+  overlay.innerHTML =
+    '<div class="dialog' + wide + (opts.wizard ? ' wizard-dialog' : '') + '" role="dialog" aria-modal="true" aria-labelledby="' + titleId + '" aria-describedby="' + descId + '">' +
+      '<div class="dialog-head">' +
+        '<div class="dialog-title" id="' + titleId + '">' + opts.title + '</div>' +
+        '<button class="dialog-close" aria-label="Close dialog">' + icon('x', 'ic') + '</button>' +
+      '</div>' +
+      '<div class="dialog-desc" id="' + descId + '" style="padding:0 18px 0 18px">' + (opts.description || '') + '</div>' +
+      '<div class="dialog-body">' + (opts.body || '') + '</div>' +
+      (opts.footer !== undefined ? '<div class="dialog-foot">' + opts.footer + '</div>' : '') +
+    '</div>';
+  root.appendChild(overlay);
+  var dialog = overlay.querySelector('.dialog');
+  var previouslyFocused = document.activeElement;
+  var focusDesc = describeFocusTarget(previouslyFocused);
+  var closed = false;
+  function close(result) {
+    if (closed) return; closed = true;
+    document.removeEventListener('keydown', onKey, true);
+    overlay.remove();
+    activeDialog = null;
+    if (opts.onClose) opts.onClose(result);
+    setTimeout(function () {
+      if (activeDialog) return;
+      var ae = document.activeElement;
+      if (ae && ae !== document.body && ae !== document.documentElement) return;
+      var target = (previouslyFocused && document.contains(previouslyFocused)) ? previouslyFocused : findFocusReplacement(focusDesc);
+      if (target && document.contains(target) && target.focus) {
+        try { target.focus(); } catch (e) {}
+      }
+    }, 0);
+  }
+  function onKey(e) {
+    if (e.key === 'Escape') { e.stopPropagation(); close('cancel'); if (opts.onCancel) opts.onCancel(); return; }
+    if (e.key === 'Tab') {
+      var f = $all('button, input, select, textarea, [href], [tabindex]:not([tabindex="-1"])', dialog).filter(function (n) { return !n.disabled && n.offsetParent !== null; });
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }
+  overlay.addEventListener('mousedown', function (e) {
+    if (e.target === overlay && opts.closeOnBackdrop !== false) { close('cancel'); if (opts.onCancel) opts.onCancel(); }
+  });
+  dialog.querySelector('.dialog-close').addEventListener('click', function () { close('cancel'); if (opts.onCancel) opts.onCancel(); });
+  document.addEventListener('keydown', onKey, true);
+  activeDialog = { close: close, el: dialog };
+  if (opts.onMount) opts.onMount(dialog, close);
+  var autofocus = dialog.querySelector('[data-autofocus]');
+  if (autofocus) autofocus.focus();
+  else {
+    var first = $all('button, input, select, textarea, [href]', dialog).filter(function (n) { return !n.disabled; })[0];
+    if (first) first.focus();
+  }
+  return { close: close, el: dialog };
+}
+function confirmDialog(opts) {
+  openDialog({
+    title: opts.title,
+    description: opts.description,
+    body: opts.bodyHtml || '',
+    wide: opts.wide,
+    closeOnBackdrop: opts.closeOnBackdrop,
+    onCancel: function () { if (opts.onCancel) opts.onCancel(); },
+    footer:
+      '<div class="spacer"></div>' +
+      '<button class="btn btn-outline" data-dlg-cancel="1"' + (opts.destructive ? ' data-autofocus' : '') + '>' + (opts.cancelLabel || 'Cancel') + '</button>' +
+      '<button class="btn ' + (opts.destructive ? 'btn-destructive' : 'btn-primary') + '" data-dlg-confirm="1"' + (opts.destructive ? '' : ' data-autofocus') + '>' + (opts.confirmLabel || 'Confirm') + '</button>',
+    onMount: function (dialog, close) {
+      dialog.querySelector('[data-dlg-confirm]').addEventListener('click', function () { close('confirm'); if (opts.onConfirm) opts.onConfirm(); });
+      dialog.querySelector('[data-dlg-cancel]').addEventListener('click', function () { close('cancel'); if (opts.onCancel) opts.onCancel(); });
+    }
+  });
+}
+/* ---------- help drawer ---------- */
+function openDrawer(opts) {
+  var root = $('#drawer-root');
+  root.innerHTML = '';
+  var overlay = document.createElement('div');
+  overlay.className = 'drawer-overlay';
+  overlay.innerHTML =
+    '<div class="drawer" role="dialog" aria-modal="true" aria-label="' + esc(opts.title) + '">' +
+      '<div class="dialog-head">' +
+        '<div class="dialog-title">' + icon('help', 'ic') + ' ' + opts.title + '</div>' +
+        '<button class="dialog-close" aria-label="Close help">' + icon('x', 'ic') + '</button>' +
+      '</div>' +
+      '<div class="drawer-body">' + opts.body + '</div>' +
+    '</div>';
+  root.appendChild(overlay);
+  var closed = false;
+  function close() {
+    if (closed) return; closed = true;
+    document.removeEventListener('keydown', onKey, true);
+    overlay.remove();
+    if (opts.onClose) opts.onClose();
+  }
+  function onKey(e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } }
+  overlay.querySelector('.dialog-close').addEventListener('click', close);
+  overlay.addEventListener('mousedown', function (e) { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', onKey, true);
+  var target = overlay.querySelector('#' + (opts.sectionId || ''));
+  if (target) { setTimeout(function () { target.scrollIntoView({ block: 'start' }); }, 40); }
+  var firstBtn = overlay.querySelector('.dialog-close');
+  if (firstBtn) firstBtn.focus();
+  return { close: close };
+}
+
+
+/* ================== Part 3: routing, shell chrome, Projects page ================== */
+var NAV = [
+  { key: 'home', label: 'Home', icon: 'home' },
+  { key: 'todos', label: 'Todos', icon: 'checkSquare' },
+  { key: 'mywork', label: 'My Work', icon: 'briefcase' },
+  { key: 'teams', label: 'Teams', icon: 'users' },
+  { key: 'projects', label: 'Projects', icon: 'folder', route: '#/projects' },
+  { key: 'portfolios', label: 'Portfolios', icon: 'layers' },
+  { key: 'reports', label: 'Reports', icon: 'chart' },
+  { key: 'ai', label: 'AI Review', icon: 'sparkles' },
+  { key: 'meetings', label: 'Meeting Imports', icon: 'fileText' },
+  { key: 'notifications', label: 'Notifications', icon: 'bell' },
+  { key: 'activity', label: 'Activity', icon: 'activity' },
+  { key: 'admin', label: 'Admin', icon: 'shield' }
+];
+function navByKey(key) { for (var i = 0; i < NAV.length; i++) if (NAV[i].key === key) return NAV[i]; return null; }
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+var ROUTE = { page: 'projects', seg: 'projects' };
+function parseRoute() {
+  var h = (location.hash || '#/projects').replace(/^#\/?/, '');
+  var qi = h.indexOf('?');
+  var query = {};
+  if (qi > -1) {
+    var qs = h.slice(qi + 1);
+    h = h.slice(0, qi);
+    qs.split('&').forEach(function (kv) {
+      if (!kv) return;
+      var p = kv.split('=');
+      query[decodeURIComponent(p[0])] = decodeURIComponent(p[1] || '');
+    });
+  }
+  var parts = h.split('/').filter(Boolean);
+  var route = { query: query };
+  if (parts.length === 0 || (parts.length === 1 && parts[0] === 'projects')) { route.page = 'projects'; route.seg = 'projects'; }
+  else if (parts.length === 2 && parts[0] === 'projects' && parts[1] === 'templates') { route.page = 'projects'; route.seg = 'templates'; }
+  else if (parts.length >= 2 && parts[0] === 'projects' && parts[1] === 'new') { route.page = 'wizard'; }
+  else if (parts.length >= 2 && parts[0] === 'projects') { route.page = 'project'; route.projectId = parts[1]; route.tab = parts[2] || 'overview'; }
+  else { route.page = 'projects'; route.seg = 'projects'; }
+  return route;
+}
+var renderToken = 0;
+function renderMain(html) { renderToken++; var m = $('#main-content'); m.innerHTML = html; return renderToken; }
+/* ---------- shell chrome ---------- */
+var searchInput = $('#global-search');
+function renderShell() {
+  var p = persona();
+  var navHtml = '';
+  NAV.forEach(function (n) {
+    var active = n.route === '#/projects';
+    navHtml += '<button class="side-item' + (active ? ' active' : '') + '" data-nav="' + n.key + '"' + (active ? ' aria-current="page"' : '') + '>' + icon(n.icon, 'ic') + '<span>' + n.label + '</span></button>';
+  });
+  $('#side-nav').innerHTML = navHtml;
+  $all('[data-nav]', $('#side-nav')).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var item = navByKey(b.getAttribute('data-nav'));
+      if (item && item.route) { location.hash = item.route; }
+      else { toast('info', item ? item.label : 'Section', 'Not part of this mock — navigation preserved for context.'); }
+    });
+  });
+  $('#side-user').innerHTML = '<span class="avatar" aria-hidden="true">' + p.initials + '</span><span class="user-meta"><b>' + esc(p.name) + '</b><i>' + esc(p.email) + '</i></span>';
+  $('#sb-trigger').innerHTML = icon('menu', 'ic');
+  $('#search-ic').innerHTML = icon('search', 'ic-sm');
+  searchInput.placeholder = (ROUTE.page === 'projects') ? 'Search projects and templates…' : 'Search projects, tasks, people…';
+  $('#create-btn').innerHTML = icon('plus', 'ic-sm') + '<span class="hide-sm"> Create</span>';
+  $('#avatar-btn').innerHTML = '<span class="avatar" aria-hidden="true" style="width:34px;height:34px">' + p.initials + '</span>';
+  $('#bell-btn').innerHTML = icon('bell', 'ic');
+  $('#theme-btn').innerHTML = icon(DB.theme === 'dark' ? 'sun' : 'moon', 'ic');
+  document.body.setAttribute('data-theme', DB.theme);
+  $('#persona-select').value = DB.persona;
+  $('#scenario-select').value = DB.scenario;
+  $('#sim-chip').hidden = DB.scenario !== 'simfail';
+  buildCreateMenu();
+  buildAvatarMenu();
+}
+function menuItemHtml(label, ic, disabled, key) {
+  return '<button class="menu-item" role="menuitem" data-create="' + (key || '') + '"' + (disabled ? ' aria-disabled="true"' : '') + '>' + icon(ic, 'ic') + ' ' + label + '</button>';
+}
+function buildCreateMenu() {
+  var html = '<div class="menu-label">Create</div>' +
+    menuItemHtml('Project', 'folder', !canCreateProjects(), 'create-project') +
+    menuItemHtml('Project template', 'layout', !canManageTemplates(), 'create-projtemplate') +
+    menuItemHtml('Workflow template', 'listChecks', !canManageTemplates(), 'create-wftemplate') +
+    '<div class="menu-sep"></div>' +
+    menuItemHtml('Task — not part of this mock', 'checkSquare', true, '') +
+    menuItemHtml('Note — not part of this mock', 'fileText', true, '');
+  $('#create-menu').innerHTML = html;
+}
+function buildAvatarMenu() {
+  var p = persona();
+  var html = '<div class="menu-label">' + esc(p.name) + '</div>' +
+    '<div class="menu-item" style="pointer-events:none"><span class="text-xs muted">' + esc(p.title) + ' · ' + esc(p.email) + '</span></div>' +
+    '<div class="menu-sep"></div>' +
+    menuItemHtml('Help center', 'help', false, 'avatar-help') +
+    menuItemHtml('What\'s new', 'sparkles', false, 'avatar-whatsnew') +
+    menuItemHtml('Profile settings', 'users', false, 'avatar-profile');
+  $('#avatar-menu').innerHTML = html;
+}
+function closeMenus() { $('#create-menu').hidden = true; $('#create-menu').parentNode && ($('#create-btn').setAttribute('aria-expanded', 'false')); $('#avatar-menu').hidden = true; $('#avatar-btn').setAttribute('aria-expanded', 'false'); }
+function toggleMenu(btn, menu) {
+  var willOpen = menu.hidden;
+  closeMenus();
+  menu.hidden = !willOpen;
+  btn.setAttribute('aria-expanded', String(willOpen));
+}
+function bindShell() {
+  var skip = $('.skip-link');
+  skip.addEventListener('click', function (e) {
+    e.preventDefault();
+    $('#main-content').focus();
+  });
+  var trigger = $('#sb-trigger');
+  trigger.addEventListener('click', function () {
+    if (window.innerWidth > 900) { document.body.classList.toggle('sb-collapsed'); }
+    else { document.body.classList.toggle('sb-open'); $('#side-backdrop').hidden = !document.body.classList.contains('sb-open'); trigger.setAttribute('aria-expanded', String(document.body.classList.contains('sb-open'))); }
+  });
+  $('#side-backdrop').addEventListener('click', function () { document.body.classList.remove('sb-open'); $('#side-backdrop').hidden = true; });
+  var createBtn = $('#create-btn');
+  createBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(createBtn, $('#create-menu')); });
+  $('#create-menu').addEventListener('click', function (e) {
+    var item = e.target.closest('[data-create]');
+    if (!item) return;
+    closeMenus();
+    if (item.getAttribute('aria-disabled') === 'true') { toast('info', 'Not part of this mock', 'This create type is out of scope.'); return; }
+    var key = item.getAttribute('data-create');
+    if (key === 'create-project') openWizard(null);
+    else if (key === 'create-projtemplate') openProjectTemplateDialog(null);
+    else if (key === 'create-wftemplate') openWorkflowTemplateForm(null);
+  });
+  var avatarBtn = $('#avatar-btn');
+  avatarBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(avatarBtn, $('#avatar-menu')); });
+  $('#avatar-menu').addEventListener('click', function (e) {
+    var item = e.target.closest('[data-create]');
+    if (!item) return;
+    closeMenus();
+    var key = item.getAttribute('data-create');
+    if (key === 'avatar-help') openHelp('workflows');
+    else if (key === 'avatar-whatsnew') toast('info', 'What\'s new', 'Not part of this mock.');
+    else if (key === 'avatar-profile') toast('info', 'Profile settings', 'Not part of this mock.');
+  });
+  document.addEventListener('click', function () { closeMenus(); });
+  $('#theme-btn').addEventListener('click', function () {
+    DB.theme = DB.theme === 'dark' ? 'light' : 'dark';
+    saveDB();
+    renderShell();
+  });
+  $('#bell-btn').addEventListener('click', function () { toast('info', 'Notifications', 'Not part of this mock.'); });
+  searchInput.addEventListener('input', function () {
+    DB.searchQuery = searchInput.value;
+    if (ROUTE.page === 'projects') { renderMain(renderProjectsPage()); bindProjectsPage($('#main-content')); }
+  });
+  searchInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && ROUTE.page !== 'projects') { toast('info', 'Search filters the Projects page', 'Open Projects to search projects and templates in this mock.'); }
+    if (e.key === 'Escape' && searchInput.value) { searchInput.value = ''; DB.searchQuery = ''; if (ROUTE.page === 'projects') { renderMain(renderProjectsPage()); bindProjectsPage($('#main-content')); } }
+  });
+  $('#persona-select').addEventListener('change', function () {
+    DB.persona = this.value;
+    saveDB();
+    renderPage();
+    toast('info', 'Persona switched', 'Now signed in as ' + persona().name + ' (' + persona().title + ').');
+  });
+  $('#scenario-select').addEventListener('change', function () {
+    DB.scenario = this.value;
+    simErrorOverride = false;
+    saveDB();
+    renderPage();
+    if (DB.scenario === 'simfail') toast('info', 'Partial-failure scenario ON', 'The next project created from a template will simulate one failed workflow start. SIMULATED — no transaction or backend behavior is claimed.');
+    if (DB.scenario === 'first-run') toast('info', 'First-run scenario', 'Templates are hidden to show the first-run empty states.');
+    if (DB.scenario === 'error') toast('info', 'Error scenario', 'Template lists will show the error state once. Use Retry to recover.');
+  });
+  $('#reset-btn').addEventListener('click', function () {
+    resetAll();
+    searchInput.value = '';
+    location.hash = '#/projects';
+    renderPage();
+    toast('success', 'Mock data reset', 'All synthetic data restored to defaults.');
+  });
+  $('#notes-btn').addEventListener('click', function () { openNotes(); });
+  window.addEventListener('hashchange', function () { renderPage(); focusAfterNav(); });
+}
+/* ---------- breadcrumbs ---------- */
+function renderBreadcrumbs() {
+  var html = '<a href="#/projects">Projects</a>';
+  if (ROUTE.page === 'projects') {
+    if (ROUTE.seg === 'templates') html += '<span class="bcrumb-sep" aria-hidden="true">/</span><span>Templates</span>';
+  } else if (ROUTE.page === 'wizard') {
+    html += '<span class="bcrumb-sep" aria-hidden="true">/</span><span>New project</span>';
+  } else if (ROUTE.page === 'project') {
+    var pr = getProject(ROUTE.projectId);
+    html += '<span class="bcrumb-sep" aria-hidden="true">/</span><a href="#/projects/' + esc(ROUTE.projectId) + '">' + esc(pr ? pr.name : 'Project') + '</a>';
+    if (ROUTE.tab && ROUTE.tab !== 'overview') html += '<span class="bcrumb-sep" aria-hidden="true">/</span><span>' + esc(cap(ROUTE.tab)) + '</span>';
+  }
+  $('#breadcrumbs').innerHTML = html;
+}
+/* ---------- page dispatch ---------- */
+function renderPage() {
+  cancelSwaps();
+  ROUTE = parseRoute();
+  renderShell();
+  renderBreadcrumbs();
+  var html = '';
+  if (ROUTE.page === 'projects') html = renderProjectsPage();
+  else if (ROUTE.page === 'wizard') html = renderWizardPage();
+  else if (ROUTE.page === 'project') html = renderProjectPage();
+  renderMain(html);
+  if (ROUTE.page === 'projects') bindProjectsPage($('#main-content'));
+  else if (ROUTE.page === 'wizard') bindWizardPage($('#main-content'));
+  else if (ROUTE.page === 'project') bindProjectPage($('#main-content'));
+}
+function focusAfterNav() {
+  if (ROUTE.page === 'wizard') return;
+  var h = $('#page-h1');
+  if (h) h.focus();
+}
+/* ---------- Projects page ---------- */
+function renderProjectsPage() {
+  var templatesSeg = ROUTE.seg === 'templates';
+  var html = '<div class="page-head">' +
+    '<div><h1 class="page-title" id="page-h1" tabindex="-1">' + (templatesSeg ? 'Templates' : 'Projects') + '</h1>' +
+    '<p class="page-sub">' + (templatesSeg
+      ? 'Reusable project setups — default visibility, methodology and optional workflows. Projects are snapshots, so editing a template never changes existing projects.'
+      : 'Track project work across the workspace. Project templates live on this page too — switch to the Templates view.') + '</p></div>' +
+    '<div class="page-actions">' +
+    (canCreateProjects()
+      ? '<button class="btn btn-primary" id="new-project-btn" data-testid="new-project-btn">' + icon('plus', 'ic-sm') + ' New Project</button>'
+      : '<span class="perm-note" style="border:0;background:none;padding:0">' + icon('lock', 'ic-sm') + ' Project creation requires permission</span>') +
+    '</div></div>';
+  html += '<div class="seg mb-4" role="group" aria-label="Projects or Templates view" style="margin-bottom:14px">' +
+    '<button class="seg-btn" data-seg="projects" aria-pressed="' + (ROUTE.seg === 'projects') + '" data-testid="seg-projects">' + icon('folder', 'ic-sm') + ' Projects <span class="seg-count">' + DB.projects.length + '</span></button>' +
+    '<button class="seg-btn" data-seg="templates" aria-pressed="' + (ROUTE.seg === 'templates') + '" data-testid="seg-templates">' + icon('layout', 'ic-sm') + ' Templates <span class="seg-count">' + DB.projTemplates.length + '</span></button>' +
+    '</div>';
+  html += '<div id="projects-content">';
+  if (ROUTE.seg === 'templates') {
+    if (DB.scenario === 'loading') {
+      html += skeletonCardHtml('templates');
+      scheduleSwap(function () {
+        if (ROUTE.page !== 'projects') return;
+        var box = $('#projects-content');
+        if (!box) return;
+        box.innerHTML = renderTemplatesTab();
+        bindProjectsPage($('#main-content'));
+      });
+    } else if (DB.scenario === 'error' && !simErrorOverride) {
+      html += errorCardHtml('templates');
+    } else {
+      html += renderTemplatesTab();
+    }
+  } else {
+    html += renderProjectsTab();
+  }
+  html += '</div>';
+  return html;
+}
+var swapTimers = [];
+function scheduleSwap(fn, delay) {
+  cancelSwaps();
+  swapTimers.push(setTimeout(function () { swapTimers = []; fn(); }, delay || 900));
+}
+function cancelSwaps() {
+  swapTimers.forEach(function (id) { clearTimeout(id); });
+  swapTimers = [];
+}
+function skeletonCardHtml(kind) {
+  var inner = '';
+  for (var i = 0; i < 4; i++) { inner += '<div class="skeleton" style="height:44px;margin:10px 12px"></div>'; }
+  return '<div class="card" style="margin-top:4px"><div class="card-head"><div class="skeleton" style="height:16px;width:220px"></div><div class="skeleton" style="height:12px;width:340px;margin-top:6px"></div></div>' + inner + '</div>';
+}
+function errorCardHtml(kind) {
+  return '<div class="card" style="margin-top:4px"><div class="empty" data-testid="error-state">' +
+    '<div class="empty-ic">' + icon('alert', 'ic-lg') + '</div>' +
+    '<h3>Couldn\'t load ' + (kind === 'templates' ? 'templates' : 'workflow templates') + '</h3>' +
+    '<p>Something went wrong on the server. Your data is safe — try again.</p>' +
+    '<div class="mt-3"><button class="btn btn-outline" data-act="retry">' + icon('refresh', 'ic-sm') + ' Retry</button></div>' +
+    '</div></div>';
+}
+function emptyStateHtml(title, desc, actionHtml, ic) {
+  return '<div class="card" style="margin-top:4px"><div class="empty" data-testid="empty-state">' +
+    '<div class="empty-ic">' + icon(ic || 'folder', 'ic-lg') + '</div>' +
+    '<h3>' + esc(title) + '</h3>' +
+    '<p>' + esc(desc) + '</p>' +
+    (actionHtml ? '<div class="mt-3">' + actionHtml + '</div>' : '') +
+    '</div></div>';
+}
+function renderProjectsTab() {
+  var q = (DB.searchQuery || '').trim().toLowerCase();
+  var list = DB.projects.filter(function (p) {
+    return !q || (p.name + ' ' + p.client + ' ' + METHODOLOGIES[p.methodology] + ' ' + STATUS[p.status] + ' ' + VIS[p.visibility]).toLowerCase().indexOf(q) > -1;
+  });
+  if (DB.projects.length === 0) {
+    return emptyStateHtml('No projects yet', 'Create your first project to start tracking work.',
+      canCreateProjects() ? '<button class="btn btn-primary" data-act="new-project">' + icon('plus', 'ic-sm') + ' New Project</button>' : '');
+  }
+  if (!list.length) {
+    return emptyStateHtml('No projects match "' + DB.searchQuery + '"', 'Try a different search, or clear it.',
+      '<button class="btn btn-outline" data-act="clear-search">' + icon('x', 'ic-sm') + ' Clear search</button>', 'search');
+  }
+  var html = '<div class="card"><div class="table-scroll" data-testid="projects-table"><table class="tbl">' +
+    '<thead><tr><th>Name</th><th>Client</th><th>Status</th><th>Visibility</th><th>Methodology</th><th>Tasks</th><th>Due</th><th></th></tr></thead><tbody>';
+  list.forEach(function (p) {
+    html += '<tr>' +
+      '<td><div class="cell-main" style="max-width:250px"><a href="#/projects/' + esc(p.id) + '" data-open="' + esc(p.id) + '" style="color:var(--foreground);font-weight:500">' + esc(p.name) + '</a><span>' + esc(p.desc || '') + '</span></div></td>' +
+      '<td class="nowrap">' + esc(p.client) + '</td>' +
+      '<td><span class="chip ' + STATUS_CHIP[p.status] + '">' + STATUS[p.status] + '</span></td>' +
+      '<td class="nowrap">' + visLabelHtml(p.visibility) + '</td>' +
+      '<td class="nowrap"><span class="chip chip-neutral">' + METHODOLOGIES[p.methodology] + '</span></td>' +
+      '<td>' + p.tasks + '</td>' +
+      '<td class="nowrap muted">' + (p.due ? fmtDate(p.due) : '—') + '</td>' +
+      '<td><div class="row-actions"><button class="link-btn" data-open="' + esc(p.id) + '">Open</button></div></td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  return html;
+}
+function visLabelHtml(v) {
+  if (v === 'private') return '<span style="display:inline-flex;align-items:center;gap:5px">' + icon('lock', 'ic-sm') + ' Private</span>';
+  if (v === 'workspace') return '<span style="display:inline-flex;align-items:center;gap:5px">' + icon('building', 'ic-sm') + ' Company wide</span>';
+  return '<span style="display:inline-flex;align-items:center;gap:5px">' + icon('users', 'ic-sm') + ' Teams</span>';
+}
+function wfSummaryHtml(t) {
+  var wfs = (t.wfIds || []).map(function (id) { return getWf(id); }).filter(Boolean);
+  if (!wfs.length) return '<span class="muted">—</span>';
+  return wfs.map(function (w) { return '<span class="nowrap">' + esc(w.name) + ' <span class="muted">(' + w.steps.length + ' steps)</span></span>'; }).join('<br>');
+}
+function renderTemplatesTab() {
+  var manager = canManageTemplates();
+  var canCreate = canCreateProjects();
+  var q = (DB.searchQuery || '').trim().toLowerCase();
+  var firstRun = DB.scenario === 'first-run';
+  var list = DB.projTemplates.filter(function (t) {
+    return !q || (t.name + ' ' + t.desc + ' ' + METHODOLOGIES[t.methodology]).toLowerCase().indexOf(q) > -1;
+  });
+  var html = '<div class="page-head" style="margin-bottom:10px">' +
+    '<div><h2 class="card-title" id="tpl-heading">' + icon('layout', 'ic') + ' Project templates</h2>' +
+    '<p class="card-desc" style="margin-top:4px;max-width:680px">Saved project setups: a default visibility and methodology, plus optional workflows that start automatically when a project is created from the template. Projects are snapshots — editing a template later never changes existing projects. Workflow templates are managed in each project\'s <a href="#/projects/p1/workflows" data-go="wf-tab">Workflows tab</a>.</p></div>' +
+    '<div class="page-actions">' +
+    (manager ? '<button class="btn btn-primary" id="new-tpl-btn" data-testid="new-tpl-btn">' + icon('plus', 'ic-sm') + ' New template</button>' : '') +
+    '<button class="btn btn-ghost" data-help="templates">' + icon('help', 'ic-sm') + ' Learn about templates</button>' +
+    '</div></div>';
+  if (!manager) {
+    html += '<div class="perm-note mb-4" style="margin-bottom:12px">' + icon('shield', 'ic') +
+      '<span>You need the <b>Manage projects</b> permission to create, edit, archive or restore templates. You can view all templates' + (canCreate ? ' and use them to create projects.' : ', but creating projects from them needs the project-creation permission.') + '</span></div>';
+  }
+  if (firstRun) {
+    html += emptyStateHtml('No project templates yet', 'Save a setup from any project\'s Settings, or create one from scratch. Templates make repeatable project setups one click away.',
+      manager ? '<button class="btn btn-primary" data-act="new-tpl">' + icon('plus', 'ic-sm') + ' New template</button>' : '', 'layout');
+    return html;
+  }
+  if (!list.length && q) {
+    html += emptyStateHtml('No templates match "' + DB.searchQuery + '"', 'Try a different search, or clear it.',
+      '<button class="btn btn-outline" data-act="clear-search">' + icon('x', 'ic-sm') + ' Clear search</button>', 'search');
+    return html;
+  }
+  var rows = '';
+  list.forEach(function (t) {
+    var archived = t.status === 'archived';
+    var actions = '';
+    if (!archived && canCreate) actions += '<button class="link-btn" data-use="' + esc(t.id) + '">' + icon('arrowRight', 'ic-sm') + ' Use template</button>';
+    if (manager) actions += '<button class="link-btn" data-edit="' + esc(t.id) + '">Edit</button>';
+    if (manager) {
+      if (!archived) actions += '<button class="link-btn danger" data-archive="' + esc(t.id) + '">Archive</button>';
+      else actions += '<button class="link-btn" data-restore="' + esc(t.id) + '">Restore</button>';
+    }
+    rows += '<tr' + (archived ? ' style="opacity:.62"' : '') + ' data-testid="tpl-row">' +
+      '<td><div class="cell-main" style="max-width:270px"><b>' + esc(t.name) + '</b><span>' + esc(t.desc) + '</span></div></td>' +
+      '<td class="nowrap">' + visLabelHtml(t.visibility) + '</td>' +
+      '<td class="nowrap"><span class="chip chip-neutral">' + METHODOLOGIES[t.methodology] + '</span></td>' +
+      '<td>' + wfSummaryHtml(t) + '</td>' +
+      '<td class="nowrap"><span class="text-xs muted">' + fmtDate(t.updatedAt) + '<br>' + esc(t.updatedBy) + '</span></td>' +
+      '<td><span class="chip ' + (archived ? 'chip-archived' : 'chip-done') + '">' + (archived ? 'Archived' : 'Active') + '</span></td>' +
+      '<td><div class="row-actions">' + actions + (actions ? '' : '<span class="muted text-xs">—</span>') + '</div></td>' +
+      '</tr>';
+  });
+  html += '<div class="card"><div class="table-scroll" data-testid="templates-table"><table class="tbl">' +
+    '<thead><tr><th>Template</th><th>Visibility</th><th>Methodology</th><th>Workflows at creation</th><th>Updated</th><th>Status</th><th></th></tr></thead>' +
+    '<tbody>' + rows + '</tbody></table></div>' +
+    '<div class="card-foot" style="border-top:1px solid var(--border)"><span class="muted text-xs">Archived templates can\'t be used for new projects. Template reads are available to every workspace member; manage actions need the Manage projects permission.</span></div>' +
+    '</div>';
+  return html;
+}
+function bindProjectsPage(root) {
+  $all('[data-seg]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      location.hash = b.getAttribute('data-seg') === 'templates' ? '#/projects/templates' : '#/projects';
+    });
+  });
+  var np = $('#new-project-btn', root);
+  if (np) np.addEventListener('click', function () { openWizard(null); });
+  $all('[data-act="new-project"]', root).forEach(function (b) { b.addEventListener('click', function () { openWizard(null); }); });
+  $all('[data-act="new-tpl"]', root).forEach(function (b) { b.addEventListener('click', function () { openProjectTemplateDialog(null); }); });
+  var nt = $('#new-tpl-btn', root);
+  if (nt) nt.addEventListener('click', function () { openProjectTemplateDialog(null); });
+  $all('[data-act="clear-search"]', root).forEach(function (b) {
+    b.addEventListener('click', function () { searchInput.value = ''; DB.searchQuery = ''; renderMain(renderProjectsPage()); bindProjectsPage($('#main-content')); });
+  });
+  $all('[data-act="retry"]', root).forEach(function (b) {
+    b.addEventListener('click', function () { simErrorOverride = true; renderPage(); });
+  });
+  $all('[data-open]', root).forEach(function (b) {
+    b.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/projects/' + b.getAttribute('data-open'); });
+  });
+  $all('[data-use]', root).forEach(function (b) {
+    b.addEventListener('click', function () { openWizard(getPt(b.getAttribute('data-use'))); });
+  });
+  $all('[data-edit]', root).forEach(function (b) {
+    b.addEventListener('click', function () { openProjectTemplateDialog(getPt(b.getAttribute('data-edit'))); });
+  });
+  $all('[data-archive]', root).forEach(function (b) {
+    b.addEventListener('click', function () { archiveProjectTemplate(getPt(b.getAttribute('data-archive'))); });
+  });
+  $all('[data-restore]', root).forEach(function (b) {
+    b.addEventListener('click', function () { restoreProjectTemplate(getPt(b.getAttribute('data-restore'))); });
+  });
+  $all('[data-help]', root).forEach(function (b) {
+    b.addEventListener('click', function () { openHelp(b.getAttribute('data-help')); });
+  });
+  $all('[data-go]', root).forEach(function (b) {
+    b.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/projects/p1/workflows'; });
+  });
+}
+
+
+/* ================== Part 4: wizard, project detail, templates, help, notes, init ================== */
+/* ---------- draft persistence (sessionStorage, one slot) ---------- */
+var DRAFT_KEY = 'waypoint-mock-B-draft';
+function loadDraft() { try { var raw = sessionStorage.getItem(DRAFT_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } }
+function clearDraft() { try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) {} }
+function persistDraft() {
+  if (!WZ || WZ.showDraftPrompt) return;
+  try {
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+      name: WZ.name, description: WZ.description, visibility: WZ.visibility, teamIds: WZ.teamIds,
+      methodology: WZ.methodology, startDate: WZ.startDate, dueDate: WZ.dueDate,
+      budgetOn: WZ.budgetOn, budget: WZ.budget, templateId: WZ.template ? WZ.template.id : null,
+      savedAt: new Date().toISOString()
+    }));
+  } catch (e) {}
+}
+/* ---------- wizard ---------- */
+var WZ = null;
+var WIZ_RETURN = '#/projects';
+function openWizard(template) {
+  var current = location.hash || '#/projects';
+  if (current.indexOf('#/projects') === 0 && current.indexOf('new') === -1) WIZ_RETURN = current; else WIZ_RETURN = '#/projects';
+  WZ = null;
+  location.hash = '#/projects/new' + (template ? '?template=' + template.id : '');
+}
+function freshWizard(template) {
+  return {
+    key: location.hash, step: 0, name: '', description: '', visibility: 'private', teamIds: [],
+    methodology: 'blank', startDate: '', dueDate: '', budgetOn: false, budget: '', currency: 'USD',
+    template: template || null, dirty: false, busy: false, showDraftPrompt: false, err: {},
+    fromDraft: false, justOpened: true
+  };
+}
+function renderWizardPage() {
+  if (!canCreateProjects()) {
+    return '<div class="page-head"><h1 class="page-title" id="page-h1" tabindex="-1">New project</h1></div>' +
+      emptyStateHtml('You don\'t have permission to create projects', 'Project creation requires the create-projects permission. Ask a workspace admin to grant it, or switch persona in the Mock controls strip.',
+      '<a class="btn btn-outline" href="#/projects">' + icon('arrowLeft', 'ic-sm') + ' Back to Projects</a>', 'lock');
+  }
+  if (!WZ || WZ.key !== location.hash) {
+    var tplId = ROUTE.query.template;
+    var template = tplId ? getPt(tplId) : null;
+    if (template && (!template.status || template.status === 'active')) {
+      WZ = freshWizard(template);
+      WZ.visibility = template.visibility === 'workspace' ? 'workspace' : 'private';
+      WZ.methodology = template.methodology;
+      WZ.dirty = true;
+      persistDraft();
+    } else {
+      var draft = loadDraft();
+      if (draft) {
+        WZ = freshWizard(null);
+        WZ.showDraftPrompt = true;
+        WZ.draft = draft;
+        WZ.justOpened = false;
+      } else {
+        WZ = freshWizard(null);
+      }
+    }
+  }
+  var h = '<div class="page-head">' +
+    '<div><h1 class="page-title" id="page-h1" tabindex="-1">New project</h1>' +
+    '<p class="page-sub">Four steps — your draft is saved automatically in this browser and survives a reload.</p></div>' +
+    '<div class="page-actions"><button class="btn btn-ghost" data-wz-cancel="1">Cancel</button></div></div>' +
+    '<div class="card" data-testid="wizard"><div class="card-body">' +
+    wizardStepperHtml(WZ.step) +
+    '<div style="margin-top:18px">' + wizardStepHtml() + '</div>' +
+    '</div>' +
+    '<div class="card-foot">' +
+    '<span class="muted text-xs" style="margin-right:auto">Draft saved automatically · step ' + (WZ.step + 1) + ' of 4</span>' +
+    '<button class="btn btn-outline" data-wz-back="1"' + (WZ.step === 0 || WZ.busy ? ' disabled' : '') + '>' + icon('arrowLeft', 'ic-sm') + ' Back</button>' +
+    (WZ.step < 3
+      ? '<button class="btn btn-primary" data-wz-next="1" data-testid="wz-continue"' + (WZ.busy ? ' disabled' : '') + '>Continue ' + icon('arrowRight', 'ic-sm') + '</button>'
+      : '<button class="btn btn-primary" data-wz-create="1" data-testid="wz-create"' + (WZ.busy ? ' disabled' : '') + '>' + (WZ.busy ? '<span class="spin"></span> Creating…' : 'Create project') + '</button>') +
+    '</div></div>';
+  return h;
+}
+function wizardStepperHtml(current) {
+  var names = ['Basics', 'Access', 'Planning', 'Review'];
+  var h = '<div class="stepper" role="list" aria-label="Wizard steps">';
+  names.forEach(function (n, i) {
+    var state = i < current ? 'done' : (i === current ? 'current' : '');
+    h += '<div class="step-item ' + state + '"' + (state === 'current' ? ' aria-current="step"' : '') + '>' +
+      '<span class="step-dot">' + (state === 'done' ? icon('check', 'ic-sm') : String(i + 1)) + '</span>' +
+      '<span class="step-name">' + n + '</span>' +
+      (i < names.length - 1 ? '<span class="step-line" aria-hidden="true"></span>' : '') +
+      '</div>';
+  });
+  return h + '</div>';
+}
+function wizardStepHtml() {
+  if (WZ.showDraftPrompt) return wizardDraftPromptHtml();
+  if (WZ.step === 0) return wizardBasicsHtml();
+  if (WZ.step === 1) return wizardAccessHtml();
+  if (WZ.step === 2) return wizardPlanningHtml();
+  return wizardReviewHtml();
+}
+function wizardDraftPromptHtml() {
+  var d = WZ.draft;
+  return '<div class="banner banner-info" data-testid="draft-prompt">' + icon('info', 'ic') +
+    '<div><b>Continue an unfinished draft?</b>' +
+    '<span style="display:block;margin-top:2px">You have a draft for «' + esc(d.name || 'Untitled project') + '» saved ' + (d.savedAt ? new Date(d.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'earlier') + '. Continue it or start fresh.</span>' +
+    '<span class="banner-actions">' +
+    '<button class="btn btn-primary" data-draft-continue="1" data-autofocus>Continue draft</button>' +
+    '<button class="btn btn-outline" data-draft-fresh="1">Start fresh</button></span></div></div>';
+}
+function wizardBasicsHtml() {
+  var t = WZ.template;
+  var err = WZ.err && WZ.err.name;
+  var h = '<div class="flex gap-2 items-center mb-2"><h2 class="card-title" style="font-size:14px">Basics</h2></div>' +
+    '<div style="max-width:560px">' +
+    '<label class="label" for="wz-name">Project name <span style="color:var(--destructive)" aria-hidden="true">*</span></label>' +
+    '<input class="input" id="wz-name" maxlength="80" value="' + esc(WZ.name) + '" aria-required="true" aria-invalid="' + (err ? 'true' : 'false') + '" aria-describedby="wz-name-err wz-name-hint"' + (WZ.justOpened && !WZ.showDraftPrompt ? ' data-autofocus' : '') + '>' +
+    (err ? '<div class="field-error" id="wz-name-err" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(err) + '</div>' : '') +
+    '<p class="hint" id="wz-name-hint">Up to 80 characters. Names can be changed later in Settings.</p>' +
+    '<div class="mt-3"><label class="label" for="wz-desc">Description <span class="muted">(optional)</span></label>' +
+    '<textarea class="textarea" id="wz-desc">' + esc(WZ.description) + '</textarea></div>' +
+    '</div>';
+  h += '<div class="mt-4" style="max-width:560px">';
+  if (t) {
+    h += '<div class="from-tpl-card" data-testid="wizard-template-card">' +
+      '<h4>' + icon('layout', 'ic') + ' From template «' + esc(t.name) + '»</h4>' +
+      '<p style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">' +
+      '<span class="chip chip-neutral">' + VIS[t.visibility] + '</span><span class="chip chip-neutral">' + METHODOLOGIES[t.methodology] + '</span>' +
+      '<span class="chip chip-neutral">' + (t.wfIds || []).length + ' workflow' + ((t.wfIds || []).length === 1 ? '' : 's') + '</span></p>' +
+      '<p>Access and Methodology will be prefilled — you can change them.</p>' +
+      '<div class="mt-2"><button class="btn btn-outline btn-sm" data-wz-remove-tpl="1">' + icon('x', 'ic-sm') + ' Remove template</button></div></div>';
+  } else {
+    h += '<div class="perm-note" style="border:1px dashed var(--ring);background:var(--primary-soft)">' + icon('layout', 'ic') +
+      '<span><b>Start from a template (optional)</b><br>Prefills Access and Methodology from a saved template. You can still change everything.' +
+      '<br><button class="btn btn-outline btn-sm mt-2" data-wz-pick-tpl="1">' + icon('arrowRight', 'ic-sm') + ' Choose a template…</button></span></div>';
+  }
+  h += '</div>';
+  return h;
+}
+function wizardAccessHtml() {
+  var t = WZ.template;
+  var err = WZ.err && WZ.err.teams;
+  var h = '';
+  if (t) h += '<div class="helper mb-3" style="margin-bottom:12px">' + icon('info', 'ic') + '<span>Prefilled from «' + esc(t.name) + '» — you can change it before creating.</span></div>';
+  h += '<div class="flex gap-2 items-center mb-2"><h2 class="card-title" style="font-size:14px">Access</h2></div>' +
+    '<p class="hint" style="margin-bottom:10px">Who can see this project?</p>' +
+    '<div class="radio-stack" role="radiogroup" aria-label="Project visibility" style="max-width:560px">' +
+    wizardRadioCard('private', 'Private', 'Only people you invite can see this project.', 'lock') +
+    wizardRadioCard('workspace', 'Company wide', 'Every workspace member can see this project.', 'building') +
+    wizardRadioCard('teams', 'Teams', 'Visible to the teams you choose.', 'users') +
+    '</div>';
+  if (WZ.visibility === 'teams') {
+    h += '<div class="mt-3" style="max-width:560px"><label class="label" id="teams-label">Teams <span style="color:var(--destructive)" aria-hidden="true">*</span></label>' +
+      '<div class="team-chips" role="group" aria-labelledby="teams-label">' +
+      TEAMS.map(function (tm) {
+        var on = WZ.teamIds.indexOf(tm.id) > -1;
+        return '<button type="button" class="team-chip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-team="' + tm.id + '">' + tm.name + '</button>';
+      }).join('') +
+      '</div>' +
+      (err ? '<div class="field-error" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(err) + '</div>' : '') +
+      '</div>';
+  }
+  h += '<div class="mt-3"><label class="label" for="wz-currency" hidden>Currency</label><input id="wz-currency" type="hidden" value="USD"></div>';
+  return h;
+}
+function wizardRadioCard(val, title, desc, ic) {
+  return '<label class="radio-card' + (WZ.visibility === val ? ' checked' : '') + '">' +
+    '<input type="radio" name="wz-visibility" value="' + val + '"' + (WZ.visibility === val ? ' checked' : '') + '>' +
+    '<span>' + icon(ic, 'ic') + ' <b>' + title + '</b><p>' + desc + '</p></span></label>';
+}
+function wizardPlanningHtml() {
+  var err = WZ.err && WZ.err.dates;
+  var opts = Object.keys(METHODOLOGIES).map(function (k) {
+    return '<option value="' + k + '"' + (WZ.methodology === k ? ' selected' : '') + '>' + METHODOLOGIES[k] + '</option>';
+  }).join('');
+  var h = '<div class="flex gap-2 items-center mb-2"><h2 class="card-title" style="font-size:14px">Planning</h2></div>' +
+    '<div style="max-width:560px">' +
+    '<label class="label" for="wz-methodology">Methodology</label>' +
+    '<select class="select" id="wz-methodology">' + opts + '</select>' +
+    '<div class="helper mt-2" style="margin-top:8px">' + icon('info', 'ic') +
+    '<span>Methodology sets up default task statuses (for example, Scrum → Backlog, Sprint, In Progress, Review, Done). You can change it later without moving existing tasks. Workflow templates can be started anytime from the Workflows tab.</span></div>' +
+    '<div class="mt-3" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+    '<div><label class="label" for="wz-start">Start date <span class="muted">(optional)</span></label>' +
+    '<input class="input" type="date" id="wz-start" value="' + esc(WZ.startDate) + '"></div>' +
+    '<div><label class="label" for="wz-due">Due date <span class="muted">(optional)</span></label>' +
+    '<input class="input" type="date" id="wz-due" value="' + esc(WZ.dueDate) + '"></div></div>' +
+    (err ? '<div class="field-error" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(err) + '</div>' : '') +
+    '<div class="mt-3"><label class="checkbox-row"><input type="checkbox" id="wz-budget"' + (WZ.budgetOn ? ' checked' : '') + '> Set a budget</label>' +
+    (WZ.budgetOn ? '<div class="mt-2" style="display:flex;gap:10px"><input class="input" id="wz-budget-amt" type="number" min="0" placeholder="Amount" value="' + esc(WZ.budget) + '" style="max-width:180px">' +
+      '<select class="select" id="wz-budget-cur" style="max-width:160px"><option value="USD">US Dollar</option><option value="EUR">Euro</option><option value="GBP">British Pound</option></select></div>' : '') +
+    '</div></div>';
+  return h;
+}
+function wizardReviewHtml() {
+  var t = WZ.template;
+  var teamsTxt = WZ.visibility === 'teams' ? TEAMS.filter(function (tm) { return WZ.teamIds.indexOf(tm.id) > -1; }).map(function (tm) { return tm.name; }).join(', ') || 'None selected' : '';
+  var h = '<div class="flex gap-2 items-center mb-2"><h2 class="card-title" style="font-size:14px">Review</h2></div>';
+  if (t) h += fromTemplateCardHtml(t) + '<div class="mt-3"></div>';
+  h += '<div class="card" style="box-shadow:none;background:var(--background)"><div class="card-body"><dl class="dl" data-testid="wizard-review">' +
+    '<div class="dl-row"><dt>Name</dt><dd>' + esc(WZ.name) + '</dd></div>' +
+    '<div class="dl-row"><dt>Description</dt><dd class="muted">' + (WZ.description ? esc(WZ.description) : '—') + '</dd></div>' +
+    '<div class="dl-row"><dt>Visibility</dt><dd>' + (WZ.visibility === 'teams' ? 'Teams · ' + esc(teamsTxt) : VIS[WZ.visibility]) + '</dd></div>' +
+    '<div class="dl-row"><dt>Methodology</dt><dd>' + METHODOLOGIES[WZ.methodology] + '</dd></div>' +
+    '<div class="dl-row"><dt>Dates</dt><dd class="muted">' + (WZ.startDate ? fmtDate(WZ.startDate) + ' → ' : '') + (WZ.dueDate ? fmtDate(WZ.dueDate) : '—') + '</dd></div>' +
+    '<div class="dl-row"><dt>Budget</dt><dd class="muted">' + (WZ.budgetOn ? (WZ.budget ? 'On · ' + WZ.currency + ' ' + esc(WZ.budget) : 'On') : 'Off') + '</dd></div>' +
+    '</dl></div></div>';
+  return h;
+}
+function fromTemplateCardHtml(t) {
+  var wfs = (t.wfIds || []).map(function (id) { return getWf(id); }).filter(Boolean);
+  var m = ptStepCount(t);
+  return '<div class="from-tpl-card" data-testid="from-template-card">' +
+    '<h4>' + icon('layout', 'ic') + ' From template «' + esc(t.name) + '»</h4>' +
+    '<p>Visibility: <b>' + VIS[t.visibility] + '</b> · Methodology: <b>' + METHODOLOGIES[t.methodology] + '</b>.<br>' +
+    (wfs.length
+      ? 'After creation, ' + wfs.length + ' workflow' + (wfs.length === 1 ? '' : 's') + ' will create ' + m + ' task' + (m === 1 ? '' : 's') + ' — ' + wfs.map(function (w) { return esc(w.name); }).join(', ') + '.'
+      : 'No workflows are attached to this template, so none will start automatically.') +
+    '<br>Snapshot semantics: editing the template later never changes this project.</p></div>';
+}
+function bindWizardPage(root) {
+  if (!canCreateProjects()) return;
+  $all('[data-wz-cancel]', root).forEach(function (b) { b.addEventListener('click', wizardCancel); });
+  $all('[data-wz-back]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      if (WZ.step > 0 && !WZ.busy) { WZ.step--; WZ.justStepped = true; renderPage(); }
+    });
+  });
+  $all('[data-wz-next]', root).forEach(function (b) { b.addEventListener('click', wizardContinue); });
+  $all('[data-wz-create]', root).forEach(function (b) { b.addEventListener('click', wizardCreate); });
+  $all('[data-draft-continue]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var d = WZ.draft;
+      WZ.showDraftPrompt = false;
+      WZ.name = d.name || ''; WZ.description = d.description || ''; WZ.visibility = d.visibility || 'private';
+      WZ.teamIds = d.teamIds || []; WZ.methodology = d.methodology || 'blank';
+      WZ.startDate = d.startDate || ''; WZ.dueDate = d.dueDate || '';
+      WZ.budgetOn = !!d.budgetOn; WZ.budget = d.budget || '';
+      WZ.template = d.templateId ? getPt(d.templateId) : null;
+      WZ.dirty = true; WZ.fromDraft = true;
+      renderPage();
+    });
+  });
+  $all('[data-draft-fresh]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      clearDraft();
+      WZ = freshWizard(null);
+      WZ.justOpened = true;
+      renderPage();
+    });
+  });
+  $all('[data-wz-pick-tpl]', root).forEach(function (b) { b.addEventListener('click', openTemplatePicker); });
+  $all('[data-wz-remove-tpl]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      WZ.template = null; WZ.dirty = true; persistDraft(); renderPage();
+    });
+  });
+  var nameInput = $('#wz-name', root);
+  if (nameInput) {
+    nameInput.addEventListener('input', function () { WZ.name = nameInput.value; WZ.dirty = true; WZ.err.name = ''; persistDraft(); });
+  }
+  var descInput = $('#wz-desc', root);
+  if (descInput) descInput.addEventListener('input', function () { WZ.description = descInput.value; WZ.dirty = true; persistDraft(); });
+  $all('input[name="wz-visibility"]', root).forEach(function (r) {
+    r.addEventListener('change', function () { WZ.visibility = r.value; WZ.dirty = true; persistDraft(); renderPage(); });
+  });
+  $all('[data-team]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var id = b.getAttribute('data-team');
+      var i = WZ.teamIds.indexOf(id);
+      if (i > -1) WZ.teamIds.splice(i, 1); else WZ.teamIds.push(id);
+      WZ.dirty = true; WZ.err.teams = ''; persistDraft(); renderPage();
+    });
+  });
+  var meth = $('#wz-methodology', root);
+  if (meth) meth.addEventListener('change', function () { WZ.methodology = meth.value; WZ.dirty = true; persistDraft(); });
+  var startD = $('#wz-start', root);
+  if (startD) startD.addEventListener('change', function () { WZ.startDate = startD.value; WZ.dirty = true; WZ.err.dates = ''; persistDraft(); });
+  var dueD = $('#wz-due', root);
+  if (dueD) dueD.addEventListener('change', function () { WZ.dueDate = dueD.value; WZ.dirty = true; WZ.err.dates = ''; persistDraft(); });
+  var budget = $('#wz-budget', root);
+  if (budget) budget.addEventListener('change', function () { WZ.budgetOn = budget.checked; WZ.dirty = true; persistDraft(); renderPage(); });
+  var amt = $('#wz-budget-amt', root);
+  if (amt) amt.addEventListener('input', function () { WZ.budget = amt.value; persistDraft(); });
+  function onWzEsc(e) {
+    if (ROUTE.page !== 'wizard') { document.removeEventListener('keydown', onWzEsc); document.__wzEscBound = false; return; }
+    if (e.key === 'Escape') { e.preventDefault(); wizardCancel(); }
+  }
+  if (!document.__wzEscBound) { document.__wzEscBound = true; document.addEventListener('keydown', onWzEsc); }
+  if (WZ.justStepped || WZ.justOpened) {
+    var first = root.querySelector('[data-autofocus]') || $('#wz-name', root) || $('#wz-methodology', root);
+    if (first) first.focus();
+    WZ.justStepped = false; WZ.justOpened = false;
+  }
+}
+function wizardContinue() {
+  if (WZ.busy) return;
+  WZ.err = {};
+  if (WZ.step === 0 && !WZ.name.trim()) { WZ.err.name = 'Project name is required.'; renderPage(); return; }
+  if (WZ.step === 1 && WZ.visibility === 'teams' && !WZ.teamIds.length) { WZ.err.teams = 'Select at least one team for this access mode.'; renderPage(); return; }
+  if (WZ.step === 2 && WZ.startDate && WZ.dueDate && WZ.startDate > WZ.dueDate) { WZ.err.dates = 'Start date must be before the due date.'; renderPage(); return; }
+  WZ.step++; WZ.justStepped = true;
+  persistDraft();
+  renderPage();
+}
+function wizardCancel() {
+  if (WZ.busy) return;
+  if (WZ.dirty && !WZ.showDraftPrompt) {
+    confirmDialog({
+      title: 'Discard this draft?',
+      description: 'Your answers will be lost. You can always start over from the Projects page.',
+      cancelLabel: 'Keep editing',
+      confirmLabel: 'Discard draft',
+      destructive: true,
+      onConfirm: function () { clearDraft(); WZ = null; location.hash = WIZ_RETURN; }
+    });
+  } else {
+    WZ = null;
+    location.hash = WIZ_RETURN;
+  }
+}
+function wizardCreate() {
+  if (WZ.busy) return;
+  if (!WZ.name.trim()) { WZ.err = { name: 'Project name is required.' }; WZ.step = 0; renderPage(); return; }
+  WZ.busy = true;
+  renderPage();
+  setTimeout(function () {
+    var template = WZ.template;
+    var project = {
+      id: 'p' + DB.nextProjectNum++, name: WZ.name.trim(), client: 'Acme Studio',
+      status: 'planning', visibility: WZ.visibility, methodology: WZ.methodology,
+      tasks: 0, due: WZ.dueDate || '', desc: WZ.description.trim(),
+      fromTemplate: template ? template.id : null, bannerFailures: []
+    };
+    var started = 0, taskCount = 0, failed = [];
+    if (template) {
+      (template.wfIds || []).forEach(function (wfId, idx) {
+        var wf = getWf(wfId);
+        if (!wf || wf.status !== 'active') return;
+        if (DB.scenario === 'simfail' && idx === 1) { failed.push(wf); return; }
+        var tasks = wf.steps.map(function (s, si) { return { id: uid('t'), title: s.title }; });
+        DB.history.unshift({ id: uid('h'), projectId: project.id, wfId: wf.id, wfName: wf.name, startedAt: '2026-11-01', by: persona().name, status: 'started', tasks: tasks });
+        project.tasks += tasks.length; taskCount += tasks.length; started++;
+      });
+    }
+    failed.forEach(function (wf) {
+      DB.history.unshift({ id: uid('h'), projectId: project.id, wfId: wf.id, wfName: wf.name, startedAt: '2026-11-01', by: persona().name, status: 'failed', tasks: [] });
+      project.bannerFailures.push(wf.id);
+    });
+    DB.projects.unshift(project);
+    saveDB(); clearDraft(); WZ = null;
+    var msg = 'Project created';
+    if (template) {
+      msg = 'Project created · ' + taskCount + ' task' + (taskCount === 1 ? '' : 's') + ' created from ' + started + ' workflow' + (started === 1 ? '' : 's');
+      if (failed.length) msg += ' · ' + failed.length + ' workflow failed';
+    }
+    toast(failed.length ? 'warning' : 'success', msg, template ? 'Using template «' + template.name + '». One toast, even when workflows auto-start.' : '');
+    location.hash = '#/projects/' + project.id + (template ? '/workflows' : '/overview');
+  }, 900);
+}
+/* ---------- template picker dialog ---------- */
+function openTemplatePicker() {
+  var firstRun = DB.scenario === 'first-run';
+  var list = activePts();
+  var gridHtml = function (filter) {
+    var f = (filter || '').trim().toLowerCase();
+    var vis = list.filter(function (t) { return !f || (t.name + ' ' + t.desc + ' ' + METHODOLOGIES[t.methodology]).toLowerCase().indexOf(f) > -1; });
+    if (firstRun) return '<div class="empty"><div class="empty-ic">' + icon('layout', 'ic-lg') + '</div><h3>No project templates yet</h3><p>Create one from the Templates view on the Projects page.</p></div>';
+    if (!list.length) return '<div class="empty"><div class="empty-ic">' + icon('layout', 'ic-lg') + '</div><h3>No active templates</h3><p>All project templates are archived. Restore one to use it here.</p></div>';
+    if (!vis.length) return '<div class="empty"><div class="empty-ic">' + icon('search', 'ic-lg') + '</div><h3>No templates match "' + esc(filter) + '"</h3><p>Try a different filter.</p></div>';
+    return '<div class="picker-grid" data-testid="template-picker">' + vis.map(function (t) {
+      var wfs = (t.wfIds || []).map(function (id) { return getWf(id); }).filter(Boolean);
+      return '<button type="button" class="picker-card" data-pick="' + esc(t.id) + '">' +
+        '<h4>' + esc(t.name) + '<span class="chip chip-primary">Use</span></h4>' +
+        '<p>' + esc(t.desc) + '</p>' +
+        '<span class="picker-meta"><span class="chip chip-neutral">' + VIS[t.visibility] + '</span><span class="chip chip-neutral">' + METHODOLOGIES[t.methodology] + '</span></span>' +
+        '<span class="picker-foot"><span>' + wfs.length + ' workflow' + (wfs.length === 1 ? '' : 's') + ' · ' + ptStepCount(t) + ' step' + (ptStepCount(t) === 1 ? '' : 's') + '</span><span>Updated ' + fmtDate(t.updatedAt) + '</span></span>' +
+        '</button>';
+    }).join('') + '</div>';
+  };
+  openDialog({
+    title: 'Start from a template',
+    description: 'Pick a template to prefill the wizard. You can still change anything before creating.',
+    wide: true,
+    body: '<div class="picker-search"><input class="input" id="picker-q" placeholder="Filter templates…" aria-label="Filter templates"></div><div id="picker-grid">' + gridHtml('') + '</div>',
+    footer: '<div class="spacer"></div><button class="btn btn-outline" data-picker-cancel="1">Cancel</button>',
+    onMount: function (dialog, close) {
+      dialog.querySelector('[data-picker-cancel]').addEventListener('click', function () { close('cancel'); });
+      dialog.querySelector('#picker-q').addEventListener('input', function () {
+        dialog.querySelector('#picker-grid').innerHTML = gridHtml(this.value);
+      });
+      $all('[data-pick]', dialog).forEach(function (b) {
+        b.addEventListener('click', function () {
+          var pt = getPt(b.getAttribute('data-pick'));
+          if (!pt) return;
+          WZ.template = pt;
+          WZ.visibility = pt.visibility === 'workspace' ? 'workspace' : 'private';
+          WZ.methodology = pt.methodology;
+          WZ.dirty = true;
+          persistDraft();
+          close('pick');
+          renderPage();
+        });
+      });
+    }
+  });
+}
+/* ---------- project page ---------- */
+var TABS = ['Overview', 'Tasks', 'Workflows', 'Board', 'Gantt', 'Calendar', 'Costs', 'Roadblocks', 'Updates', 'Files', 'Reports', 'Settings'];
+var TAB_KEYS = { Overview: 'overview', Tasks: 'tasks', Workflows: 'workflows', Board: 'board', Gantt: 'gantt', Calendar: 'calendar', Costs: 'costs', Roadblocks: 'roadblocks', Updates: 'updates', Files: 'files', Reports: 'reports', Settings: 'settings' };
+function renderProjectPage() {
+  var pr = getProject(ROUTE.projectId);
+  if (!pr) {
+    return '<div class="page-head"><h1 class="page-title" id="page-h1" tabindex="-1">Project not found</h1></div>' +
+      emptyStateHtml('Project not found', 'It may have been archived. Return to the projects list.', '<a class="btn btn-outline" href="#/projects">' + icon('arrowLeft', 'ic-sm') + ' All projects</a>', 'alert');
+  }
+  var viewer = !isProjectManager(pr.id);
+  var h = '<div class="page-head" style="margin-bottom:8px">' +
+    '<div><h1 class="page-title" id="page-h1" tabindex="-1" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' + esc(pr.name) +
+    '<span class="chip ' + STATUS_CHIP[pr.status] + '">' + STATUS[pr.status] + '</span>' +
+    (viewer ? '<span class="chip chip-neutral">' + icon('eye', 'ic-sm') + ' View-only access</span>' : '') +
+    '</h1>' +
+    '<p class="page-sub" style="margin-top:4px">' + esc(pr.client) + ' · ' + (pr.due ? 'Due ' + fmtDate(pr.due) + ' · ' : '') + pr.tasks + ' task' + (pr.tasks === 1 ? '' : 's') + ' · ' + VIS[pr.visibility] + ' · ' + METHODOLOGIES[pr.methodology] +
+    (pr.fromTemplate ? ' · from template «' + esc((getPt(pr.fromTemplate) || {}).name || 'deleted') + '»' : '') + '</p></div>' +
+    '<div class="page-actions"><a class="btn btn-ghost btn-sm" href="#/projects">' + icon('arrowLeft', 'ic-sm') + ' All projects</a></div></div>';
+  h += partialBannerHtml(pr);
+  h += '<div class="tabrow" role="tablist" aria-label="Project tabs" style="margin-bottom:16px">' +
+    TABS.map(function (name) {
+      var key = TAB_KEYS[name];
+      var active = ROUTE.tab === key;
+      var scoped = key === 'overview' || key === 'workflows' || key === 'settings';
+      return '<button class="ptab' + (scoped ? '' : ' ptab-out') + '" role="tab" data-ptab="' + key + '"' + (active ? ' aria-current="page"' : '') + '>' + name + '</button>';
+    }).join('') + '</div>';
+  if (ROUTE.tab === 'overview') h += renderOverviewTab(pr);
+  else if (ROUTE.tab === 'workflows') h += renderWorkflowsTab(pr);
+  else if (ROUTE.tab === 'settings') h += renderSettingsTab(pr);
+  else h += placeholderTab(pr);
+  return h;
+}
+function partialBannerHtml(pr) {
+  var failed = (pr.bannerFailures || []).map(function (id) { return getWf(id); }).filter(Boolean);
+  if (!failed.length) return '';
+  return '<div class="banner banner-warn mb-4" data-testid="partial-banner" role="alert">' + icon('alert', 'ic') +
+    '<div><b>Project created, but ' + failed.length + ' workflow' + (failed.length === 1 ? '' : 's') + ' couldn\'t start</b>' +
+    '<span style="display:block;margin-top:2px">«' + failed.map(function (w) { return esc(w.name); }).join('», «') + '» failed to start. The project is kept — start it from the Workflows tab.</span>' +
+    '<span class="banner-actions">' +
+    '<button class="btn btn-sm btn-outline" data-retry-wf="' + esc(failed[0].id) + '">' + icon('refresh', 'ic-sm') + ' Retry</button>' +
+    '<button class="btn btn-sm btn-primary" data-goto-start="' + esc(failed[0].id) + '">' + icon('arrowRight', 'ic-sm') + ' Start from Workflows tab</button></span>' +
+    '<span class="muted text-xs" style="display:block;margin-top:6px">SIMULATED partial failure — no transaction or backend behavior is claimed.</span></div></div>';
+}
+function placeholderTab(pr) {
+  var name = cap(ROUTE.tab);
+  return '<div class="card"><div class="empty" style="padding:44px 16px">' +
+    '<div class="empty-ic">' + icon('layers', 'ic-lg') + '</div>' +
+    '<h3>' + name + ' is outside this mock</h3>' +
+    '<p>Direction B scopes to the Workflows and Settings tabs plus the create-project and template journeys. ' + name + ' keeps its existing WayPoint behavior.</p>' +
+    '<div class="mt-3"><a class="btn btn-outline btn-sm" href="#/projects/' + esc(pr.id) + '/workflows">' + icon('arrowRight', 'ic-sm') + ' Go to Workflows</a></div></div></div>';
+}
+function renderOverviewTab(pr) {
+  var h = '<div class="stack">' +
+    '<div class="card"><div class="card-head"><div class="card-title">' + icon('info', 'ic') + ' About this project</div></div>' +
+    '<div class="card-body"><p style="font-size:13.5px">' + (pr.desc ? esc(pr.desc) : '<span class="muted">No description yet.</span>') + '</p>' +
+    '<div class="metric-row mt-3" style="margin-top:12px">' +
+    '<div class="metric"><b>' + pr.tasks + '</b><span>Tasks</span></div>' +
+    '<div class="metric"><b>' + (pr.due ? fmtDate(pr.due) : '—') + '</b><span>Due</span></div>' +
+    '<div class="metric"><b>' + METHODOLOGIES[pr.methodology] + '</b><span>Methodology</span></div></div></div></div>';
+  h += '<div class="card" data-testid="next-steps">' +
+    '<div class="card-head"><div class="card-title">' + icon('sparkles', 'ic') + ' Next steps <span class="chip chip-neutral">proposed · P12</span></div></div>' +
+    '<div class="card-body" style="display:flex;gap:8px;flex-wrap:wrap">' +
+    '<button class="btn btn-outline btn-sm" data-goto="workflows">' + icon('listChecks', 'ic-sm') + ' Start a workflow</button>' +
+    '<button class="btn btn-outline btn-sm" data-invite="1">' + icon('users', 'ic-sm') + ' Invite collaborators</button></div>' +
+    '<div class="card-foot" style="border-top:1px solid var(--border)"><span class="muted text-xs">Optional card — ships only if the owner approves P12.</span></div></div>';
+  return h;
+}
+/* ---------- workflows tab ---------- */
+var WF_FORM = null;
+var WFS = null;
+function renderWorkflowsTab(pr) {
+  var manager = isProjectManager(pr.id);
+  var canManage = canManageTemplates();
+  var firstRun = DB.scenario === 'first-run';
+  var loading = DB.scenario === 'loading';
+  var errorOut = DB.scenario === 'error' && !simErrorOverride;
+  if (loading) {
+    var tok = ++renderToken;
+    setTimeout(function () {
+      if (renderToken !== tok || ROUTE.page !== 'project' || ROUTE.tab !== 'workflows') return;
+      $('#main-content').innerHTML = renderProjectPage();
+      bindProjectPage($('#main-content'));
+    }, 900);
+  }
+  var h = '<div class="helper" style="margin-bottom:12px" data-testid="wf-intro">' + icon('info', 'ic') +
+    '<span><b>Workflow templates are shared by every project in this workspace.</b> Starting one creates a task for each step in this project — you track the work on the Tasks tab. There is no separate run to track. ' +
+    '<a href="#" data-help="workflows">What are workflows?</a> · Project templates live on the <a href="#/projects/templates">Projects page → Templates</a>.</span></div>';
+  if (loading) {
+    h += '<div class="stack">' + skeletonCardHtml('workflows') + skeletonCardHtml('workflows') + '</div>';
+    return h;
+  }
+  if (errorOut) {
+    h += errorCardHtml('workflows');
+    return h;
+  }
+  if (firstRun) {
+    h += '<div class="card" data-testid="wf-templates-card"><div class="card-head"><div class="card-title">' + icon('listChecks', 'ic') + ' Workflow templates</div></div>' +
+      '<div class="empty">' + '<div class="empty-ic">' + icon('listChecks', 'ic-lg') + '</div>' +
+      '<h3>No workflow templates yet</h3><p>Create a template to start repeatable project tasks.</p>' +
+      (canManage ? '<div class="mt-3"><button class="btn btn-primary" data-wf-new="1">' + icon('plus', 'ic-sm') + ' Create template</button></div>' : '') + '</div></div>';
+    return h;
+  }
+  h += wfTemplatesCardHtml(canManage, manager);
+  h += '<div class="cols cols-2" style="margin-top:14px">' + renderStartPanel(pr, manager) + renderHistoryCard(pr, manager) + '</div>';
+  return h;
+}
+function wfTemplatesCardHtml(canManage, manager) {
+  var h = '<div class="card" data-testid="wf-templates-card">' +
+    '<div class="card-head" style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">' +
+    '<div style="flex:1;min-width:220px"><div class="card-title">' + icon('listChecks', 'ic') + ' Workflow templates</div>' +
+    '<div class="card-desc">Ordered step recipes, managed here per project but shared workspace-wide.' + (canManage ? '' : ' Management needs the Manage projects permission.') + '</div></div>' +
+    (canManage && !(WF_FORM && WF_FORM.open) ? '<button class="btn btn-primary btn-sm" data-wf-new="1">' + icon('plus', 'ic-sm') + ' New template</button>' : '') +
+    '</div>';
+  if (WF_FORM && WF_FORM.open) {
+    h += '<div class="card-body">' + wfFormHtml() + '</div>';
+  } else {
+    var rows = '';
+    DB.wfTemplates.forEach(function (w) {
+      var archived = w.status === 'archived';
+      var actions = '';
+      if (canManage) {
+        actions += '<button class="link-btn" data-wf-edit="' + esc(w.id) + '">Edit</button>';
+        if (!archived) actions += '<button class="link-btn danger" data-wf-archive="' + esc(w.id) + '">Archive</button>';
+        else actions += '<button class="link-btn" data-wf-restore="' + esc(w.id) + '">Restore</button>';
+      }
+      rows += '<tr' + (archived ? ' style="opacity:.62"' : '') + ' data-testid="wf-row">' +
+        '<td><div class="cell-main" style="max-width:280px"><b>' + esc(w.name) + '</b><span>' + esc(w.desc) + '</span></div></td>' +
+        '<td>' + w.steps.length + ' steps</td>' +
+        '<td><span class="chip ' + (archived ? 'chip-archived' : 'chip-done') + '">' + (archived ? 'Archived' : 'Active') + '</span></td>' +
+        '<td class="nowrap"><span class="text-xs muted">' + fmtDate(w.updatedAt) + '<br>' + esc(w.updatedBy) + '</span></td>' +
+        '<td><div class="row-actions">' + (actions || '<span class="muted text-xs">View only</span>') + '</div></td></tr>';
+    });
+    h += '<div class="table-scroll"><table class="tbl" data-testid="wf-templates-table">' +
+      '<thead><tr><th>Template</th><th>Steps</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+  h += '</div>';
+  return h;
+}
+function openWorkflowTemplateForm(wf) {
+  WF_FORM = {
+    open: true, editing: wf ? wf.id : null, name: wf ? wf.name : '', desc: wf ? wf.desc : '',
+    steps: wf ? JSON.parse(JSON.stringify(wf.steps)) : [{ title: '', notes: '' }],
+    dirty: false, busy: false, err: {}
+  };
+  if (!(ROUTE.page === 'project' && ROUTE.tab === 'workflows')) {
+    location.hash = '#/projects/p1/workflows';
+  } else {
+    renderPage();
+  }
+}
+function wfFormHtml() {
+  var f = WF_FORM;
+  var errName = f.err && f.err.name;
+  var h = '<div data-testid="wf-form">' +
+    '<label class="label" for="wf-f-name">Template name <span style="color:var(--destructive)" aria-hidden="true">*</span></label>' +
+    '<input class="input" id="wf-f-name" maxlength="80" value="' + esc(f.name) + '" aria-invalid="' + (errName ? 'true' : 'false') + '" data-autofocus>' +
+    (errName ? '<div class="field-error" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(errName) + '</div>' : '') +
+    '<div class="mt-3"><label class="label" for="wf-f-desc">Description <span class="muted">(optional)</span></label>' +
+    '<textarea class="textarea" id="wf-f-desc" style="min-height:56px">' + esc(f.desc) + '</textarea></div>' +
+    '<div class="mt-3"><span class="label">Steps <span style="color:var(--destructive)" aria-hidden="true">*</span></span>' +
+    '<p class="hint" style="margin-bottom:8px">Each step becomes one task when the workflow is started. Empty step titles are rejected.</p>' +
+    '<div class="steps-editor" style="display:flex;flex-direction:column;gap:8px">' +
+    f.steps.map(function (s, i) {
+      var err = f.err && f.err.steps && f.err.steps[i];
+      return '<div class="step-row' + (err ? ' invalid' : '') + '" data-wf-step="' + i + '">' +
+        '<span class="step-num">' + (i + 1) + '</span>' +
+        '<span class="step-inputs">' +
+        '<input class="input" aria-label="Step ' + (i + 1) + ' title" placeholder="Step title" value="' + esc(s.title) + '" data-wf-step-title="' + i + '"' + (err ? ' aria-invalid="true"' : '') + '>' +
+        '<input class="input" aria-label="Step ' + (i + 1) + ' notes" placeholder="Notes (optional)" value="' + esc(s.notes || '') + '" data-wf-step-notes="' + i + '">' +
+        (err ? '<span class="field-error" role="alert">' + icon('alert', 'ic-sm') + ' Step ' + (i + 1) + ' needs a title.</span>' : '') +
+        '</span>' +
+        '<span class="step-controls">' +
+        '<button class="mini-btn" aria-label="Move step ' + (i + 1) + ' up" data-wf-up="' + i + '"' + (i === 0 ? ' disabled' : '') + '>' + icon('chevronUp', 'ic-sm') + '</button>' +
+        '<button class="mini-btn" aria-label="Move step ' + (i + 1) + ' down" data-wf-down="' + i + '"' + (i === f.steps.length - 1 ? ' disabled' : '') + '>' + icon('chevronDown', 'ic-sm') + '</button>' +
+        '<button class="mini-btn danger" aria-label="Remove step ' + (i + 1) + '" data-wf-del="' + i + '">' + icon('x', 'ic-sm') + '</button>' +
+        '</span></div>';
+    }).join('') +
+    '</div>' +
+    '<div class="mt-2"><button class="btn btn-outline btn-sm" data-wf-add-step="1">' + icon('plus', 'ic-sm') + ' Add step</button></div>' +
+    (f.err && f.err.all ? '<div class="field-error" role="alert" style="margin-top:8px">' + icon('alert', 'ic-sm') + ' ' + esc(f.err.all) + '</div>' : '') +
+    '<div class="mt-3" style="display:flex;gap:8px;justify-content:flex-end">' +
+    '<button class="btn btn-outline" data-wf-form-cancel="1">Cancel edit</button>' +
+    '<button class="btn btn-primary" data-wf-form-save="1" data-testid="wf-form-save">' + (f.busy ? '<span class="spin"></span> Saving…' : 'Save template') + '</button></div>' +
+    '</div>';
+  return h;
+}
+function bindWfForm(root) {
+  var f = WF_FORM;
+  if (!f) return;
+  var nameInput = $('#wf-f-name', root);
+  if (nameInput) nameInput.addEventListener('input', function () { f.name = nameInput.value; f.dirty = true; f.err.name = ''; });
+  var descInput = $('#wf-f-desc', root);
+  if (descInput) descInput.addEventListener('input', function () { f.desc = descInput.value; f.dirty = true; });
+  $all('[data-wf-step-title]', root).forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      var i = parseInt(inp.getAttribute('data-wf-step-title'), 10);
+      f.steps[i].title = inp.value; f.dirty = true;
+      if (f.err && f.err.steps) delete f.err.steps[i];
+    });
+  });
+  $all('[data-wf-step-notes]', root).forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      var i = parseInt(inp.getAttribute('data-wf-step-notes'), 10);
+      f.steps[i].notes = inp.value; f.dirty = true;
+    });
+  });
+  $all('[data-wf-up]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var i = parseInt(b.getAttribute('data-wf-up'), 10);
+      if (i > 0) { var tmp = f.steps[i - 1]; f.steps[i - 1] = f.steps[i]; f.steps[i] = tmp; f.dirty = true; renderPage(); }
+    });
+  });
+  $all('[data-wf-down]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var i = parseInt(b.getAttribute('data-wf-down'), 10);
+      if (i < f.steps.length - 1) { var tmp = f.steps[i + 1]; f.steps[i + 1] = f.steps[i]; f.steps[i] = tmp; f.dirty = true; renderPage(); }
+    });
+  });
+  $all('[data-wf-del]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var i = parseInt(b.getAttribute('data-wf-del'), 10);
+      f.steps.splice(i, 1);
+      if (!f.steps.length) f.steps.push({ title: '', notes: '' });
+      f.dirty = true; renderPage();
+    });
+  });
+  var addBtn = $('[data-wf-add-step]', root);
+  if (addBtn) addBtn.addEventListener('click', function () { f.steps.push({ title: '', notes: '' }); f.dirty = true; renderPage(); });
+  var cancelBtn = $('[data-wf-form-cancel]', root);
+  if (cancelBtn) cancelBtn.addEventListener('click', function () {
+    if (f.dirty) {
+      confirmDialog({
+        title: 'Discard changes?',
+        description: 'Your edits to this template will be lost.',
+        cancelLabel: 'Keep editing', confirmLabel: 'Discard', destructive: true,
+        onConfirm: function () { WF_FORM = null; renderPage(); }
+      });
+    } else { WF_FORM = null; renderPage(); }
+  });
+  var saveBtn = $('[data-wf-form-save]', root);
+  if (saveBtn) saveBtn.addEventListener('click', function () { wfFormSave(); });
+}
+function wfFormSave() {
+  var f = WF_FORM;
+  if (!f || f.busy) return;
+  f.err = { steps: {} };
+  var firstInvalidStep = -1;
+  if (!f.name.trim()) f.err.name = 'Template name is required.';
+  f.steps.forEach(function (s, i) {
+    if (!s.title.trim()) {
+      f.err.steps[i] = true;
+      if (firstInvalidStep < 0) firstInvalidStep = i;
+    }
+  });
+  var titled = f.steps.filter(function (s) { return s.title.trim(); });
+  if (!titled.length) f.err.all = 'Add at least one step with a title.';
+  if (f.err.name || f.err.all || Object.keys(f.err.steps).length) {
+    var invalidName = !!f.err.name;
+    renderPage();
+    setTimeout(function () {
+      if (!WF_FORM) return;
+      var target = invalidName ? document.getElementById('wf-f-name') : (firstInvalidStep > -1 ? document.querySelector('[data-wf-step-title="' + firstInvalidStep + '"]') : null);
+      if (target) target.focus();
+    }, 0);
+    return;
+  }
+  f.busy = true;
+  renderPage();
+  setTimeout(function () {
+    var steps = f.steps.filter(function (s) { return s.title.trim(); }).map(function (s) { return { title: s.title.trim(), notes: (s.notes || '').trim() }; });
+    if (f.editing) {
+      var w = getWf(f.editing);
+      if (w) { w.name = f.name.trim(); w.desc = f.desc.trim(); w.steps = steps; w.updatedBy = persona().name; w.updatedAt = '2026-11-01'; }
+      toast('success', 'Workflow template saved', '«' + f.name.trim() + '» updated.');
+    } else {
+      DB.wfTemplates.unshift({ id: uid('wf'), name: f.name.trim(), desc: f.desc.trim(), steps: steps, status: 'active', updatedBy: persona().name, updatedAt: '2026-11-01' });
+      toast('success', 'Workflow template created', '«' + f.name.trim() + '» is available in every project.');
+    }
+    saveDB();
+    WF_FORM = null;
+    renderPage();
+  }, 500);
+}
+/* ---------- start panel ---------- */
+function renderStartPanel(pr, manager) {
+  if (!WFS || WFS.pid !== pr.id) WFS = { pid: pr.id, selectedId: '', confirmed: false, busy: false, started: null };
+  var active = activeWfs();
+  var selected = WFS.selectedId ? getWf(WFS.selectedId) : null;
+  var opts = '<option value="">Choose a workflow…</option>' + active.map(function (w) {
+    return '<option value="' + esc(w.id) + '"' + (WFS.selectedId === w.id ? ' selected' : '') + '>' + esc(w.name) + ' — ' + w.steps.length + ' steps</option>';
+  }).join('');
+  var archived = DB.wfTemplates.filter(function (w) { return w.status === 'archived'; });
+  var h = '<div class="card" data-testid="start-card">' +
+    '<div class="card-head"><div class="card-title">' + icon('arrowRight', 'ic') + ' Start workflow</div>' +
+    '<div class="card-desc">Review the steps before creating project tasks. Each step becomes one task in this project.</div></div>' +
+    '<div class="card-body">';
+  if (!manager) {
+    h += '<div class="perm-note">' + icon('lock', 'ic') + '<span>Project manager access is required to start a workflow.</span></div>';
+  }
+  h += '<label class="label" for="wfs-select" style="margin-top:8px">Template</label>' +
+    '<select class="select" id="wfs-select"' + (manager ? '' : ' disabled') + '>' + opts + '</select>';
+  if (!active.length) h += '<p class="hint">No active templates — create one above or restore an archived template.</p>';
+  if (archived.length) h += '<p class="hint">Archived templates are not listed. Restore one to start it again.</p>';
+  if (selected) {
+    h += '<div class="mt-3" data-testid="start-review">' +
+      '<span class="label">Steps to create</span>' +
+      '<div class="card" style="box-shadow:none;background:var(--background);border:1px solid var(--border)"><div class="card-body" style="padding:10px 12px">' +
+      '<ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px">' +
+      selected.steps.map(function (s, i) {
+        return '<li style="font-size:13px">' + esc(s.title) + (s.notes ? ' <span class="muted" style="font-size:12px">— ' + esc(s.notes) + '</span>' : '') + '</li>';
+      }).join('') + '</ol></div></div>' +
+      '<div class="helper" style="margin-top:10px">' + icon('info', 'ic') + '<span>Review these steps. Starting creates a task for each one in this project — you\'ll track progress on the Tasks tab.</span></div>' +
+      '<label class="checkbox-row" style="margin-top:10px"><input type="checkbox" id="wfs-confirm"' + (WFS.confirmed ? ' checked' : '') + (manager && !WFS.busy ? '' : ' disabled') + '> I\'ve reviewed the steps</label>' +
+      '</div>';
+  }
+  if (WFS.started) {
+    h += '<div class="banner banner-info" style="margin-top:12px" data-testid="start-banner">' + icon('check', 'ic') +
+      '<div><b>Started «' + esc(WFS.started.wfName) + '»</b><span style="display:block;margin-top:2px">' + WFS.started.tasks.length + ' tasks created in this project.</span>' +
+      '<span class="banner-actions"><button class="btn btn-sm btn-outline" data-view-tasks="' + esc(WFS.started.id) + '">' + icon('eye', 'ic-sm') + ' View tasks</button></span></div></div>';
+  }
+  h += '</div>' +
+    '<div class="card-foot"><span class="muted text-xs" style="margin-right:auto">' + (manager ? 'One confirmation, one toast, one history row.' : 'View only') + '</span>' +
+    '<button class="btn btn-primary" data-wfs-start="1" data-testid="wfs-start"' + ((!manager || !selected || !WFS.confirmed || WFS.busy) ? ' disabled' : '') + '>' +
+    (WFS.busy ? '<span class="spin"></span> Starting…' : 'Start workflow') + '</button></div></div>';
+  return h;
+}
+function renderHistoryCard(pr, manager) {
+  var h = '<div class="card" data-testid="history-card">' +
+    '<div class="card-head"><div class="card-title">' + icon('activity', 'ic') + ' Recent starts</div>' +
+    '<div class="card-desc">Workflows applied to this project. Task links are durable after reload.</div></div>' +
+    '<div class="card-body" style="padding:6px 16px 10px">';
+  if (!manager) {
+    h += '<div class="perm-note" style="margin-top:8px">' + icon('eye', 'ic') + '<span>Start history is visible to project managers.</span></div>';
+    return h + '</div></div>';
+  }
+  var rows = projectHistory(pr.id);
+  if (!rows.length) {
+    h += '<div class="empty" style="padding:22px 8px"><div class="empty-ic">' + icon('activity', 'ic-lg') + '</div>' +
+      '<h3>No workflows started yet</h3><p>Start one above to create tasks in this project.</p></div>';
+  } else {
+    rows.forEach(function (row) {
+      var failed = row.status === 'failed';
+      h += '<div class="hist-row" data-testid="hist-row">' +
+        '<span class="hist-ic' + (failed ? ' failed' : '') + '">' + icon(failed ? 'alert' : 'check', 'ic-sm') + '</span>' +
+        '<span class="hist-body"><b>' + esc(row.wfName) + '</b>' +
+        '<span class="sub">Started ' + relAgo(row.startedAt) + ' · by ' + esc(row.by) + '</span>' +
+        (failed ? '<span class="sub" style="color:var(--destructive)">Start failed — the project was kept.</span>' : '') +
+        '<span style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap">' +
+        (!failed ? '<button class="link-btn" data-view-tasks="' + esc(row.id) + '">' + icon('eye', 'ic-sm') + ' View ' + row.tasks.length + ' task' + (row.tasks.length === 1 ? '' : 's') + '</button>'
+          : '<button class="link-btn" data-hist-retry="' + esc(row.id) + '">' + icon('refresh', 'ic-sm') + ' Retry</button>') +
+        '</span></span></div>';
+    });
+  }
+  h += '</div></div>';
+  return h;
+}
+function openTaskList(hist) {
+  var body = '<p class="muted text-xs" style="margin-bottom:10px">Created ' + relAgo(hist.startedAt) + ' in this project. In the product, each row links to the task.</p>' +
+    '<div class="card" style="box-shadow:none;background:var(--background)"><div class="card-body" style="padding:8px 12px">' +
+    '<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column">' +
+    hist.tasks.map(function (t, i) {
+      return '<li style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px">' +
+        '<span class="chip chip-primary" style="min-width:52px;justify-content:center">#' + (1000 + i) + '</span><span>' + esc(t.title) + '</span></li>';
+    }).join('') + '</ul></div></div>';
+  openDialog({
+    title: hist.tasks.length + ' tasks from «' + esc(hist.wfName) + '»',
+    description: 'Durable task links from the workflow start record.',
+    body: body,
+    footer: '<div class="spacer"></div><button class="btn btn-outline" data-task-close="1">Close</button>',
+    onMount: function (dialog, close) { dialog.querySelector('[data-task-close]').addEventListener('click', function () { close('ok'); }); }
+  });
+}
+function startWorkflow(pr) {
+  var wf = getWf(WFS.selectedId);
+  if (!wf || WFS.busy) return;
+  WFS.busy = true;
+  renderPage();
+  setTimeout(function () {
+    var tasks = wf.steps.map(function (s, i) { return { id: uid('t'), title: s.title }; });
+    // Manual recovery: if this template already has a failed start in this project, reconcile that
+    // record instead of adding a duplicate start (or counting its tasks twice).
+    var failedRow = DB.history.filter(function (h) { return h.projectId === pr.id && h.wfId === wf.id && h.status === 'failed'; })[0];
+    var row;
+    if (failedRow) {
+      failedRow.status = 'started';
+      failedRow.tasks = tasks;
+      failedRow.startedAt = '2026-11-01';
+      failedRow.by = persona().name;
+      row = failedRow;
+    } else {
+      row = { id: uid('h'), projectId: pr.id, wfId: wf.id, wfName: wf.name, startedAt: '2026-11-01', by: persona().name, status: 'started', tasks: tasks };
+      DB.history.unshift(row);
+    }
+    pr.tasks += tasks.length;
+    pr.bannerFailures = (pr.bannerFailures || []).filter(function (id) { return id !== wf.id; });
+    saveDB();
+    WFS = { pid: pr.id, selectedId: '', confirmed: false, busy: false, started: row };
+    toast('success', 'Workflow started', tasks.length + ' task' + (tasks.length === 1 ? '' : 's') + ' created from «' + wf.name + '». One toast — history below has the task links.');
+    renderPage();
+  }, 700);
+}
+var retryBusy = {};
+function retryFailedWorkflow(pr, wfId) {
+  var row = DB.history.filter(function (h) { return h.projectId === pr.id && h.wfId === wfId && h.status === 'failed'; })[0];
+  var wf = getWf(wfId);
+  if (!row || !wf || retryBusy[row.id]) return;
+  retryBusy[row.id] = true;
+  renderPage();
+  setTimeout(function () {
+    delete retryBusy[row.id];
+    // Idempotency guard: a manual recovery may have reconciled this row while Retry was queued.
+    if (!row || row.status !== 'failed') return;
+    var tasks = wf.steps.map(function (s, i) { return { id: uid('t'), title: s.title }; });
+    row.status = 'started';
+    row.tasks = tasks;
+    row.startedAt = '2026-11-01';
+    row.by = persona().name;
+    pr.tasks += tasks.length;
+    pr.bannerFailures = (pr.bannerFailures || []).filter(function (id) { return id !== wfId; });
+    saveDB();
+    toast('success', 'Workflow started', tasks.length + ' task' + (tasks.length === 1 ? '' : 's') + ' created from «' + wf.name + '». Retry is safe — no duplicates.');
+    renderPage();
+  }, 700);
+}
+/* ---------- settings tab ---------- */
+var SETTINGS = null;
+function renderSettingsTab(pr) {
+  if (!SETTINGS || SETTINGS.projectId !== pr.id) {
+    SETTINGS = { projectId: pr.id, name: pr.name, desc: pr.desc, visibility: pr.visibility, methodology: pr.methodology, teamIds: [], saving: null };
+  }
+  var manager = canManageTemplates();
+  var h = '<div class="stack">' +
+    '<div class="card"><div class="card-head"><div class="card-title">' + icon('pencil', 'ic') + ' General</div></div>' +
+    '<div class="card-body" style="max-width:560px">' +
+    '<label class="label" for="st-name">Project name</label><input class="input" id="st-name" value="' + esc(SETTINGS.name) + '">' +
+    '<div class="mt-3"><label class="label" for="st-desc">Description</label><textarea class="textarea" id="st-desc">' + esc(SETTINGS.desc) + '</textarea></div></div>' +
+    '<div class="card-foot"><span class="muted text-xs" style="margin-right:auto">' + (SETTINGS.saving === 'general' ? 'Saving…' : 'Saves announce with a toast.') + '</span>' +
+    '<button class="btn btn-primary" data-st-save="general">' + (SETTINGS.saving === 'general' ? '<span class="spin"></span> Saving…' : 'Save') + '</button></div></div>';
+  h += '<div class="card"><div class="card-head"><div class="card-title">' + icon('lock', 'ic') + ' Access</div>' +
+    '<div class="card-desc">Who can see this project?</div></div>' +
+    '<div class="card-body" style="max-width:560px"><div class="radio-stack">' +
+    stRadio('private', 'Private', 'Only people you invite can see this project.', 'lock') +
+    stRadio('workspace', 'Company wide', 'Every workspace member can see this project.', 'building') +
+    stRadio('teams', 'Teams', 'Visible to the teams you choose.', 'users') +
+    '</div>' +
+    (SETTINGS.visibility === 'teams' ? '<div class="mt-3"><div class="team-chips" role="group" aria-label="Teams">' + TEAMS.map(function (tm) {
+      var on = SETTINGS.teamIds.indexOf(tm.id) > -1;
+      return '<button type="button" class="team-chip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-st-team="' + tm.id + '">' + tm.name + '</button>';
+    }).join('') + '</div></div>' : '') +
+    '</div>' +
+    '<div class="card-foot"><span class="muted text-xs" style="margin-right:auto"></span>' +
+    '<button class="btn btn-primary" data-st-save="access">' + (SETTINGS.saving === 'access' ? '<span class="spin"></span> Saving…' : 'Save') + '</button></div></div>';
+  h += '<div class="card"><div class="card-head"><div class="card-title">' + icon('gauge', 'ic') + ' Methodology</div>' +
+    '<div class="card-desc">Sets the default task statuses. Changing it never moves existing tasks.</div></div>' +
+    '<div class="card-body" style="max-width:560px">' +
+    '<select class="select" id="st-methodology">' + Object.keys(METHODOLOGIES).map(function (k) {
+      return '<option value="' + k + '"' + (SETTINGS.methodology === k ? ' selected' : '') + '>' + METHODOLOGIES[k] + '</option>';
+    }).join('') + '</select></div>' +
+    '<div class="card-foot"><span class="muted text-xs" style="margin-right:auto"></span>' +
+    '<button class="btn btn-primary" data-st-save="methodology">' + (SETTINGS.saving === 'methodology' ? '<span class="spin"></span> Saving…' : 'Save') + '</button></div></div>';
+  h += '<div class="card" data-testid="save-as-template-card"><div class="card-head"><div class="card-title">' + icon('layout', 'ic') + ' Project template</div>' +
+    '<div class="card-desc">Save this project\'s setup as a reusable template. Prefilled from this project: visibility, methodology and an optional set of workflows to start automatically.</div></div>' +
+    '<div class="card-body">' +
+    (manager
+      ? '<button class="btn btn-primary" data-save-as-tpl="1">' + icon('layout', 'ic-sm') + ' Save as project template</button>' +
+        '<p class="hint">Templates are snapshots — later edits never change projects created from them.</p>'
+      : '<div class="perm-note">' + icon('shield', 'ic') + '<span>Requires the <b>Manage projects</b> permission.</span></div>') +
+    '</div></div>';
+  return h;
+}
+function stRadio(val, title, desc, ic) {
+  return '<label class="radio-card' + (SETTINGS.visibility === val ? ' checked' : '') + '">' +
+    '<input type="radio" name="st-visibility" value="' + val + '"' + (SETTINGS.visibility === val ? ' checked' : '') + '>' +
+    '<span>' + icon(ic, 'ic') + ' <b>' + title + '</b><p>' + desc + '</p></span></label>';
+}
+function stSave(pr, which) {
+  if (SETTINGS.saving) return;
+  SETTINGS.saving = which;
+  renderPage();
+  setTimeout(function () {
+    if (which === 'general') { pr.name = SETTINGS.name.trim() || pr.name; pr.desc = SETTINGS.desc; }
+    if (which === 'access') pr.visibility = SETTINGS.visibility;
+    if (which === 'methodology') pr.methodology = SETTINGS.methodology;
+    saveDB();
+    SETTINGS.saving = null;
+    renderPage();
+    toast('success', 'Settings saved', 'Announced with a toast (replaces the silent inline save).');
+  }, 500);
+}
+/* ---------- project template dialog (new / edit / save-as) ---------- */
+var PT_DLG = null;
+function openProjectTemplateDialog(existing, prefill, fromProject) {
+  var t = existing || {
+    name: (prefill && prefill.name) || '', desc: (prefill && prefill.desc) || '',
+    visibility: (prefill && prefill.visibility) || 'private', methodology: (prefill && prefill.methodology) || 'blank',
+    wfIds: (prefill && prefill.wfIds) || []
+  };
+  PT_DLG = { editing: existing || null, name: t.name, desc: t.desc, visibility: t.visibility, methodology: t.methodology, wfIds: t.wfIds.slice(), busy: false, err: {}, fromProject: fromProject || null, teamsNote: !!(fromProject && fromProject.visibility === 'teams') };
+  if (!(ROUTE.page === 'projects' && ROUTE.seg === 'templates') && !fromProject) {
+    location.hash = '#/projects/templates';
+    return;
+  }
+  renderProjectTemplateDialog();
+}
+function renderProjectTemplateDialog() {
+  var d = PT_DLG;
+  if (!d) return;
+  var body = '';
+  if (d.teamsNote) {
+    body += '<div class="helper" style="margin-bottom:12px">' + icon('info', 'ic') +
+      '<span>This project uses Teams access. Teams are chosen per project, so the template will default to <b>Private</b>. You can switch the new project to Teams after creation.</span></div>';
+  }
+  body += '<label class="label" for="ptd-name">Template name <span style="color:var(--destructive)" aria-hidden="true">*</span></label>' +
+    '<input class="input" id="ptd-name" maxlength="80" value="' + esc(d.name) + '" data-autofocus aria-invalid="' + (d.err.name ? 'true' : 'false') + '">' +
+    (d.err.name ? '<div class="field-error" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(d.err.name) + '</div>' : '') +
+    '<p class="hint">Up to 80 characters.</p>' +
+    '<div class="mt-3"><label class="label" for="ptd-desc">Description <span class="muted">(optional)</span></label>' +
+    '<textarea class="textarea" id="ptd-desc" style="min-height:56px">' + esc(d.desc) + '</textarea></div>' +
+    '<div class="mt-3" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' +
+    '<div><label class="label" for="ptd-vis">Default visibility</label>' +
+    '<select class="select" id="ptd-vis"><option value="private"' + (d.visibility === 'private' ? ' selected' : '') + '>Private</option>' +
+    '<option value="workspace"' + (d.visibility === 'workspace' ? ' selected' : '') + '>Company wide</option></select>' +
+    '<p class="hint">v1 templates support Private and Company wide only.</p></div>' +
+    '<div><label class="label" for="ptd-meth">Methodology</label>' +
+    '<select class="select" id="ptd-meth">' + Object.keys(METHODOLOGIES).map(function (k) {
+      return '<option value="' + k + '"' + (d.methodology === k ? ' selected' : '') + '>' + METHODOLOGIES[k] + '</option>';
+    }).join('') + '</select></div></div>' +
+    '<div class="mt-3"><span class="label">Workflows to start <span class="muted">(optional)</span></span>' +
+    '<p class="hint" style="margin-bottom:6px">Each selected workflow creates one task per step when a project is created from this template.</p>' +
+    '<div class="card" style="box-shadow:none;background:var(--background)"><div class="card-body" style="padding:8px 12px">' +
+    (activeWfs().length
+      ? activeWfs().map(function (w) {
+        var on = d.wfIds.indexOf(w.id) > -1;
+        return '<label class="checkbox-row" style="padding:6px 0;border-bottom:1px solid var(--border)"><input type="checkbox" data-ptd-wf="' + esc(w.id) + '"' + (on ? ' checked' : '') + '> ' + esc(w.name) + ' — ' + w.steps.length + ' steps</label>';
+      }).join('')
+      : '<p class="muted text-sm">No active workflow templates. They are created in each project\'s Workflows tab.</p>') +
+    '</div></div></div>';
+  openDialog({
+    title: d.editing ? 'Edit project template' : 'New project template',
+    description: d.editing
+      ? 'Update the template. Existing projects keep their snapshot — edits never change them.'
+      : 'Capture a repeatable project setup: default visibility, methodology and optional workflows that start automatically.',
+    wide: true,
+    body: body,
+    footer: '<div class="spacer"></div>' +
+      '<button class="btn btn-outline" data-ptd-cancel="1">Cancel</button>' +
+      '<button class="btn btn-primary" data-ptd-save="1" data-testid="ptd-save">' + (d.busy ? '<span class="spin"></span> Saving…' : 'Save template') + '</button>',
+    onCancel: function () { PT_DLG = null; },
+    onMount: function (dialog, close) {
+      dialog.querySelector('[data-ptd-cancel]').addEventListener('click', function () { close('cancel'); PT_DLG = null; });
+      dialog.querySelector('#ptd-name').addEventListener('input', function () { d.name = this.value; d.err.name = ''; });
+      dialog.querySelector('#ptd-desc').addEventListener('input', function () { d.desc = this.value; });
+      dialog.querySelector('#ptd-vis').addEventListener('change', function () { d.visibility = this.value; });
+      dialog.querySelector('#ptd-meth').addEventListener('change', function () { d.methodology = this.value; });
+      $all('[data-ptd-wf]', dialog).forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          var id = cb.getAttribute('data-ptd-wf');
+          var i = d.wfIds.indexOf(id);
+          if (cb.checked && i === -1) d.wfIds.push(id);
+          if (!cb.checked && i > -1) d.wfIds.splice(i, 1);
+        });
+      });
+      dialog.querySelector('[data-ptd-save]').addEventListener('click', function () {
+        if (d.busy) return;
+        if (!d.name.trim()) { d.err.name = 'Template name is required.'; renderProjectTemplateDialog(); return; }
+        d.busy = true;
+        dialog.querySelector('[data-ptd-save]').innerHTML = '<span class="spin"></span> Saving…';
+        setTimeout(function () {
+          if (d.editing) {
+            var existing = getPt(d.editing.id);
+            if (existing) {
+              existing.name = d.name.trim(); existing.desc = d.desc.trim();
+              existing.visibility = d.visibility; existing.methodology = d.methodology;
+              existing.wfIds = d.wfIds.slice(); existing.updatedBy = persona().name; existing.updatedAt = '2026-11-01';
+            }
+            toast('success', 'Project template updated', 'Existing projects keep their snapshot.');
+          } else {
+            var pt = { id: uid('pt'), name: d.name.trim(), desc: d.desc.trim(), visibility: d.visibility, methodology: d.methodology, wfIds: d.wfIds.slice(), status: 'active', updatedBy: persona().name, updatedAt: '2026-11-01' };
+            DB.projTemplates.unshift(pt);
+            toast('success', 'Project template created', '«' + pt.name + '» now appears in the Templates view.');
+          }
+          saveDB();
+          PT_DLG = null;
+          close('saved');
+          renderPage();
+        }, 600);
+      });
+    }
+  });
+}
+function archiveProjectTemplate(pt) {
+  confirmDialog({
+    title: 'Archive template?',
+    description: '«' + pt.name + '» will be hidden from the create-project picker and can\'t be used for new projects. Existing projects are unaffected — templates are snapshots. You can restore it anytime.',
+    confirmLabel: 'Archive', destructive: true,
+    onConfirm: function () {
+      pt.status = 'archived';
+      saveDB();
+      renderPage();
+      toast('success', 'Template archived', '«' + pt.name + '» is hidden from new projects.');
+    }
+  });
+}
+function restoreProjectTemplate(pt) {
+  confirmDialog({
+    title: 'Restore template?',
+    description: '«' + pt.name + '» will be available for new projects again.',
+    confirmLabel: 'Restore',
+    onConfirm: function () {
+      pt.status = 'active';
+      saveDB();
+      renderPage();
+      toast('success', 'Template restored', '«' + pt.name + '» can be used for new projects.');
+    }
+  });
+}
+/* ---------- help + notes ---------- */
+function openHelp(section) {
+  var body =
+    '<section id="help-what"><h3>What are workflows?</h3>' +
+    '<p>A <b>workflow template</b> is a shared recipe of ordered steps owned by the whole workspace. Starting one in a project instantly creates one task per step — the tasks are the work; there is no separate run to track. Workflow templates are managed in each project\'s Workflows tab, and every active template is available in every project.</p>' +
+    '<p class="muted">A <b>workflow start</b> is the durable record "template X was applied to project Y on date Z, creating tasks T1…Tn". It appears in Recent starts with links to the created tasks.</p></section>' +
+    '<section id="help-start"><h3>Starting a workflow</h3>' +
+    '<ul><li>Choose a template (active templates only; archived ones are hidden).</li>' +
+    '<li>Review the steps — each step becomes one task.</li>' +
+    '<li>Confirm the checkbox and start. You get one toast and one history row.</li>' +
+    '<li>Project manager access is required to start a workflow.</li></ul></section>' +
+    '<section id="help-templates"><h3>Project templates</h3>' +
+    '<p>A <b>project template</b> is a saved project setup — default visibility and methodology, plus optional workflows that start automatically at creation. Applying copies values into the new project; the project then lives independently (snapshot semantics).</p>' +
+    '<ul><li>Create one from any project\'s Settings → "Save as project template", or from the Projects page → Templates → New template.</li>' +
+    '<li>v1 templates support Private and Company wide visibility only.</li>' +
+    '<li>Creating from a template prefills the wizard; the Review step shows what will happen.</li></ul></section>' +
+    '<section id="help-perms"><h3>Permissions</h3>' +
+    '<ul><li>Template manage (create/edit/archive/restore): active member + <b>Manage projects</b> permission.</li>' +
+    '<li>Creating projects (from scratch or template): <b>create projects</b> permission.</li>' +
+    '<li>Starting workflows: project manager authority.</li>' +
+    '<li>Reading templates: any workspace member.</li></ul></section>' +
+    '<section id="help-sim"><h3>What is simulated in this mock</h3>' +
+    '<p class="muted">Loading delays, backend errors, permission checks and the partial-failure path are simulated locally. No transaction or backend behavior is claimed.</p></section>';
+  openDrawer({ title: 'Workflows & templates — help', body: body, sectionId: 'help-' + (section || 'what') });
+}
+function openNotes() {
+  openDialog({
+    title: 'Mockup notes / Demo controls',
+    description: 'Everything here is a static, synthetic-data mock. Read before evaluating.',
+    wide: true,
+    body:
+      '<div class="stack" style="gap:10px">' +
+      '<div class="helper">' + icon('info', 'ic') + '<span><b>Implementation stage:</b> mockup-stage work only. No product implementation, no repo edits/commits/PRs, no publishing. The Lead publishes only after independent testing.</span></div>' +
+      '<div class="helper">' + icon('users', 'ic') + '<span><b>Synthetic data:</b> every project, template, person and number is invented. No real tenant ids, emails, PII or secrets. No backend or network calls; this file works offline.</span></div>' +
+      '<div class="helper">' + icon('alert', 'ic') + '<span><b>Simulated paths:</b> the partial-failure path (keep project + banner + Retry), all permission states, loading skeletons and error states are simulated via the Mock controls strip. The partial-failure path is labelled SIMULATED — no transaction or backend behavior is claimed.</span></div>' +
+      '<div class="helper">' + icon('shield', 'ic') + '<span><b>NOT claimed (unresolved probes):</b> P-Q3 (creator manager authority on auto-start), P-TX (gateway transaction/atomicity), P-H1–H4 (deployed-bundle drift, viewer-via-workspace start authority), P-MODES (Waterfall/Hybrid status behavior, Teams access mode), P-A11Y (no screen-reader/axe/contrast certification — keyboard, focus and dialog descriptions only), P-MIGRATION (migration numbering/order).</span></div>' +
+      '<div class="helper">' + icon('refresh', 'ic') + '<span><b>Reset:</b> the Reset data button clears localStorage/sessionStorage (drafts included) and restores the seed data. Drafts live in sessionStorage, so reloading the page mid-wizard offers Continue draft / Start fresh.</span></div>' +
+      '<div class="helper">' + icon('check', 'ic') + '<span><b>Keyboard:</b> Tab and Shift+Tab cycle inside dialogs, Escape closes dialogs and cancels the wizard (with discard confirmation), the first field is focused when the wizard or a dialog opens, and the skip link reaches the content.</span></div>' +
+      '</div>',
+    footer: '<div class="spacer"></div><button class="btn btn-primary" data-notes-close="1">Got it</button>',
+    onMount: function (dialog, close) { dialog.querySelector('[data-notes-close]').addEventListener('click', function () { close('ok'); }); }
+  });
+}
+/* ---------- bindings ---------- */
+function bindProjectPage(root) {
+  $all('[data-ptab]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var key = b.getAttribute('data-ptab');
+      location.hash = '#/projects/' + ROUTE.projectId + '/' + key;
+    });
+  });
+  $all('[data-retry-wf]', root).forEach(function (b) {
+    b.addEventListener('click', function () { retryFailedWorkflow(getProject(ROUTE.projectId), b.getAttribute('data-retry-wf')); });
+  });
+  $all('[data-goto-start]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var wfId = b.getAttribute('data-goto-start');
+      WFS = { pid: ROUTE.projectId, selectedId: wfId, confirmed: false, busy: false, started: null };
+      if (ROUTE.tab === 'workflows') { renderPage(); }
+      else { location.hash = '#/projects/' + ROUTE.projectId + '/workflows'; }
+    });
+  });
+  $all('[data-goto]', root).forEach(function (b) {
+    b.addEventListener('click', function () { location.hash = '#/projects/' + ROUTE.projectId + '/' + b.getAttribute('data-goto'); });
+  });
+  $all('[data-invite]', root).forEach(function (b) {
+    b.addEventListener('click', function () { toast('info', 'Invite collaborators', 'Not part of this mock.'); });
+  });
+  $all('[data-help]', root).forEach(function (b) {
+    b.addEventListener('click', function (e) { e.preventDefault(); openHelp(b.getAttribute('data-help')); });
+  });
+  $all('[data-wf-new]', root).forEach(function (b) { b.addEventListener('click', function () { openWorkflowTemplateForm(null); }); });
+  $all('[data-wf-edit]', root).forEach(function (b) { b.addEventListener('click', function () { openWorkflowTemplateForm(getWf(b.getAttribute('data-wf-edit'))); }); });
+  $all('[data-wf-archive]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var w = getWf(b.getAttribute('data-wf-archive'));
+      confirmDialog({
+        title: 'Archive workflow template?',
+        description: '«' + w.name + '» can\'t be started in any project and is hidden from start pickers. Existing projects and tasks are not affected. You can restore it anytime.',
+        confirmLabel: 'Archive', destructive: true,
+        onConfirm: function () {
+          w.status = 'archived';
+          if (WFS && WFS.selectedId === w.id) WFS.selectedId = '';
+          saveDB();
+          renderPage();
+          toast('success', 'Workflow template archived', '«' + w.name + '» is hidden from start pickers.');
+        }
+      });
+    });
+  });
+  $all('[data-wf-restore]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var w = getWf(b.getAttribute('data-wf-restore'));
+      confirmDialog({
+        title: 'Restore workflow template?',
+        description: '«' + w.name + '» will be available to start again in every project.',
+        confirmLabel: 'Restore',
+        onConfirm: function () {
+          w.status = 'active';
+          saveDB();
+          renderPage();
+          toast('success', 'Workflow template restored', '«' + w.name + '» is available to start again.');
+        }
+      });
+    });
+  });
+  bindWfForm(root);
+  var sel = $('#wfs-select', root);
+  if (sel) sel.addEventListener('change', function () {
+    WFS.selectedId = sel.value;
+    WFS.confirmed = false;
+    WFS.started = null;
+    renderPage();
+  });
+  var conf = $('#wfs-confirm', root);
+  if (conf) conf.addEventListener('change', function () { WFS.confirmed = conf.checked; renderPage(); });
+  var startBtn = $('[data-wfs-start]', root);
+  if (startBtn) startBtn.addEventListener('click', function () { startWorkflow(getProject(ROUTE.projectId)); });
+  $all('[data-view-tasks]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var row = DB.history.filter(function (h) { return h.id === b.getAttribute('data-view-tasks'); })[0];
+      if (row) openTaskList(row);
+    });
+  });
+  $all('[data-hist-retry]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var row = DB.history.filter(function (h) { return h.id === b.getAttribute('data-hist-retry'); })[0];
+      if (row) retryFailedWorkflow(getProject(ROUTE.projectId), row.wfId);
+    });
+  });
+  var nameIn = $('#st-name', root);
+  if (nameIn) nameIn.addEventListener('input', function () { SETTINGS.name = nameIn.value; });
+  var descIn = $('#st-desc', root);
+  if (descIn) descIn.addEventListener('input', function () { SETTINGS.desc = descIn.value; });
+  $all('input[name="st-visibility"]', root).forEach(function (r) {
+    r.addEventListener('change', function () { SETTINGS.visibility = r.value; renderPage(); });
+  });
+  $all('[data-st-team]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var id = b.getAttribute('data-st-team');
+      var i = SETTINGS.teamIds.indexOf(id);
+      if (i > -1) SETTINGS.teamIds.splice(i, 1); else SETTINGS.teamIds.push(id);
+      renderPage();
+    });
+  });
+  var methSel = $('#st-methodology', root);
+  if (methSel) methSel.addEventListener('change', function () { SETTINGS.methodology = methSel.value; });
+  $all('[data-st-save]', root).forEach(function (b) {
+    b.addEventListener('click', function () { stSave(getProject(ROUTE.projectId), b.getAttribute('data-st-save')); });
+  });
+  $all('[data-save-as-tpl]', root).forEach(function (b) {
+    b.addEventListener('click', function () {
+      var pr = getProject(ROUTE.projectId);
+      var tpl = {
+        name: pr.name + ' template', desc: pr.desc,
+        visibility: pr.visibility === 'teams' ? 'private' : pr.visibility,
+        methodology: pr.methodology, wfIds: []
+      };
+      openProjectTemplateDialog(null, tpl, pr);
+    });
+  });
+}
+/* ---------- init ---------- */
+function init() {
+  bindShell();
+  renderPage();
+}
+init();
+
+</script>
+</body>
+</html>

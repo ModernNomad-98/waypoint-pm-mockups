@@ -1,0 +1,1907 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light dark" />
+<title>WayPoint — Direction A mockup: template-first hub (workflows & project templates)</title>
+<style>
+/* ============ tokens (mirrors WayPoint published mocks) ============ */
+:root{
+  --radius:.75rem;
+  --background:#f7f8fb;
+  --foreground:#202a3d;
+  --card:#ffffff;
+  --card-foreground:#202a3d;
+  --primary:#4f46e5;
+  --primary-foreground:#fafaff;
+  --secondary:#f1f2f6;
+  --secondary-foreground:#253045;
+  --muted:#f4f5f8;
+  --muted-foreground:#5b6b85;
+  --accent:#eef2ff;
+  --accent-foreground:#3730a3;
+  --destructive:#dc2626;
+  --destructive-foreground:#fef2f2;
+  --border:#e3e6ee;
+  --input:#e3e6ee;
+  --ring:#4f46e5;
+  --sidebar:#fbfbfd;
+  --sidebar-foreground:#2b3648;
+  --sidebar-border:#e3e6ee;
+  --sidebar-accent:#eef2ff;
+  --sidebar-accent-foreground:#3730a3;
+  --ok:#16a34a; --ok-bg:#ecfdf5;
+  --warn:#b45309; --warn-bg:#fffbeb;
+  --info:#1d4ed8; --info-bg:#eff6ff;
+  --danger:#b91c1c; --danger-bg:#fef2f2;
+  --shadow-soft:0 1px 2px 0 rgba(32,42,61,.05);
+  --shadow-card:0 1px 3px 0 rgba(32,42,61,.07),0 1px 2px -1px rgba(32,42,61,.05);
+  --font:ui-sans-serif,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+.dark{
+  color-scheme:dark;
+  --background:#10131c;
+  --foreground:#f4f6fb;
+  --card:#1b2030;
+  --card-foreground:#f4f6fb;
+  --primary:#818cf8;
+  --primary-foreground:#12132b;
+  --secondary:#242a3d;
+  --secondary-foreground:#f4f6fb;
+  --muted:#222839;
+  --muted-foreground:#9aa6bd;
+  --accent:#2a3150;
+  --accent-foreground:#e4e6ff;
+  --destructive:#f87171;
+  --destructive-foreground:#2b1212;
+  --border:rgba(255,255,255,.12);
+  --input:rgba(255,255,255,.16);
+  --ring:#818cf8;
+  --sidebar:#171c2a;
+  --sidebar-foreground:#e8ecf6;
+  --sidebar-border:rgba(255,255,255,.12);
+  --sidebar-accent:#2a3150;
+  --sidebar-accent-foreground:#e4e6ff;
+  --ok:#4ade80; --ok-bg:rgba(34,197,94,.12);
+  --warn:#fbbf24; --warn-bg:rgba(245,158,11,.12);
+  --info:#93c5fd; --info-bg:rgba(59,130,246,.12);
+  --danger:#fca5a5; --danger-bg:rgba(239,68,68,.12);
+  --shadow-soft:0 1px 2px 0 rgba(0,0,0,.3);
+  --shadow-card:0 1px 3px 0 rgba(0,0,0,.35),0 1px 2px -1px rgba(0,0,0,.3);
+}
+/* ============ base ============ */
+*,*:before,*:after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--background);color:var(--foreground);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none}
+img,svg{display:block}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ring);outline-offset:2px;border-radius:4px}
+.skip-link{position:fixed;left:-9999px;top:0;z-index:200;background:var(--card);color:var(--foreground);padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-weight:600;text-decoration:none}
+.skip-link:focus{left:12px;top:12px}
+.icon{width:16px;height:16px;flex:none}
+.icon-lg{width:20px;height:20px}
+.icon-sm{width:14px;height:14px}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* ============ app layout ============ */
+.app{display:flex;min-height:100vh}
+.sidebar{width:248px;flex:none;background:var(--sidebar);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:40}
+.brand{display:flex;align-items:center;gap:10px;padding:16px 16px 14px}
+.brand-mark{width:30px;height:30px;border-radius:9px;background:var(--primary);color:var(--primary-foreground);display:grid;place-items:center;font-weight:700;font-size:15px}
+.brand-name{font-weight:650;font-size:15px;letter-spacing:-.01em}
+.nav{padding:4px 10px;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--sidebar-foreground);text-decoration:none;position:relative}
+.nav-item:hover{background:var(--sidebar-accent);color:var(--sidebar-accent-foreground)}
+.nav-item[aria-current="page"]{background:var(--sidebar-accent);color:var(--sidebar-accent-foreground);font-weight:600}
+.nav-item .new-badge{font-size:10px;font-weight:700;letter-spacing:.03em;background:var(--primary);color:var(--primary-foreground);padding:2px 6px;border-radius:999px;margin-left:auto;text-transform:uppercase}
+.nav-section{margin:12px 16px 4px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-foreground)}
+.sidebar-foot{margin-top:auto;padding:14px 16px;border-top:1px solid var(--sidebar-border);font-size:12px;color:var(--muted-foreground);display:flex;flex-direction:column;gap:8px}
+.persona-chip{display:flex;align-items:center;gap:8px}
+.avatar{width:26px;height:26px;border-radius:999px;background:var(--secondary);color:var(--secondary-foreground);display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:54px;flex:none;display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(8px);position:sticky;top:0;z-index:35}
+.searchbox{flex:1;max-width:420px;display:flex;align-items:center;gap:8px;border:1px solid var(--input);background:var(--card);border-radius:9px;padding:0 10px;height:34px;color:var(--muted-foreground)}
+.searchbox input{border:none;background:none;outline:none;flex:1;min-width:0;font-size:13.5px;color:var(--foreground)}
+.icon-btn{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--muted-foreground)}
+.icon-btn:hover{background:var(--muted);color:var(--foreground)}
+.hamburger{display:none}
+.demo-strip{flex:none;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--accent) 55%,var(--card));padding:7px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px}
+.demo-strip .lbl{font-weight:650;color:var(--accent-foreground);display:flex;align-items:center;gap:6px}
+.demo-strip .hint{color:var(--muted-foreground)}
+.demo-strip select{height:28px;border:1px solid var(--input);border-radius:7px;background:var(--card);padding:0 8px;font-size:12px;max-width:190px}
+.content{padding:22px 26px 60px;max-width:1240px;width:100%;margin:0 auto}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.page-head h1{font-size:22px;font-weight:650;letter-spacing:-.02em}
+.page-head .sub{color:var(--muted-foreground);font-size:13.5px;margin-top:2px;max-width:760px}
+.page-head .actions{display:flex;gap:8px;flex-wrap:wrap}
+/* ============ buttons ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 14px;border-radius:9px;font-size:13.5px;font-weight:550;border:1px solid transparent;transition:background .12s,border-color .12s;white-space:nowrap}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-primary{background:var(--primary);color:var(--primary-foreground)}
+.btn-primary:hover:not(:disabled){background:color-mix(in srgb,var(--primary) 88%,black)}
+.btn-outline{border-color:var(--input);background:var(--card);color:var(--foreground)}
+.btn-outline:hover:not(:disabled){background:var(--muted)}
+.btn-ghost{color:var(--muted-foreground)}
+.btn-ghost:hover:not(:disabled){background:var(--muted);color:var(--foreground)}
+.btn-danger{background:var(--destructive);color:var(--destructive-foreground)}
+.btn-danger:hover:not(:disabled){background:color-mix(in srgb,var(--destructive) 88%,black)}
+.btn-sm{height:30px;padding:0 10px;font-size:12.5px;border-radius:8px}
+.btn-lg{height:40px;padding:0 18px;font-size:14px}
+.btn .icon{width:15px;height:15px}
+/* ============ forms ============ */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.field label{font-size:12.5px;font-weight:600;color:var(--foreground)}
+.field .req{color:var(--destructive)}
+.field .help{font-size:12px;color:var(--muted-foreground)}
+.field .err{font-size:12px;color:var(--destructive);font-weight:500}
+.input,.select,.textarea{width:100%;border:1px solid var(--input);border-radius:9px;background:var(--card);color:var(--foreground);padding:8px 11px;font-size:13.5px}
+.input:focus,.select:focus,.textarea:focus{outline:2px solid var(--ring);outline-offset:0;border-color:transparent}
+.input[aria-invalid="true"],.select[aria-invalid="true"],.textarea[aria-invalid="true"]{border-color:var(--destructive)}
+.input[disabled],.select[disabled],.textarea[disabled]{opacity:.55;cursor:not-allowed}
+.textarea{min-height:72px;resize:vertical}
+.charcount{font-size:11px;color:var(--muted-foreground);text-align:right}
+.charcount.over{color:var(--destructive);font-weight:600}
+.radiocard{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--input);border-radius:10px;padding:12px 14px;cursor:pointer;background:var(--card)}
+.radiocard:hover{border-color:var(--ring)}
+.radiocard.selected{border-color:var(--ring);background:var(--accent)}
+.radiocard input{margin-top:3px;accent-color:var(--primary)}
+.radiocard .rc-title{display:block;font-weight:600;font-size:13.5px}
+.radiocard .rc-desc{display:block;font-size:12.5px;color:var(--muted-foreground);margin-top:2px}
+.radiocard>span:last-child,.checkrow>span:last-child{display:block;min-width:0}
+.checkrow{display:flex;gap:10px;align-items:flex-start;padding:9px 0}
+.checkrow input{margin-top:3px;accent-color:var(--primary)}
+.checkrow .cr-title{display:block;font-weight:550;font-size:13.5px}
+.checkrow .cr-desc{display:block;font-size:12px;color:var(--muted-foreground);margin-top:2px}
+/* ============ cards & layout helpers ============ */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-soft)}
+.card-pad{padding:16px}
+.card-title{font-size:14.5px;font-weight:650;display:flex;align-items:center;gap:8px}
+.card-sub{font-size:12.5px;color:var(--muted-foreground);margin-top:2px}
+.row{display:flex;gap:10px;align-items:center}
+.spread{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+.muted{color:var(--muted-foreground)}
+.small{font-size:12.5px}
+.tiny{font-size:11.5px}
+.bold{font-weight:600}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+hr.sep{border:none;border-top:1px solid var(--border);margin:14px 0}
+/* ============ chips ============ */
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2.5px 9px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.chip .icon{width:12px;height:12px}
+.chip-status{background:var(--info-bg);color:var(--info)}
+.chip-planning{background:var(--warn-bg);color:var(--warn)}
+.chip-progress{background:var(--info-bg);color:var(--info)}
+.chip-hold{background:var(--danger-bg);color:var(--danger)}
+.chip-done{background:var(--ok-bg);color:var(--ok)}
+.chip-archived{background:var(--muted);color:var(--muted-foreground)}
+.chip-vis{background:var(--secondary);color:var(--secondary-foreground)}
+.chip-method{background:var(--accent);color:var(--accent-foreground)}
+.chip-new{background:var(--primary);color:var(--primary-foreground)}
+/* ============ tables ============ */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow-soft)}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+.tbl th{text-align:left;font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted-foreground);padding:9px 12px;border-bottom:1px solid var(--border);background:color-mix(in srgb,var(--muted) 60%,transparent)}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:color-mix(in srgb,var(--muted) 55%,transparent)}
+.tbl .cell-main{min-width:180px}
+.tbl .cell-main .t{font-weight:600;font-size:13px}
+.tbl .cell-main .d{font-size:12px;color:var(--muted-foreground);margin-top:1px;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbl .acts{display:flex;gap:4px;justify-content:flex-end}
+/* ============ banners / states ============ */
+.banner{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--border);border-radius:11px;padding:12px 14px;background:var(--card);font-size:13px}
+.banner .b-title{font-weight:650;font-size:13.5px}
+.banner .b-body{color:var(--muted-foreground);margin-top:1px;font-size:12.5px}
+.banner .b-acts{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+.banner-info{border-color:color-mix(in srgb,var(--info) 30%,var(--border));background:var(--info-bg)}
+.banner-info .b-title{color:var(--info)}
+.banner-warning{border-color:color-mix(in srgb,var(--warn) 30%,var(--border));background:var(--warn-bg)}
+.banner-warning .b-title{color:var(--warn)}
+.banner-danger{border-color:color-mix(in srgb,var(--danger) 30%,var(--border));background:var(--danger-bg)}
+.banner-danger .b-title{color:var(--danger)}
+.banner-muted{background:var(--muted)}
+.sim-tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:750;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);border:1px dashed color-mix(in srgb,var(--warn) 55%,transparent);border-radius:6px;padding:1.5px 7px}
+.statebox{border:1px dashed var(--input);border-radius:var(--radius);background:color-mix(in srgb,var(--muted) 50%,transparent);padding:34px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.statebox .st-title{font-weight:650;font-size:14.5px}
+.statebox .st-body{font-size:13px;color:var(--muted-foreground);max-width:460px}
+.statebox .icon-big{width:38px;height:38px;color:var(--muted-foreground);opacity:.7}
+.skeleton{background:linear-gradient(90deg,var(--muted) 25%,color-mix(in srgb,var(--muted) 45%,var(--card)) 37%,var(--muted) 63%);background-size:400% 100%;animation:skel 1.3s ease infinite;border-radius:7px}
+@keyframes skel{0%{background-position:100% 50%}100%{background-position:0 50%}}
+/* ============ tabs & segmented ============ */
+.tabrow{display:flex;gap:2px;overflow-x:auto;border-bottom:1px solid var(--border);margin-bottom:16px;scrollbar-width:none}
+.tabrow::-webkit-scrollbar{display:none}
+.tab{padding:9px 13px;font-size:13px;font-weight:550;color:var(--muted-foreground);border-bottom:2px solid transparent;white-space:nowrap;display:inline-flex;gap:7px;align-items:center}
+.tab:hover{color:var(--foreground)}
+.tab[aria-selected="true"]{color:var(--foreground);border-bottom-color:var(--primary);font-weight:650}
+.tab:disabled{opacity:.45;cursor:not-allowed}
+.tab .tab-note{font-size:10px;color:var(--muted-foreground);font-weight:600}
+.segmented{display:inline-flex;background:var(--muted);border-radius:10px;padding:3px;gap:2px}
+.seg{display:inline-flex;align-items:center;gap:7px;padding:6px 13px;border-radius:8px;font-size:13px;font-weight:550;color:var(--muted-foreground)}
+.seg[aria-selected="true"]{background:var(--card);color:var(--foreground);box-shadow:var(--shadow-soft);font-weight:650}
+/* ============ wizard ============ */
+.overlay{position:fixed;inset:0;background:color-mix(in srgb,var(--background) 82%,transparent);backdrop-filter:blur(3px);z-index:60;overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;padding:28px 16px}
+.wizard{width:100%;max-width:760px;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-card)}
+.wizard-head{padding:18px 22px 0;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.wizard-head .w-title{font-size:17px;font-weight:650}
+.wizard-head .w-sub{font-size:13px;color:var(--muted-foreground);margin-top:2px}
+.steps{display:flex;align-items:center;padding:16px 22px 6px;overflow-x:auto}
+.step{display:flex;align-items:center;gap:8px;color:var(--muted-foreground);flex:none}
+.step .dot{width:26px;height:26px;border-radius:999px;border:1.5px solid var(--input);display:grid;place-items:center;font-size:12px;font-weight:650;background:var(--card);color:var(--muted-foreground)}
+.step[aria-current="step"] .dot{background:var(--primary);border-color:var(--primary);color:var(--primary-foreground)}
+.step.done .dot{background:var(--accent);border-color:var(--primary);color:var(--primary)}
+.step .slabel{font-size:12.5px;font-weight:550}
+.step[aria-current="step"] .slabel{color:var(--foreground);font-weight:650}
+.step .sindex{font-size:12px;font-weight:650}
+.conn{width:26px;height:1.5px;background:var(--input);margin:0 8px;flex:none}
+.conn.done{background:var(--primary)}
+.wizard-body{padding:18px 22px;max-height:min(58vh,620px);overflow-y:auto}
+.wizard-foot{padding:14px 22px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.wizard-foot .spacer{flex:1}
+.entrycards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.entrycard{border:1.5px solid var(--input);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;background:var(--card);text-align:left}
+.entrycard:hover{border-color:var(--ring);box-shadow:var(--shadow-card)}
+.entrycard .ec-title{font-weight:650;font-size:14.5px;display:flex;align-items:center;gap:8px}
+.entrycard .ec-desc{font-size:12.5px;color:var(--muted-foreground)}
+.entrycard .ec-meta{font-size:11.5px;color:var(--muted-foreground);border-top:1px solid var(--border);margin-top:6px;padding-top:8px;display:flex;flex-direction:column;gap:3px}
+.reviewrow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.reviewrow:last-child{border-bottom:none}
+.reviewrow .rk{color:var(--muted-foreground);display:flex;align-items:center;gap:6px;flex:none}
+.reviewrow .rv{font-weight:550;text-align:right;min-width:0;overflow-wrap:anywhere}
+/* ============ dialogs ============ */
+.dlg-overlay{position:fixed;inset:0;background:rgba(10,14,26,.55);z-index:80;display:flex;align-items:center;justify-content:center;padding:18px}
+.dlg-overlay.dlg-top{z-index:100}
+.dlg{width:100%;max-width:470px;max-height:calc(100vh - 40px);overflow:hidden;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-card)}
+.dlg-wide{max-width:680px}
+.dlg-head{padding:16px 18px 0;flex:none}
+.dlg-title{font-size:15.5px;font-weight:650}
+.dlg-desc{font-size:13px;color:var(--muted-foreground);margin-top:5px}
+.dlg-body{padding:12px 18px;flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.dlg-foot{padding:14px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;flex:none;background:var(--card);border-radius:0 0 14px 14px}
+/* ============ toasts ============ */
+.toast-root{position:fixed;bottom:18px;right:18px;z-index:120;display:flex;flex-direction:column;gap:9px;max-width:min(390px,calc(100vw - 32px))}
+.toast{display:flex;gap:10px;align-items:flex-start;background:var(--foreground);color:var(--background);border-radius:11px;padding:11px 14px;box-shadow:var(--shadow-card);font-size:13px;animation:toastin .18s ease-out}
+@keyframes toastin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.toast .t-ico{color:var(--ok);margin-top:1px}
+.toast .t-close{margin-left:auto;opacity:.7;display:grid;place-items:center;flex:none}
+.toast .t-close:hover{opacity:1}
+/* ============ steps preview / workflow ============ */
+.stepprev{display:flex;flex-direction:column;gap:0;margin-top:6px}
+.stepprev .sp{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed var(--border);font-size:13px}
+.stepprev .sp:last-child{border-bottom:none}
+.stepprev .sp .num{width:22px;height:22px;border-radius:999px;background:var(--accent);color:var(--accent-foreground);display:grid;place-items:center;font-size:11px;font-weight:700;flex:none}
+.stepprev .sp .note{font-size:12px;color:var(--muted-foreground)}
+/* step editor rows */
+.steprow{display:flex;gap:8px;align-items:flex-start;padding:8px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:color-mix(in srgb,var(--muted) 40%,transparent)}
+.steprow .num{width:22px;height:22px;border-radius:999px;background:var(--accent);color:var(--accent-foreground);display:grid;place-items:center;font-size:11px;font-weight:700;flex:none;margin-top:6px}
+.steprow .fields{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.steprow .rowtools{display:flex;flex-direction:column;gap:2px}
+.mini-btn{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--muted-foreground)}
+.mini-btn:hover{background:var(--muted);color:var(--foreground)}
+.mini-btn:disabled{opacity:.35;cursor:not-allowed}
+.mini-btn.danger:hover{color:var(--destructive)}
+/* ============ picker cards ============ */
+.pickgrid{display:grid;grid-template-columns:1fr;gap:10px}
+.pickcard{border:1.5px solid var(--input);border-radius:12px;padding:13px 15px;display:flex;flex-direction:column;gap:7px;cursor:pointer;background:var(--card);text-align:left}
+.pickcard:hover{border-color:var(--ring)}
+.pickcard.selected{border-color:var(--ring);background:var(--accent)}
+.pickcard .pc-title{font-weight:650;font-size:14px}
+.pickcard .pc-desc{font-size:12.5px;color:var(--muted-foreground)}
+.pickcard .pc-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11.5px;color:var(--muted-foreground)}
+/* ============ help drawer / notes ============ */
+.drawer-overlay{position:fixed;inset:0;background:rgba(10,14,26,.45);z-index:90}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--card);border-left:1px solid var(--border);z-index:95;overflow-y:auto;box-shadow:var(--shadow-card);padding:20px 22px 40px}
+.drawer h2{font-size:16px;font-weight:650;margin-bottom:4px}
+.drawer h3{font-size:13px;font-weight:650;margin:18px 0 6px;display:flex;align-items:center;gap:7px}
+.drawer p,.drawer li{font-size:12.5px;color:var(--muted-foreground)}
+.drawer ul{padding-left:18px;display:flex;flex-direction:column;gap:5px;margin-top:4px}
+.drawer code{font-size:11.5px;background:var(--muted);padding:1px 5px;border-radius:5px}
+.kbd{font-size:10.5px;font-weight:650;border:1px solid var(--input);border-bottom-width:2px;border-radius:5px;padding:1px 5px;background:var(--muted)}
+.probe-list li b{color:var(--foreground)}
+/* ============ responsive ============ */
+.scrim{position:fixed;inset:0;background:rgba(10,14,26,.45);z-index:39;display:none}
+@media (max-width:980px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-105%);transition:transform .18s ease;z-index:45}
+  .sidebar.open{transform:none;box-shadow:var(--shadow-card)}
+  .scrim.show{display:block}
+  .hamburger{display:grid}
+  .entrycards{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .content{padding:14px 12px 48px}
+  .topbar{padding:0 10px;gap:6px}
+  .searchbox{max-width:none}
+  .grid2{grid-template-columns:1fr}
+  .wizard-foot{flex-wrap:wrap}
+  .wizard-foot .btn{flex:1;min-width:110px}
+  .step .slabel{display:none}
+  .conn{width:14px;margin:0 5px}
+  .page-head h1{font-size:19px}
+  .toast-root{left:16px;right:16px;bottom:14px}
+  .demo-strip{padding:7px 10px;gap:6px}
+}
+@media (max-width:390px){
+  .btn{padding:0 11px}
+  .page-head .actions .btn{flex:1}
+  .radiocard{padding:10px 12px}
+  .dlg-foot .btn{flex:1}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Workspace navigation">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">W</div>
+      <div>
+        <div class="brand-name">WayPoint</div>
+        <div class="tiny muted">Northwind Labs <span class="tiny" style="opacity:.75">(synthetic)</span></div>
+      </div>
+    </div>
+    <nav class="nav" aria-label="Primary">
+      <button class="nav-item" data-act="nav" data-view="projects" data-tid="nav-projects"><span class="icon" data-ico="folder"></span>Projects</button>
+      <button class="nav-item" data-act="nav" data-view="templates" data-tid="nav-templates"><span class="icon" data-ico="layers"></span>Templates<span class="new-badge">New</span></button>
+      <div class="nav-section">Workspace</div>
+      <button class="nav-item" data-act="static-nav" data-tid="nav-people"><span class="icon" data-ico="users"></span>People</button>
+      <button class="nav-item" data-act="static-nav" data-tid="nav-reports"><span class="icon" data-ico="list-checks"></span>Reports</button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="persona-chip"><span class="avatar" id="side-avatar">AR</span>
+        <div><div class="bold" id="side-name">Alex Rivera</div><div class="tiny" id="side-role">Org admin</div></div>
+      </div>
+      <div class="tiny" style="opacity:.75">Static interactive mockup — no real data, no backend.</div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" data-act="close-drawer"></div>
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn hamburger" data-act="toggle-sidebar" aria-label="Open navigation menu" data-tid="btn-hamburger"><span class="icon" data-ico="menu"></span></button>
+      <label class="searchbox">
+        <span class="icon" data-ico="search" aria-hidden="true"></span>
+        <input id="global-search" type="search" placeholder="Search…" autocomplete="off" aria-label="Search current list" data-tid="global-search" />
+      </label>
+      <div class="row" style="margin-left:auto">
+        <button class="icon-btn" data-act="toggle-theme" aria-label="Toggle light or dark theme" data-tid="btn-theme"><span class="icon" data-ico="moon"></span></button>
+        <button class="icon-btn" data-act="open-notes" aria-label="Open mockup notes and demo controls" title="Mockup notes" data-tid="btn-notes"><span class="icon" data-ico="info"></span></button>
+        <span class="avatar" aria-hidden="true" id="top-avatar">AR</span>
+      </div>
+    </header>
+    <div class="demo-strip" data-tid="demo-strip">
+      <span class="lbl"><span class="icon-sm icon" data-ico="settings"></span>Mockup controls</span>
+      <span class="hint">not part of the product</span>
+      <label class="tiny bold muted" for="persona-select">Persona:</label>
+      <select id="persona-select" data-act="persona" data-tid="persona-select" aria-label="Demo persona">
+        <option value="admin">Org admin (manages templates)</option>
+        <option value="manager">Project manager</option>
+        <option value="viewer">Member (read-only)</option>
+      </select>
+      <label class="tiny bold muted" for="scenario-select">Scenario:</label>
+      <select id="scenario-select" data-act="scenario" data-tid="scenario-select" aria-label="Demo scenario">
+        <option value="normal">Normal</option>
+        <option value="partial">Simulate partial workflow-start failure</option>
+        <option value="hub-error">Templates hub load error</option>
+        <option value="loading">Loading delay (skeletons)</option>
+        <option value="empty">Empty workspace</option>
+      </select>
+      <button class="btn btn-outline btn-sm" data-act="reset-demo" data-tid="btn-reset"><span class="icon icon-sm" data-ico="refresh"></span>Reset demo data</button>
+      <span class="hint" style="margin-left:auto" data-tid="strip-view"></span>
+    </div>
+    <main id="main-content" class="content" tabindex="-1" data-tid="main-content"></main>
+  </div>
+</div>
+<div id="overlay-root"></div>
+<div id="toast-root" class="toast-root" aria-live="polite" aria-label="Notifications" data-tid="toast-root"></div>
+<div id="drawer-root"></div>
+<script>
+"use strict";
+/* ================= icons (inline SVG, stroke=currentColor) ================= */
+var ICONS = {
+  "plus": '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  "search": '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  "archive": '<rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/>',
+  "restore": '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+  "pencil": '<path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+  "x": '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  "chevron-right": '<path d="m9 18 6-6-6-6"/>',
+  "chevron-left": '<path d="m15 18-6-6 6-6"/>',
+  "chevron-up": '<path d="m18 15-6-6-6 6"/>',
+  "chevron-down": '<path d="m6 9 6 6 6-6"/>',
+  "check": '<path d="M20 6 9 17l-5-5"/>',
+  "arrow-left": '<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>',
+  "layers": '<path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>',
+  "folder": '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+  "folder-plus": '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/><path d="M12 10v6"/><path d="M9 13h6"/>',
+  "list-checks": '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
+  "info": '<circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  "alert": '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  "help": '<circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+  "play": '<path d="m6 4 14 8-14 8Z"/>',
+  "zap": '<path d="M13 2 3 14h7l-1 8 10-12h-7Z"/>',
+  "menu": '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>',
+  "moon": '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  "sun": '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  "refresh": '<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',
+  "users": '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  "eye": '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  "clock": '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  "settings": '<path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/>',
+  "external": '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/>',
+  "spinner": '<circle cx="12" cy="12" r="9" opacity=".25"/><path d="M21 12a9 9 0 0 0-9-9"/>',
+  "lock": '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  "clipboard": '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6"/><path d="M9 16h6"/>'
+};
+function ico(name, cls){
+  return '<svg class="' + (cls || 'icon') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || '') + '</svg>';
+}
+function bindIcons(root){
+  var els = root.querySelectorAll("[data-ico]");
+  for (var i = 0; i < els.length; i++){
+    var e = els[i]; var n = e.getAttribute("data-ico");
+    e.removeAttribute("data-ico"); e.innerHTML = ICONS[n] || "";
+  }
+}
+function esc(s){
+  if (s === null || s === undefined) return "";
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+/* ================= seed data (all synthetic) ================= */
+function seedData(){
+  return {
+    wfTemplates: [
+      { id:"wf1", name:"New client onboarding", desc:"Standard setup for a newly signed client: kickoff through first check-in.", steps:[{t:"Kickoff meeting",n:"Book with client and PM"},{t:"Set up shared folder",n:"Docs, brief, and assets"},{t:"Send welcome email",n:""},{t:"Schedule first check-in",n:"Two weeks out"}], status:"active", updated:"Oct 28, 2026", by:"Alex Rivera" },
+      { id:"wf2", name:"Website launch checklist", desc:"Final gates before pushing a site live.", steps:[{t:"Final content review",n:""},{t:"DNS cutover",n:"Update A/CNAME records"},{t:"Post-launch smoke test",n:"Check forms, links, analytics"},{t:"Announce on social",n:""}], status:"active", updated:"Oct 25, 2026", by:"Alex Rivera" },
+      { id:"wf3", name:"Quarterly business review", desc:"Gather metrics and run the QBR cadence.", steps:[{t:"Gather metrics",n:""},{t:"Build slide deck",n:""},{t:"Schedule review meeting",n:""},{t:"Send summary notes",n:""}], status:"active", updated:"Oct 18, 2026", by:"Jordan Lee" },
+      { id:"wf4", name:"Design sprint", desc:"Five-day sprint: map, sketch, decide, prototype, test.", steps:[{t:"Map",n:""},{t:"Sketch",n:""},{t:"Decide",n:""},{t:"Prototype",n:""},{t:"Test",n:""}], status:"active", updated:"Oct 12, 2026", by:"Alex Rivera" },
+      { id:"wf5", name:"Offboarding checklist", desc:"Close out access and knowledge when someone leaves a project.", steps:[{t:"Revoke access",n:""},{t:"Exit interview",n:""},{t:"Knowledge transfer",n:""}], status:"archived", updated:"Sep 21, 2026", by:"Alex Rivera" }
+    ],
+    ptTemplates: [
+      { id:"pt1", name:"Client website project", desc:"Starter setup for client website builds.", vis:"private", method:"scrum", wfIds:["wf1","wf2"], status:"active", updated:"Oct 30, 2026", by:"Alex Rivera" },
+      { id:"pt2", name:"Internal ops initiative", desc:"Cross-team, company-wide initiatives with a QBR cadence.", vis:"company", method:"hybrid", wfIds:["wf3"], status:"active", updated:"Oct 27, 2026", by:"Alex Rivera" },
+      { id:"pt3", name:"Marketing campaign", desc:"Campaign launch with a website push at the end.", vis:"private", method:"blank", wfIds:["wf2"], status:"active", updated:"Oct 22, 2026", by:"Jordan Lee" },
+      { id:"pt4", name:"Legacy: data migration", desc:"Retired template — kept for reference.", vis:"private", method:"waterfall", wfIds:[], status:"archived", updated:"Sep 14, 2026", by:"Alex Rivera" }
+    ],
+    projects: [
+      { id:"pr1", name:"Website Redesign", desc:"Refresh of the marketing site for the Q4 launch.", vis:"company", method:"scrum", status:"progress", due:"Nov 14, 2026", extra:6, updated:"Oct 29", fromTemplate:null },
+      { id:"pr2", name:"Q4 Marketing Push", desc:"Campaign execution across paid and organic.", vis:"private", method:"blank", status:"planning", due:null, extra:3, updated:"Oct 26", fromTemplate:"pt3" },
+      { id:"pr3", name:"Partner Portal Migration", desc:"Move the partner portal to the new stack.", vis:"company", method:"hybrid", status:"hold", due:"Dec 5, 2026", extra:18, updated:"Oct 24", fromTemplate:null },
+      { id:"pr4", name:"Office Relocation", desc:"Planning and executing the move to 4th floor.", vis:"private", method:"waterfall", status:"done", due:"Sep 30, 2026", extra:9, updated:"Oct 2", fromTemplate:null },
+      { id:"pr5", name:"Design System Refresh", desc:"Tokens, components, and docs for all products.", vis:"company", method:"scrum", status:"progress", due:"Nov 30, 2026", extra:26, updated:"Oct 31", fromTemplate:"pt1" }
+    ],
+    starts: {
+      pr1: [
+        { id:"s1a", wfId:"wf1", date:"Oct 20, 2026", tasks:[{id:"t1",title:"Kickoff meeting",status:"done"},{id:"t2",title:"Set up shared folder",status:"done"},{id:"t3",title:"Send welcome email",status:"todo"},{id:"t4",title:"Schedule first check-in",status:"todo"}] },
+        { id:"s1b", wfId:"wf2", date:"Oct 22, 2026", tasks:[{id:"t5",title:"Final content review",status:"doing"},{id:"t6",title:"DNS cutover",status:"todo"},{id:"t7",title:"Post-launch smoke test",status:"todo"},{id:"t8",title:"Announce on social",status:"todo"}] }
+      ],
+      pr2: [ { id:"s2a", wfId:"wf2", date:"Sep 30, 2026", tasks:[{id:"t9",title:"Final content review",status:"done"},{id:"t10",title:"DNS cutover",status:"todo"},{id:"t11",title:"Post-launch smoke test",status:"todo"},{id:"t12",title:"Announce on social",status:"todo"}] } ],
+      pr3: [ { id:"s3a", wfId:"wf1", date:"Sep 12, 2026", tasks:[{id:"t13",title:"Kickoff meeting",status:"done"},{id:"t14",title:"Set up shared folder",status:"done"},{id:"t15",title:"Send welcome email",status:"done"},{id:"t16",title:"Schedule first check-in",status:"doing"}] } ],
+      pr5: [ { id:"s5a", wfId:"wf4", date:"Sep 5, 2026", tasks:[{id:"t17",title:"Map",status:"done"},{id:"t18",title:"Sketch",status:"done"},{id:"t19",title:"Decide",status:"done"},{id:"t20",title:"Prototype",status:"doing"},{id:"t21",title:"Test",status:"todo"}] } ]
+    },
+    partialFails: {}
+  };
+}
+var LS_KEY = "wp-mock-direction-a-v1";
+function defaultStore(){
+  var d = seedData();
+  return {
+    v:1, persona:"admin", scenario:"normal", theme:"light", view:"projects",
+    sec:"project", search:"", projId:null, tab:"overview", tabOther:"board",
+    projects:d.projects, wfTemplates:d.wfTemplates, ptTemplates:d.ptTemplates,
+    starts:d.starts, partialFails:d.partialFails,
+    draft:null, wizard:null, picker:null, editor:null, dialog:null,
+    notesOpen:false, hubErrorCleared:false, busy:null, focusReq:null, toasts:[]
+  };
+}
+var S = defaultStore();
+var PERSIST_KEYS = ["persona","scenario","theme","view","sec","search","projId","tab","tabOther","projects","wfTemplates","ptTemplates","starts","partialFails","draft"];
+function save(){
+  var o = {}; for (var i=0;i<PERSIST_KEYS.length;i++){ o[PERSIST_KEYS[i]] = S[PERSIST_KEYS[i]]; }
+  try { localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch(e){}
+}
+function load(){
+  try {
+    var raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    var o = JSON.parse(raw);
+    for (var i=0;i<PERSIST_KEYS.length;i++){ if (o[PERSIST_KEYS[i]] !== undefined) S[PERSIST_KEYS[i]] = o[PERSIST_KEYS[i]]; }
+  } catch(e){}
+}
+/* ================= derived helpers ================= */
+var PERSONS = { admin:{name:"Alex Rivera", initials:"AR", role:"Org admin"}, manager:{name:"Jordan Lee", initials:"JL", role:"Project manager"}, viewer:{name:"Sam Chen", initials:"SC", role:"Member (read-only)"} };
+function perms(){
+  var p = S.persona;
+  return {
+    manageTemplates: p === "admin",
+    createProjects: p === "admin" || p === "manager",
+    startWorkflows: p === "admin" || p === "manager",
+    viewHistory: p === "admin" || p === "manager"
+  };
+}
+function effWf(){ return S.scenario === "empty" ? [] : S.wfTemplates; }
+function effPt(){ return S.scenario === "empty" ? [] : S.ptTemplates; }
+function effProjects(){ return S.scenario === "empty" ? [] : S.projects; }
+function visLabel(v){ return v === "company" ? "Company wide" : "Private"; }
+function methodLabel(m){ return m === "blank" ? "Blank" : (m === "scrum" ? "Scrum" : (m === "waterfall" ? "Waterfall" : "Hybrid")); }
+function statusLabel(st){ return st === "progress" ? "In progress" : (st === "planning" ? "Planning" : (st === "hold" ? "On hold" : "Completed")); }
+function statusChip(st){
+  var cls = st === "progress" ? "chip-progress" : (st === "planning" ? "chip-planning" : (st === "hold" ? "chip-hold" : "chip-done"));
+  return '<span class="chip ' + cls + '">' + statusLabel(st) + '</span>';
+}
+function wfById(id){ for (var i=0;i<S.wfTemplates.length;i++){ if (S.wfTemplates[i].id===id) return S.wfTemplates[i]; } return null; }
+function ptById(id){ for (var i=0;i<S.ptTemplates.length;i++){ if (S.ptTemplates[i].id===id) return S.ptTemplates[i]; } return null; }
+function projById(id){ for (var i=0;i<S.projects.length;i++){ if (S.projects[i].id===id) return S.projects[i]; } return null; }
+function projectTasks(pid){
+  var out = []; var st = S.starts[pid] || [];
+  for (var i=0;i<st.length;i++){ for (var j=0;j<st[i].tasks.length;j++){ out.push(st[i].tasks[j]); } }
+  return out;
+}
+function projectTaskCount(pid){
+  var p = projById(pid); var n = p ? (p.extra||0) : 0;
+  return n + projectTasks(pid).length;
+}
+function tplSteps(t){
+  var n = 0; for (var i=0;i<t.wfIds.length;i++){ var w = wfById(t.wfIds[i]); if (w) n += w.steps.length; }
+  return n;
+}
+function actives(pred){
+  var out = []; for (var i=0;i<pred.length;i++){ if (pred[i].status === "active") out.push(pred[i]); }
+  return out;
+}
+function filtered(list, q){
+  if (!q) return list;
+  var out = []; q = q.toLowerCase();
+  for (var i=0;i<list.length;i++){
+    var it = list[i];
+    if ((it.name||"").toLowerCase().indexOf(q) > -1 || (it.desc||"").toLowerCase().indexOf(q) > -1) out.push(it);
+  }
+  return out;
+}
+/* ================= toast ================= */
+function showToast(msg, kind, key){
+  var now = Date.now();
+  if (key && S.lastToast && S.lastToast.key === key && now - S.lastToast.at < 1200) return;
+  S.lastToast = { key:key||null, at:now };
+  var id = "toast-" + (++S.toastSeq || (S.toastSeq = 1));
+  S.toasts.push({ id:id, msg:msg, kind:kind || "ok" });
+  renderToasts();
+  window.setTimeout(function(){
+    for (var i=0;i<S.toasts.length;i++){ if (S.toasts[i].id===id){ S.toasts.splice(i,1); break; } }
+    renderToasts();
+  }, 4600);
+}
+function renderToasts(){
+  var root = document.getElementById("toast-root");
+  var h = "";
+  for (var i=0;i<S.toasts.length;i++){
+    var t = S.toasts[i];
+    var ic = t.kind === "warn" ? "alert" : (t.kind === "info" ? "info" : "check");
+    h += '<div class="toast" role="status" data-tid="toast"><span class="icon t-ico" data-ico="' + ic + '"></span><span>' + esc(t.msg) + '</span><button class="t-close" data-act="toast-close" data-id="' + t.id + '" aria-label="Dismiss notification"><span class="icon icon-sm" data-ico="x"></span></button></div>';
+  }
+  root.innerHTML = h;
+  bindIcons(root);
+}
+/* ================= dialog (ConfirmDialogShell-style) ================= */
+function openDialog(d){
+  S.dialog = d; S.focusReq = '[data-tid="dlg-first"]'; renderOverlays();
+}
+function closeDialog(){
+  var prev = S.dialog; S.dialog = null;
+  renderOverlays();
+  if (prev && prev.returnFocus) { var el = document.querySelector(prev.returnFocus); if (el) el.focus(); }
+}
+/* ================= overlay rendering (wizard / picker / editor / dialog) ================= */
+function renderOverlays(){
+  var root = document.getElementById("overlay-root");
+  var h = "";
+  if (S.editor) h += renderEditor();
+  if (S.picker) h += renderPicker();
+  if (S.wizard) h += renderWizard();
+  if (S.dialog) h += renderDialog();
+  root.innerHTML = h;
+  bindIcons(root);
+  applyFocus();
+}
+function applyFocus(){
+  if (!S.focusReq) return;
+  var el = document.querySelector(S.focusReq);
+  S.focusReq = null;
+  if (el) { try { el.focus(); } catch(e){} }
+}
+/* ================= chrome ================= */
+function updateChrome(){
+  document.documentElement.classList.toggle("dark", S.theme === "dark");
+  var navs = document.querySelectorAll("[data-act='nav']");
+  for (var i=0;i<navs.length;i++){
+    var cur = navs[i].getAttribute("data-view") === S.view && !S.projId;
+    if (cur) navs[i].setAttribute("aria-current","page"); else navs[i].removeAttribute("aria-current");
+  }
+  var p = PERSONS[S.persona];
+  var av = document.getElementById("side-avatar"), av2 = document.getElementById("top-avatar");
+  if (av){ av.textContent = p.initials; }
+  if (av2){ av2.textContent = p.initials; av2.setAttribute("title", p.name + " — " + p.role); }
+  var nm = document.getElementById("side-name"), rl = document.getElementById("side-role");
+  if (nm) nm.textContent = p.name;
+  if (rl) rl.textContent = p.role + " · simulated";
+  var sbox = document.getElementById("global-search");
+  if (sbox){
+    var ph = "Search…";
+    if (S.view === "projects" || (S.view === "project" && !S.projId)) ph = "Search projects…";
+    else if (S.view === "templates") ph = S.sec === "project" ? "Search project templates…" : "Search workflow templates…";
+    sbox.placeholder = ph;
+    if (document.activeElement !== sbox) sbox.value = S.search;
+  }
+  var tb = document.querySelector("[data-act='toggle-theme'] .icon");
+  if (tb){ tb.innerHTML = ico(S.theme === "dark" ? "sun" : "moon"); }
+  var strip = document.querySelector("[data-tid='strip-view']");
+  if (strip){
+    var lbl = S.view === "projects" ? "Projects · " + effProjects().length + " shown" :
+      (S.view === "templates" ? "Templates hub · " + (S.sec === "project" ? "project" : "workflow") + " templates" :
+      "Project detail · " + (S.tab === "overview" ? "Overview" : S.tab === "workflows" ? "Workflows" : S.tab === "tasks" ? "Tasks" : S.tab === "settings" ? "Settings" : "Other tab"));
+    strip.textContent = lbl;
+  }
+  var psel = document.getElementById("persona-select"); if (psel && psel.value !== S.persona) psel.value = S.persona;
+  var ssel = document.getElementById("scenario-select"); if (ssel && ssel.value !== S.scenario) ssel.value = S.scenario;
+}
+function render(){
+  updateChrome();
+  var main = document.getElementById("main-content");
+  var h = "";
+  if (S.view === "projects") h = renderProjects();
+  else if (S.view === "templates") h = renderTemplates();
+  else if (S.view === "project") h = renderProject();
+  main.innerHTML = h;
+  bindIcons(main);
+  applyFocus();
+  renderOverlays();
+}
+/* ================= Projects page ================= */
+function renderProjects(){
+  var pm = perms();
+  var all = filtered(effProjects(), S.search);
+  var h = "";
+  h += '<div class="page-head"><div><h1>Projects</h1><p class="sub">' + all.length + ' project' + (all.length===1?"":"s") + ' · Northwind Labs (synthetic tenant)</p></div>';
+  h += '<div class="actions">';
+  if (pm.createProjects) h += '<button class="btn btn-primary" data-act="new-project" data-tid="btn-new-project">' + ico("plus") + 'New project</button>';
+  else h += '<span class="chip chip-vis">' + ico("lock") + ' View-only</span>';
+  h += '</div></div>';
+  if (!pm.createProjects){
+    h += '<div class="banner banner-info mt8" data-tid="banner-no-create"><span class="icon icon-lg" data-ico="info"></span><div><div class="b-title">You can view projects</div><div class="b-body">Creating projects needs <code>tenant.projects.create</code> or <code>tenant.manage_projects</code>. Switch persona in the mockup controls to try the create journey.</div></div></div>';
+  }
+  if (S.search){
+    h += '<div class="row mt12 small"><span class="muted">Showing results for “<b>' + esc(S.search) + '</b>”</span><button class="btn btn-ghost btn-sm" data-act="clear-search" data-tid="btn-clear-search">' + ico("x") + 'Clear search</button></div>';
+  }
+  if (S.scenario === "loading"){
+    h += '<div class="table-wrap mt12" aria-hidden="true"><table class="tbl"><thead><tr><th>Project</th><th>Status</th><th>Methodology</th><th>Visibility</th><th>Tasks</th></tr></thead><tbody>';
+    for (var i=0;i<4;i++) h += '<tr><td><div class="skeleton" style="width:60%;height:12px"></div></td><td><div class="skeleton" style="width:70px;height:12px"></div></td><td><div class="skeleton" style="width:56px;height:12px"></div></td><td><div class="skeleton" style="width:80px;height:12px"></div></td><td><div class="skeleton" style="width:24px;height:12px"></div></td></tr>';
+    h += '</tbody></table></div><p class="small muted mt12" role="status">Loading projects… (simulated delay)</p>';
+    return h;
+  }
+  if (all.length === 0){
+    if (S.search){
+      h += '<div class="statebox mt12" data-tid="empty-filtered"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No projects match “' + esc(S.search) + '”</div><div class="st-body">This is a filtered-empty state — different from an empty workspace. Check the spelling or clear the search.</div><button class="btn btn-outline" data-act="clear-search">Clear search</button></div>';
+    } else if (S.scenario === "empty") {
+      h += '<div class="statebox mt12" data-tid="empty-first-run"><span class="icon-big icon" data-ico="folder"></span><div class="st-title">No projects yet</div><div class="st-body">This is the first-run empty state. Projects you create (or create from a template) will appear here.</div>';
+      if (pm.createProjects) h += '<button class="btn btn-primary" data-act="new-project">' + ico("plus") + 'Create your first project</button>';
+      h += '</div>';
+    } else {
+      h += '<div class="statebox mt12"><span class="icon-big icon" data-ico="folder"></span><div class="st-title">No projects</div><div class="st-body">Unexpected empty list. Reset demo data in the mockup controls to restore the sample.</div></div>';
+    }
+    return h;
+  }
+  h += '<div class="table-wrap mt12" data-tid="projects-table"><table class="tbl"><thead><tr><th>Project</th><th>Status</th><th>Methodology</th><th>Visibility</th><th>Due</th><th>Tasks</th><th>Updated</th></tr></thead><tbody>';
+  for (var j=0;j<all.length;j++){
+    var p = all[j];
+    h += '<tr data-act="open-project" data-id="' + p.id + '" style="cursor:pointer" data-tid="project-row-' + p.id + '">';
+    h += '<td class="cell-main"><div class="t">' + esc(p.name) + (p.fromTemplate ? ' <span class="chip chip-method tiny" style="padding:1px 6px;font-size:10px">from template</span>' : '') + '</div><div class="d">' + esc(p.desc) + '</div></td>';
+    h += '<td>' + statusChip(p.status) + '</td>';
+    h += '<td class="muted">' + methodLabel(p.method) + '</td>';
+    h += '<td>' + visLabel(p.vis) + '</td>';
+    h += '<td class="muted">' + (p.due || "—") + '</td>';
+    h += '<td class="muted">' + projectTaskCount(p.id) + '</td>';
+    h += '<td class="muted">' + p.updated + '</td>';
+    h += '</tr>';
+  }
+  h += '</tbody></table></div>';
+  h += '<p class="tiny muted mt12">Click a row to open the project. Projects listed are synthetic sample data.</p>';
+  return h;
+}
+/* ================= Templates hub (Direction A — NEW surface) ================= */
+function renderTemplates(){
+  var pm = perms();
+  var h = "";
+  h += '<div class="page-head"><div><h1>Templates</h1><p class="sub">Templates shared by <b>every project in this workspace</b> — one hub for project setups and workflow step recipes.</p></div>';
+  h += '<div class="actions">';
+  if (pm.manageTemplates){
+    h += '<button class="btn btn-outline" data-act="new-wf" data-tid="btn-new-wf">' + ico("plus") + 'New workflow template</button>';
+    h += '<button class="btn btn-primary" data-act="new-pt" data-tid="btn-new-pt">' + ico("plus") + 'New project template</button>';
+  } else {
+    h += '<span class="chip chip-vis">' + ico("lock") + ' View-only</span>';
+  }
+  h += '</div></div>';
+  h += '<div class="banner banner-info" data-tid="banner-direction-a"><span class="icon icon-lg" data-ico="info"></span><div><div class="b-title">New in Direction A — a tenant-level Templates hub</div><div class="b-body">Today workflow templates live only inside each project\'s Workflows tab. This direction adds this hub (sidebar entry + page) so templates are discoverable workspace-wide, and makes the Workflows tab usage-only (start + history) with a link back here. <button class="btn btn-ghost btn-sm" style="height:24px;padding:0 6px;margin-left:2px" data-act="open-notes">Read mockup notes</button></div></div></div>';
+  var cntP = effPt().length, cntW = effWf().length;
+  h += '<div class="row mt16"><div class="segmented" role="tablist" aria-label="Template kinds">';
+  h += '<button class="seg" role="tab" aria-selected="' + (S.sec==="project"?"true":"false") + '" data-act="sec" data-v="project" data-tid="sec-project">' + ico("layers","icon icon-sm") + 'Project templates (' + cntP + ')</button>';
+  h += '<button class="seg" role="tab" aria-selected="' + (S.sec==="workflow"?"true":"false") + '" data-act="sec" data-v="workflow" data-tid="sec-workflow">' + ico("list-checks","icon icon-sm") + 'Workflow templates (' + cntW + ')</button>';
+  h += '</div></div>';
+  if (S.scenario === "hub-error" && !S.hubErrorCleared){
+    h += '<div class="statebox mt12" data-tid="hub-error"><span class="icon-big icon" data-ico="alert"></span><div class="st-title">Couldn\'t load templates</div><div class="st-body">Simulated load error on the Templates hub. Your data is untouched — retry recovers.</div><button class="btn btn-outline" data-act="retry-hub" data-tid="btn-retry-hub">' + ico("refresh") + 'Retry</button></div>';
+    return h;
+  }
+  if (S.scenario === "loading"){
+    h += '<div class="table-wrap mt12" aria-hidden="true"><table class="tbl"><thead><tr><th>Template</th><th>Status</th><th>Updated</th></tr></thead><tbody>';
+    for (var i=0;i<4;i++) h += '<tr><td><div class="skeleton" style="width:55%;height:12px"></div></td><td><div class="skeleton" style="width:60px;height:12px"></div></td><td><div class="skeleton" style="width:80px;height:12px"></div></td></tr>';
+    h += '</tbody></table></div><p class="small muted mt12" role="status">Loading templates… (simulated delay)</p>';
+    return h;
+  }
+  if (S.sec === "project") h += renderPTsection(pm);
+  else h += renderWFsection(pm);
+  h += '<p class="tiny muted mt12" data-tid="perm-note">Template permission mirror: read = any active member · manage (edit/archive/restore) = <code>tenant.manage_projects</code> · "Use template" = <code>tenant.projects.create</code>. No permission widening in this direction.</p>';
+  return h;
+}
+function renderPTsection(pm){
+  var h = "";
+  var statusF = S.ptStatus || "all";
+  var all = effPt();
+  var list = filtered(all, S.search);
+  if (statusF !== "all") list = list.filter(function(t){ return t.status === statusF; });
+  var hdr = '<div class="spread mt12"><div class="row"><label class="tiny bold muted" for="pt-status">Status:</label><select id="pt-status" class="select" style="width:auto;height:32px" data-act="pt-status" data-tid="pt-status">' +
+    '<option value="all"' + (statusF==="all"?" selected":"") + '>All</option><option value="active"' + (statusF==="active"?" selected":"") + '>Active</option><option value="archived"' + (statusF==="archived"?" selected":"") + '>Archived</option></select></div>' +
+    '<button class="btn btn-ghost btn-sm" data-act="open-notes">' + ico("help","icon icon-sm") + 'What are project templates?</button></div>';
+  h += hdr;
+  if (!pm.manageTemplates){
+    h += '<div class="banner banner-muted mt12"><span class="icon" data-ico="info"></span><div class="b-body">You can view and (if you can create projects) use templates. <b>Managing them needs <code>tenant.manage_projects</code></b> — switch to the Org admin persona to edit, archive, or create templates.</div></div>';
+  }
+  if (list.length === 0){
+    if (S.search || statusF !== "all"){
+      h += '<div class="statebox mt12" data-tid="pt-filtered-empty"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No project templates match</div><div class="st-body">Filtered-empty state: adjust the search or the status filter to see more.</div><button class="btn btn-outline" data-act="pt-clear-filter">Clear filters</button></div>';
+    } else if (all.length === 0){
+      h += '<div class="statebox mt12" data-tid="pt-empty"><span class="icon-big icon" data-ico="layers"></span><div class="st-title">No project templates yet</div><div class="st-body">A project template captures a reusable setup: default visibility, methodology, and workflow templates to start automatically at project creation.</div>';
+      if (pm.manageTemplates) h += '<button class="btn btn-primary" data-act="new-pt">' + ico("plus") + 'Create a project template</button>';
+      h += '</div>';
+    } else {
+      h += '<div class="statebox mt12"><span class="icon-big icon" data-ico="archive"></span><div class="st-title">All project templates are archived</div><div class="st-body">Every project template is archived. Restore one, or create a new one.</div>' + (pm.manageTemplates ? '<button class="btn btn-primary" data-act="new-pt">' + ico("plus") + 'New template</button>' : '') + '</div>';
+    }
+    return h;
+  }
+  h += '<div class="table-wrap mt12" data-tid="pt-table"><table class="tbl"><thead><tr><th>Template</th><th>Visibility</th><th>Methodology</th><th>Workflows</th><th>Updated</th><th>Status</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+  for (var i=0;i<list.length;i++){
+    var t = list[i];
+    var wfs = [];
+    for (var w=0;w<t.wfIds.length;w++){ var wt = wfById(t.wfIds[w]); if (wt) wfs.push(wt.name); }
+    h += '<tr data-tid="pt-row-' + t.id + '">';
+    h += '<td class="cell-main"><div class="t">' + esc(t.name) + '</div><div class="d">' + esc(t.desc) + '</div></td>';
+    h += '<td>' + visLabel(t.vis) + '</td><td class="muted">' + methodLabel(t.method) + '</td>';
+    h += '<td class="muted">' + (wfs.length ? wfs.length + ' (' + tplSteps(t) + ' steps)' : "None") + '</td>';
+    h += '<td class="muted">' + t.updated + '</td>';
+    h += '<td>' + (t.status === "active" ? '<span class="chip chip-done">Active</span>' : '<span class="chip chip-archived">Archived</span>') + '</td>';
+    h += '<td><div class="acts">';
+    if (t.status === "active" && pm.createProjects) h += '<button class="btn btn-outline btn-sm" data-act="use-template" data-id="' + t.id + '" data-tid="use-' + t.id + '">' + ico("play","icon icon-sm") + 'Use template</button>';
+    if (pm.manageTemplates){
+      if (t.status === "active") h += '<button class="btn btn-ghost btn-sm" data-act="edit-pt" data-id="' + t.id + '" aria-label="Edit ' + esc(t.name) + '" data-tid="edit-pt-' + t.id + '">' + ico("pencil","icon icon-sm") + '</button>';
+      else h += '<button class="btn btn-ghost btn-sm" disabled title="Archived templates can be restored, not edited">' + ico("pencil","icon icon-sm") + '</button>';
+      if (t.status === "active") h += '<button class="btn btn-ghost btn-sm" data-act="archive-pt" data-id="' + t.id + '" aria-label="Archive ' + esc(t.name) + '" data-tid="archive-pt-' + t.id + '">' + ico("archive","icon icon-sm") + '</button>';
+      else h += '<button class="btn btn-ghost btn-sm" data-act="restore-pt" data-id="' + t.id + '" aria-label="Restore ' + esc(t.name) + '" data-tid="restore-pt-' + t.id + '">' + ico("restore","icon icon-sm") + '</button>';
+    }
+    h += '</div></td></tr>';
+  }
+  h += '</tbody></table></div>';
+  h += '<p class="small muted mt12" data-tid="pt-snapshot-note">Snapshot semantics: later edits to a template never change projects already created from it. Workflows listed here start automatically when a project is created from the template.</p>';
+  return h;
+}
+function renderWFsection(pm){
+  var h = "";
+  h += '<div class="banner banner-muted mt12" data-tid="wf-shared-explainer"><span class="icon icon-lg" data-ico="list-checks"></span><div><div class="b-title">Workflow templates are recipes shared by every project in this workspace</div><div class="b-body">Each template is an ordered list of steps. Starting one in a project instantly creates one task per step — the tasks are the work; there is no separate run to track. Archived templates are hidden from start pickers, and the server rejects starting them (proposed behavior).</div></div></div>';
+  var statusF = S.wfStatus || "all";
+  var all = effWf();
+  var list = filtered(all, S.search);
+  if (statusF !== "all") list = list.filter(function(t){ return t.status === statusF; });
+  h += '<div class="spread mt12"><div class="row"><label class="tiny bold muted" for="wf-status">Status:</label><select id="wf-status" class="select" style="width:auto;height:32px" data-act="wf-status" data-tid="wf-status">' +
+    '<option value="all"' + (statusF==="all"?" selected":"") + '>All</option><option value="active"' + (statusF==="active"?" selected":"") + '>Active</option><option value="archived"' + (statusF==="archived"?" selected":"") + '>Archived</option></select></div>' +
+    '<button class="btn btn-ghost btn-sm" data-act="open-notes">' + ico("help","icon icon-sm") + 'How do workflows work?</button></div>';
+  if (!pm.manageTemplates){
+    h += '<div class="banner banner-muted mt12"><span class="icon" data-ico="info"></span><div class="b-body">You can view workflow templates and start them inside projects. <b>Managing them needs <code>tenant.manage_projects</code></b>.</div></div>';
+  }
+  if (list.length === 0){
+    if (S.search || statusF !== "all"){
+      h += '<div class="statebox mt12" data-tid="wf-filtered-empty"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No workflow templates match</div><div class="st-body">Filtered-empty state: adjust the search or the status filter.</div><button class="btn btn-outline" data-act="wf-clear-filter">Clear filters</button></div>';
+    } else if (all.length === 0){
+      h += '<div class="statebox mt12" data-tid="wf-empty"><span class="icon-big icon" data-ico="list-checks"></span><div class="st-title">No workflow templates yet</div><div class="st-body">Create a step recipe once, then start it in any project to generate its tasks.</div>';
+      if (pm.manageTemplates) h += '<button class="btn btn-primary" data-act="new-wf">' + ico("plus") + 'Create a workflow template</button>';
+      h += '</div>';
+    } else {
+      h += '<div class="statebox mt12"><span class="icon-big icon" data-ico="archive"></span><div class="st-title">All workflow templates are archived</div><div class="st-body">Nothing is startable right now. Restore one or create a new template.</div>' + (pm.manageTemplates ? '<button class="btn btn-primary" data-act="new-wf">' + ico("plus") + 'New template</button>' : '') + '</div>';
+    }
+    return h;
+  }
+  h += '<div class="table-wrap mt12" data-tid="wf-table"><table class="tbl"><thead><tr><th>Template</th><th>Steps</th><th>Status</th><th>Updated</th><th style="text-align:right">Actions</th></tr></thead><tbody>';
+  for (var i=0;i<list.length;i++){
+    var t = list[i];
+    h += '<tr data-tid="wf-row-' + t.id + '">';
+    h += '<td class="cell-main"><div class="t">' + esc(t.name) + '</div><div class="d">' + esc(t.desc) + '</div></td>';
+    h += '<td class="muted">' + t.steps.length + ' step' + (t.steps.length===1?"":"s") + '</td>';
+    h += '<td>' + (t.status === "active" ? '<span class="chip chip-done">Active</span>' : '<span class="chip chip-archived">Archived</span>') + '</td>';
+    h += '<td class="muted">' + t.updated + '</td>';
+    h += '<td><div class="acts">';
+    if (pm.manageTemplates){
+      if (t.status === "active") h += '<button class="btn btn-ghost btn-sm" data-act="edit-wf" data-id="' + t.id + '" aria-label="Edit ' + esc(t.name) + '" data-tid="edit-wf-' + t.id + '">' + ico("pencil","icon icon-sm") + '</button>';
+      else h += '<button class="btn btn-ghost btn-sm" disabled title="Archived templates can be restored, not edited">' + ico("pencil","icon icon-sm") + '</button>';
+      if (t.status === "active") h += '<button class="btn btn-ghost btn-sm" data-act="archive-wf" data-id="' + t.id + '" aria-label="Archive ' + esc(t.name) + '" data-tid="archive-wf-' + t.id + '">' + ico("archive","icon icon-sm") + '</button>';
+      else h += '<button class="btn btn-ghost btn-sm" data-act="restore-wf" data-id="' + t.id + '" aria-label="Restore ' + esc(t.name) + '" data-tid="restore-wf-' + t.id + '">' + ico("restore","icon icon-sm") + '</button>';
+    }
+    h += '</div></td></tr>';
+  }
+  h += '</tbody></table></div>';
+  h += '<p class="small muted mt12" data-tid="wf-usage-note">In Direction A this page is the management home for workflow templates; the per-project Workflows tab is usage-only (start + history). Start pickers list Active templates only.</p>';
+  return h;
+}
+/* ================= dialog renderer ================= */
+function renderDialog(){
+  var d = S.dialog;
+  if (!d) return "";
+  return '<div class="dlg-overlay dlg-top" data-tid="dlg-overlay"><div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlg-title" aria-describedby="dlg-desc" data-tid="dlg">' +
+    '<div class="dlg-head"><div class="dlg-title" id="dlg-title">' + esc(d.title) + '</div><div class="dlg-desc" id="dlg-desc">' + d.desc + '</div></div>' +
+    (d.body ? '<div class="dlg-body">' + d.body + '</div>' : '') +
+    '<div class="dlg-foot"><button class="btn btn-outline" data-act="dlg-cancel" data-tid="dlg-cancel">' + esc(d.cancelLabel || "Cancel") + '</button>' +
+    '<button class="btn ' + (d.destructive ? "btn-danger" : "btn-primary") + '" data-act="dlg-confirm" data-tid="dlg-confirm"' + (d.confirmDisabled ? " disabled" : "") + '>' + esc(d.confirmLabel || "Confirm") + '</button></div>' +
+    '</div></div>';
+}
+/* ================= wizard ================= */
+var WIZ_STEPS = ["basics","access","planning","review"];
+var WIZ_LABELS = { basics:"Basics", access:"Access", planning:"Planning", review:"Review" };
+var WIZ_SUBS = { entry:"Start fresh, or reuse a saved template from your workspace.", basics:"Name the project.", access:"Who can see it.", planning:"How the work is tracked.", review:"Check everything, then create." };
+function openWizard(mode, templateId){
+  S.wizard = {
+    mode: mode || "entry-mode",
+    step: "entry",
+    f: { name:"", desc:"", vis:"private", method:"blank", due:"" },
+    templateId: templateId || null,
+    dirty: false,
+    nameErr: false
+  };
+  S.focusReq = '[data-tid="wiz-scratch-btn"]';
+  render();
+}
+function closeWizard(){
+  S.wizard = null; S.picker = null;
+  render();
+  var m = document.getElementById("main-content"); if (m) m.focus();
+}
+function wizStepIndex(step){
+  for (var i=0;i<WIZ_STEPS.length;i++){ if (WIZ_STEPS[i] === step) return i; }
+  return -1;
+}
+function wizSaveDraft(){
+  if (!S.wizard) return;
+  var f = S.wizard.f;
+  var hasContent = f.name || f.desc || f.due || f.vis !== "private" || f.method !== "blank" || S.wizard.templateId;
+  S.draft = hasContent ? { mode: S.wizard.templateId ? "template" : "scratch", templateId: S.wizard.templateId, f: { name:f.name, desc:f.desc, vis:f.vis, method:f.method, due:f.due } } : null;
+  save();
+}
+function renderWizard(){
+  if (!S.wizard) return "";
+  var w = S.wizard;
+  var h = '<div class="overlay" data-tid="wizard-overlay"><div class="wizard" role="dialog" aria-modal="true" aria-labelledby="wiz-title" aria-describedby="wiz-sub" data-tid="wizard">';
+  h += '<div class="wizard-head"><div><div class="w-title" id="wiz-title">Create a project</div><div class="w-sub" id="wiz-sub">' + (w.step === "entry" ? WIZ_SUBS.entry : "Step " + (wizStepIndex(w.step)+1) + " of 4 — " + WIZ_SUBS[w.step]) + (w.mode === "template" && w.step !== "entry" ? ' · <span class="chip chip-method" style="font-size:10.5px;padding:1px 7px">From template</span>' : '') + '</div></div>';
+  h += '<button class="icon-btn" data-act="wiz-cancel" aria-label="Close wizard" data-tid="wiz-close"><span class="icon" data-ico="x"></span></button></div>';
+  if (w.step !== "entry"){
+    h += '<div class="steps" role="tablist" aria-label="Wizard steps">';
+    var cur = wizStepIndex(w.step);
+    for (var i=0;i<WIZ_STEPS.length;i++){
+      var st = WIZ_STEPS[i];
+      if (i>0) h += '<div class="conn' + (i<=cur ? " done" : "") + '"></div>';
+      var cls = st === w.step ? ' aria-current="step"' : (i<cur ? ' class="done"' : '');
+      h += '<div class="step"' + cls + '><span class="dot">' + (i<cur ? ico("check","icon icon-sm") : '<span class="sindex">' + (i+1) + '</span>') + '</span><span class="slabel">' + WIZ_LABELS[st] + '</span></div>';
+    }
+    h += '</div>';
+  }
+  h += '<div class="wizard-body">';
+  if (w.step === "entry") h += wizEntryBody(w);
+  else if (w.step === "basics") h += wizBasicsBody(w);
+  else if (w.step === "access") h += wizAccessBody(w);
+  else if (w.step === "planning") h += wizPlanningBody(w);
+  else if (w.step === "review") h += wizReviewBody(w);
+  h += '</div>';
+  h += '<div class="wizard-foot">';
+  h += '<button class="btn btn-ghost" data-act="wiz-cancel">Cancel</button>';
+  if (w.step !== "entry"){
+    h += '<span class="spacer"></span>';
+    h += '<button class="btn btn-outline" data-act="wiz-back"' + (w.step === "basics" ? ' disabled' : '') + ' data-tid="btn-wiz-back">' + ico("arrow-left") + 'Back</button>';
+    if (w.step === "review"){
+      h += '<button class="btn btn-primary btn-lg" data-act="wiz-create" data-tid="btn-create-project"' + (S.busy === "create" ? ' disabled' : '') + '>' + (S.busy === "create" ? ico("spinner","icon spin") + 'Creating…' : ico("zap") + 'Create project') + '</button>';
+    } else {
+      h += '<button class="btn btn-primary" data-act="wiz-continue" data-tid="btn-wiz-continue">Continue' + ico("chevron-right","icon") + '</button>';
+    }
+  }
+  h += '</div></div></div>';
+  return h;
+}
+function wizEntryBody(w){
+  var h = "";
+  if (S.draft){
+    var tName = S.draft.f.name ? "“" + esc(S.draft.f.name) + "”" : "untitled";
+    h += '<div class="banner banner-info" data-tid="wiz-draft-banner"><span class="icon icon-lg" data-ico="clock"></span><div><div class="b-title">Unfinished draft</div><div class="b-body">You have a draft (' + tName + ') saved from earlier. Drafts survive reload — one slot per workspace in this proposal.</div><div class="b-acts"><button class="btn btn-primary btn-sm" data-act="wiz-continue-draft" data-tid="btn-continue-draft">Continue draft</button><button class="btn btn-outline btn-sm" data-act="wiz-fresh" data-tid="btn-start-fresh">Start fresh</button></div></div></div>';
+  }
+  h += '<div class="entrycards">';
+  h += '<div class="entrycard" data-act="wiz-scratch" data-tid="wiz-scratch-btn" tabindex="0" role="button" aria-label="Start from scratch"><div class="ec-title">' + ico("folder-plus","icon-lg") + 'Start from scratch</div><div class="ec-desc">Set up name, access, and planning yourself — the usual four steps.</div><div class="ec-meta"><span>Basics → Access → Planning → Review</span></div></div>';
+  var recents = actives(effPt()).slice(0,3);
+  h += '<div class="entrycard"><div class="ec-title">' + ico("layers","icon-lg") + 'Start from a template</div><div class="ec-desc">Begin with a saved setup: visibility, methodology, and workflows that start automatically.</div><div class="ec-meta">';
+  if (recents.length){
+    h += '<span class="bold">Recent templates</span>';
+    for (var i=0;i<recents.length;i++) h += '<span>' + esc(recents[i].name) + ' · ' + methodLabel(recents[i].method) + '</span>';
+  } else {
+    h += '<span>No active templates — create one in the Templates hub.</span>';
+  }
+  h += '</div><button class="btn btn-outline" style="margin-top:auto;align-self:flex-start" data-act="wiz-browse" data-tid="wiz-browse-btn">' + ico("search") + 'Browse all templates</button></div>';
+  h += '</div>';
+  h += '<p class="small muted mt12">Either way you get the same wizard — a template just prefills it. You can edit anything a template fills in before creating.</p>';
+  return h;
+}
+function wizBasicsBody(w){
+  var f = w.f;
+  var over = f.name.length > 80;
+  return '<div class="field"><label for="wiz-name">Project name <span class="req">*</span></label>' +
+    '<input id="wiz-name" class="input" data-tid="wiz-name" maxlength="100" data-bind="wiz-name" value="' + esc(f.name) + '" aria-invalid="' + (w.nameErr || over ? "true" : "false") + '" aria-describedby="wiz-name-err wiz-name-count" placeholder="e.g. Website Redesign" autocomplete="off" />' +
+    '<div class="charcount" id="wiz-name-count">' + f.name.length + '/80</div>' +
+    (w.nameErr ? '<div class="err" id="wiz-name-err" role="alert">Name is required.</div>' : (over ? '<div class="err" id="wiz-name-err" role="alert">Keep it under 80 characters.</div>' : '<span class="sr-only" id="wiz-name-err"></span>')) +
+    '</div>' +
+    '<div class="field"><label for="wiz-desc">Description <span class="muted">(optional)</span></label><textarea id="wiz-desc" class="textarea" data-bind="wiz-desc" placeholder="What is this project for?">' + esc(f.desc) + '</textarea></div>' +
+    '<p class="small muted">Validation is live: leaving the name empty and pressing Continue shows an inline error and keeps you on this step.</p>';
+}
+function wizAccessBody(w){
+  var f = w.f;
+  return '<fieldset style="border:none"><legend class="field" style="margin-bottom:8px"><label>Visibility <span class="req">*</span></label><span class="help">Choose who can see this project.</span></legend>' +
+    '<label class="radiocard ' + (f.vis === "private" ? "selected" : "") + '" data-tid="wiz-vis-private"><input type="radio" name="wiz-vis" value="private" data-bind="wiz-vis" ' + (f.vis === "private" ? "checked" : "") + ' /><span><span class="rc-title">Private</span><span class="rc-desc">Only people invited to the project can see it.</span></span></label>' +
+    '<label class="radiocard ' + (f.vis === "company" ? "selected" : "") + '" style="margin-top:9px" data-tid="wiz-vis-company"><input type="radio" name="wiz-vis" value="company" data-bind="wiz-vis" ' + (f.vis === "company" ? "checked" : "") + ' /><span><span class="rc-title">Company wide</span><span class="rc-desc">Everyone in the workspace can see it.</span></span></label>' +
+    '<label class="radiocard" style="margin-top:9px;opacity:.6;cursor:not-allowed" title="Teams access mode was not observed in this mockup pass — unresolved probe (modes)."><input type="radio" name="wiz-vis" value="teams" disabled /><span><span class="rc-title">Teams <span class="chip chip-archived" style="font-size:10px">not simulated</span></span><span class="rc-desc">Teams access mode exists in WayPoint but wasn\'t observed for this mockup (unresolved probe P-MODES).</span></span></label>' +
+    '</fieldset>' +
+    (w.mode === "template" ? '<p class="small muted mt12">Prefilled from the template — you can change it. Template visibility supports Private and Company wide only in this proposal.</p>' : '<p class="small muted mt12">Default is Private (unchanged from today).</p>');
+}
+function wizPlanningBody(w){
+  var f = w.f;
+  return '<div class="field"><label for="wiz-method">Methodology</label><select id="wiz-method" class="select" data-bind="wiz-method" data-tid="wiz-method">' +
+    '<option value="blank"' + (f.method === "blank" ? " selected" : "") + '>Blank — no methodology yet</option>' +
+    '<option value="scrum"' + (f.method === "scrum" ? " selected" : "") + '>Scrum</option>' +
+    '<option value="waterfall"' + (f.method === "waterfall" ? " selected" : "") + '>Waterfall</option>' +
+    '<option value="hybrid"' + (f.method === "hybrid" ? " selected" : "") + '>Hybrid</option></select>' +
+    '<span class="help">Methodology sets up default task statuses (for example Scrum → Backlog, Sprint, In Progress, Review, Done). You can change it later without moving existing tasks.</span></div>' +
+    '<div class="field"><label for="wiz-due">Due date <span class="muted">(optional)</span></label><input id="wiz-due" class="input" type="text" data-bind="wiz-due" data-tid="wiz-due" value="' + esc(f.due) + '" placeholder="e.g. Nov 14, 2026" /></div>' +
+    '<div class="field"><label class="row"><input type="checkbox" disabled checked style="opacity:.5" aria-label="Budget setup not simulated" /><span>Track budget <span class="muted">(off — not simulated in this mockup)</span></span></label></div>' +
+    '<div class="banner banner-muted"><span class="icon" data-ico="list-checks"></span><div class="b-body"><b>Workflows cross-reference:</b> workflow templates can be started anytime from the project\'s Workflows tab — each step becomes a task. A project template can also start them automatically at creation.</div></div>';
+}
+function wizReviewBody(w){
+  var f = w.f;
+  var h = '<div class="card card-pad"><div class="card-title">Summary</div>';
+  h += '<div class="reviewrow"><span class="rk">Name</span><span class="rv">' + esc(f.name || "—") + '</span></div>';
+  h += '<div class="reviewrow"><span class="rk">Description</span><span class="rv muted">' + esc(f.desc || "—") + '</span></div>';
+  h += '<div class="reviewrow"><span class="rk">Visibility</span><span class="rv">' + visLabel(f.vis) + '</span></div>';
+  h += '<div class="reviewrow"><span class="rk">Methodology</span><span class="rv">' + (f.method === "blank" ? "Blank — no methodology yet" : methodLabel(f.method)) + '</span></div>';
+  h += '<div class="reviewrow"><span class="rk">Due date</span><span class="rv muted">' + (f.due || "—") + '</span></div>';
+  h += '</div>';
+  if (w.mode === "template"){
+    var t = ptById(w.templateId);
+    var wfCount = 0, stepTotal = 0;
+    if (t){
+      for (var i=0;i<t.wfIds.length;i++){ var wt = wfById(t.wfIds[i]); if (wt && wt.status === "active"){ wfCount++; stepTotal += wt.steps.length; } }
+    }
+    h += '<div class="card card-pad mt12" data-tid="review-template-card"><div class="card-title">' + ico("layers") + 'From template</div><div class="card-sub">Using <b>' + esc(t ? t.name : "?") + '</b>. After creation, ' + wfCount + ' workflow' + (wfCount===1?"":"s") + ' will create ' + stepTotal + ' task' + (stepTotal===1?"":"s") + ' in this project.</div><div class="mt8"><button class="btn btn-ghost btn-sm" data-act="wiz-change-template">' + ico("pencil","icon icon-sm") + 'Change template</button></div></div>';
+  } else {
+    h += '<div class="banner banner-muted mt12"><span class="icon" data-ico="info"></span><div class="b-body">No workflows will start automatically. You can start any workspace workflow template from the project\'s Workflows tab after creation.</div></div>';
+  }
+  return h;
+}
+/* ================= wizard actions ================= */
+function wizContinue(){
+  var w = S.wizard; if (!w) return;
+  if (w.step === "basics"){
+    var name = w.f.name.trim();
+    if (!name || name.length > 80){
+      w.nameErr = true; w.f.name = w.f.name.slice(0,100);
+      S.focusReq = '[data-tid="wiz-name"]';
+      renderOverlays();
+      return;
+    }
+  }
+  w.nameErr = false;
+  var i = wizStepIndex(w.step);
+  w.step = WIZ_STEPS[i+1];
+  wizSaveDraft();
+  S.focusReq = w.step === "access" ? '[data-tid="wiz-vis-private"] input' : (w.step === "planning" ? '[data-tid="wiz-method"]' : '[data-tid="btn-create-project"]');
+  renderOverlays();
+}
+function wizBack(){
+  var w = S.wizard; if (!w) return;
+  var i = wizStepIndex(w.step);
+  w.step = i <= 0 ? "entry" : WIZ_STEPS[i-1];
+  w.nameErr = false;
+  S.focusReq = w.step === "entry" ? '[data-tid="wiz-scratch-btn"]' : (w.step === "basics" ? '[data-tid="wiz-name"]' : '[data-tid="btn-wiz-continue"]');
+  renderOverlays();
+}
+function wizCancelRequest(){
+  var w = S.wizard; if (!w) return;
+  if (w.dirty){
+    openDialog({
+      title: "Discard this draft?",
+      desc: "Your project draft will be discarded. This can't be undone.",
+      confirmLabel: "Discard draft",
+      cancelLabel: "Keep editing",
+      destructive: true,
+      cb: function(){
+        S.draft = null; S.wizard = null; S.picker = null; save();
+        render();
+        var m = document.getElementById("main-content"); if (m) m.focus();
+      },
+      returnFocus: '[data-tid="wiz-close"]'
+    });
+  } else {
+    S.wizard = null; S.picker = null;
+    render();
+    var m = document.getElementById("main-content"); if (m) m.focus();
+  }
+}
+function wizCreate(){
+  var w = S.wizard; if (!w || S.busy) return;
+  var name = w.f.name.trim();
+  if (!name || name.length > 80){ w.nameErr = true; S.focusReq = '[data-tid="wiz-name"]'; renderOverlays(); return; }
+  S.busy = "create";
+  renderOverlays();
+  window.setTimeout(function(){
+    S.busy = null;
+    doCreate();
+  }, 750);
+}
+function doCreate(){
+  var w = S.wizard;
+  var pid = "pr" + Date.now();
+  var project = {
+    id: pid, name: w.f.name.trim(), desc: w.f.desc.trim(), vis: w.f.vis, method: w.f.method,
+    status: "planning", due: w.f.due || null, extra: 0, updated: "Just now", fromTemplate: w.templateId || null
+  };
+  var starts = [], failed = null, tasksCreated = 0, startedCount = 0;
+  if (w.templateId){
+    var t = ptById(w.templateId);
+    if (t && t.status === "active"){
+      var ids = [];
+      for (var i=0;i<t.wfIds.length;i++){ var wt = wfById(t.wfIds[i]); if (wt && wt.status === "active") ids.push(wt.id); }
+      if (S.scenario === "partial" && ids.length >= 2){ failed = ids[ids.length-1]; ids = ids.slice(0, ids.length-1); }
+      for (var j=0;j<ids.length;j++){
+        var wf = wfById(ids[j]);
+        var tasks = [];
+        for (var k=0;k<wf.steps.length;k++) tasks.push({ id: "t" + pid + "-" + j + "-" + k, title: wf.steps[k].t, status: "todo" });
+        starts.push({ id: "s" + pid + "-" + j, wfId: wf.id, date: "Nov 1, 2026", tasks: tasks });
+        tasksCreated += tasks.length; startedCount++;
+      }
+    }
+  }
+  S.projects.unshift(project);
+  S.starts[pid] = starts;
+  if (failed){ S.partialFails[pid] = failed; }
+  S.draft = null; S.wizard = null; S.picker = null;
+  S.view = "project"; S.projId = pid; S.tab = "overview";
+  save();
+  var n = startedCount;
+  if (w.templateId && n > 0){
+    if (failed){
+      showToast("Project created · " + tasksCreated + " task" + (tasksCreated===1?"":"s") + " created from " + n + " workflow" + (n===1?"":"s") + " · 1 workflow couldn't start", "warn", "create-partial");
+    } else {
+      showToast("Project created · " + tasksCreated + " task" + (tasksCreated===1?"":"s") + " created from " + n + " workflow" + (n===1?"":"s"), "ok", "create-combined");
+    }
+  } else {
+    showToast("Project created.", "ok", "create-plain");
+  }
+  S.focusReq = '[data-tid="banner-partial"] a, [data-tid="banner-partial"] button, [data-tid="proj-title"]';
+  render();
+}
+/* ================= template picker (J-D) ================= */
+function openPicker(initialId){
+  S.picker = { search:"", sel: initialId || null };
+  renderOverlays();
+  var si = document.querySelector('[data-tid="picker-search"]');
+  if (si) si.focus();
+}
+function closePicker(){
+  S.picker = null;
+  renderOverlays();
+}
+function renderPicker(){
+  if (!S.picker) return "";
+  var pk = S.picker;
+  var list = actives(effPt());
+  var q = pk.search.toLowerCase();
+  if (q) list = list.filter(function(t){ return t.name.toLowerCase().indexOf(q) > -1 || (t.desc||"").toLowerCase().indexOf(q) > -1; });
+  var h = '<div class="dlg-overlay" data-tid="picker-overlay"><div class="dlg dlg-wide" role="dialog" aria-modal="true" aria-labelledby="picker-title" aria-describedby="picker-desc" data-tid="picker">';
+  h += '<div class="dlg-head"><div class="dlg-title" id="picker-title">Start from a template</div><div class="dlg-desc" id="picker-desc">Templates are shared by every project in this workspace. Pick one — it will prefill the wizard; you can still change anything before creating.</div></div>';
+  h += '<div class="dlg-body">';
+  h += '<div class="searchbox" style="max-width:none;width:100%"><span class="icon" data-ico="search"></span><input data-tid="picker-search" type="search" data-bind="picker-search" value="' + esc(pk.search) + '" placeholder="Search templates…" aria-label="Search project templates" /></div>';
+  if (list.length === 0){
+    h += '<div class="statebox mt12"><span class="icon-big icon" data-ico="layers"></span><div class="st-title">' + (pk.search ? "No templates match “" + esc(pk.search) + "”" : "No active project templates") + '</div><div class="st-body">' + (pk.search ? "Filtered-empty state — try another search." : "Templates are created in the Templates hub. Create one first, or continue from scratch.") + '</div><div class="row"><button class="btn btn-outline" data-act="picker-cancel">Start from scratch instead</button></div></div>';
+  } else {
+    h += '<div class="pickgrid mt12">';
+    for (var i=0;i<list.length;i++){
+      var t = list[i];
+      var wfNames = [];
+      for (var j=0;j<t.wfIds.length;j++){ var wt = wfById(t.wfIds[j]); if (wt) wfNames.push(wt.name); }
+      h += '<div class="pickcard' + (pk.sel === t.id ? " selected" : "") + '" data-act="pick-sel" data-id="' + t.id + '" role="radio" aria-checked="' + (pk.sel === t.id ? "true" : "false") + '" tabindex="0" data-tid="pick-' + t.id + '">';
+      h += '<div class="spread"><span class="pc-title">' + esc(t.name) + '</span>' + (pk.sel === t.id ? '<span class="chip chip-done">' + ico("check","icon icon-sm") + ' Selected</span>' : '') + '</div>';
+      h += '<span class="pc-desc">' + esc(t.desc) + '</span>';
+      h += '<span class="pc-meta"><span class="chip chip-vis">' + visLabel(t.vis) + '</span><span class="chip chip-method">' + methodLabel(t.method) + '</span><span>' + (wfNames.length ? wfNames.length + " workflow" + (wfNames.length===1?"":"s") + " · " + tplSteps(t) + " steps" : "no workflows") + '</span><span>· updated ' + t.updated + '</span></span>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+  h += '</div>';
+  h += '<div class="dlg-foot"><button class="btn btn-outline" data-act="picker-cancel">Cancel</button><button class="btn btn-primary" data-act="picker-use" data-tid="picker-use" ' + (pk.sel ? "" : "disabled") + '>' + ico("play") + 'Use this template</button></div>';
+  h += '</div></div>';
+  return h;
+}
+/* ================= template editors ================= */
+function openEditorPT(mode, id, prefill){
+  var f = { name:"", desc:"", vis:"private", method:"blank", wfIds:[] };
+  if (mode === "edit" && id){ var t = ptById(id); if (t){ f = { name:t.name, desc:t.desc, vis:t.vis, method:t.method, wfIds:t.wfIds.slice() }; } }
+  if (prefill) f = { name:"", desc:"", vis: prefill.vis, method: prefill.method, wfIds:[] };
+  var returnFocus = prefill ? '[data-tid="btn-save-as-template"]' : (mode === "edit" && id ? '[data-tid="edit-pt-' + id + '"]' : '[data-tid="btn-new-pt"]');
+  S.editor = { kind:"pt", mode:mode, id:id || null, f:f, dirty:false, errors:{}, prefillNote: prefill ? prefill.note : null, returnFocus: returnFocus };
+  S.focusReq = '[data-tid="ed-name"]';
+  renderOverlays();
+}
+function openEditorWF(mode, id){
+  var f = { name:"", desc:"", steps:[{t:"",n:""}] };
+  if (mode === "edit" && id){ var t = wfById(id); if (t){ f = { name:t.name, desc:t.desc, steps: t.steps.map(function(s){ return {t:s.t,n:s.n}; }) }; } }
+  var returnFocus = (mode === "edit" && id) ? '[data-tid="edit-wf-' + id + '"]' : '[data-tid="btn-new-wf"]';
+  S.editor = { kind:"wf", mode:mode, id:id || null, f:f, dirty:false, errors:{}, returnFocus: returnFocus };
+  S.focusReq = '[data-tid="ed-name"]';
+  renderOverlays();
+}
+function focusOrMain(sel){
+  var list = Array.isArray(sel) ? sel : [sel];
+  var el = null;
+  for (var i=0;i<list.length;i++){ if (!list[i]) continue; el = document.querySelector(list[i]); if (el) break; }
+  if (!el) el = document.getElementById("main-content");
+  if (el) { try { el.focus(); } catch(e){} }
+}
+function closeEditor(){
+  var e = S.editor;
+  if (e && e.dirty){
+    var rf = e.returnFocus;
+    openDialog({
+      title: "Discard changes?",
+      desc: "Changes to this template haven't been saved.",
+      confirmLabel: "Discard",
+      cancelLabel: "Keep editing",
+      destructive: true,
+      cb: function(){ S.editor = null; render(); focusOrMain(rf); },
+      returnFocus: '[data-tid="ed-cancel"]'
+    });
+  } else {
+    var rf2 = e ? e.returnFocus : null;
+    S.editor = null;
+    render();
+    focusOrMain(rf2);
+  }
+}
+function renderEditor(){
+  if (!S.editor) return "";
+  var e = S.editor;
+  var isNew = e.mode === "new";
+  var kindLbl = e.kind === "pt" ? "project template" : "workflow template";
+  var title = (isNew ? "New " : "Edit ") + kindLbl;
+  var desc = e.kind === "pt"
+    ? "A project template captures a reusable setup: default visibility, methodology, and workflow templates to start automatically when a project is created from it. Name is required (max 80)."
+    : "A workflow template is an ordered recipe of steps shared by every project in this workspace. Starting it in a project creates one task per step.";
+  var h = '<div class="dlg-overlay" data-tid="editor-overlay"><div class="dlg dlg-wide" role="dialog" aria-modal="true" aria-labelledby="ed-title" aria-describedby="ed-desc" data-tid="editor">';
+  h += '<div class="dlg-head"><div class="dlg-title" id="ed-title">' + title + '</div><div class="dlg-desc" id="ed-desc">' + desc + '</div></div>';
+  h += '<div class="dlg-body">';
+  if (e.prefillNote){
+    h += '<div class="banner banner-info"><span class="icon" data-ico="info"></span><div class="b-body">' + e.prefillNote + '</div></div>';
+  }
+  h += '<div class="field"><label for="ed-name">Name <span class="req">*</span></label><input id="ed-name" class="input" data-bind="ed-name" data-tid="ed-name" maxlength="100" value="' + esc(e.f.name) + '" aria-invalid="' + (e.errors.name ? "true" : "false") + '" placeholder="e.g. Client website project" /><div class="charcount" id="ed-name-count">' + e.f.name.length + '/80</div>' + (e.errors.name ? '<div class="err" role="alert">' + e.errors.name + '</div>' : '') + '</div>';
+  h += '<div class="field"><label for="ed-desc">Description <span class="muted">(optional)</span></label><textarea id="ed-desc" class="textarea" data-bind="ed-desc" data-tid="ed-desc" placeholder="What is this template for?">' + esc(e.f.desc) + '</textarea></div>';
+  if (e.kind === "pt"){
+    h += '<fieldset style="border:none"><legend class="field" style="margin-bottom:6px"><label>Default visibility</label></legend>' +
+      '<label class="radiocard ' + (e.f.vis === "private" ? "selected" : "") + '"><input type="radio" name="ed-vis" value="private" data-bind="ed-vis" ' + (e.f.vis === "private" ? "checked" : "") + ' /><span><span class="rc-title">Private</span><span class="rc-desc">Projects created from this template start private.</span></span></label>' +
+      '<label class="radiocard ' + (e.f.vis === "company" ? "selected" : "") + '" style="margin-top:9px"><input type="radio" name="ed-vis" value="company" data-bind="ed-vis" ' + (e.f.vis === "company" ? "checked" : "") + ' /><span><span class="rc-title">Company wide</span><span class="rc-desc">Projects created from this template start visible to the whole workspace.</span></span></label>' +
+      '<p class="small muted" style="margin-top:8px">Teams are chosen per project, not stored in templates — you can switch a created project to Teams after creation (v1 proposal).</p></fieldset>';
+    h += '<div class="field"><label for="ed-method">Default methodology</label><select id="ed-method" class="select" data-bind="ed-method" data-tid="ed-method">' +
+      '<option value="blank"' + (e.f.method === "blank" ? " selected" : "") + '>Blank — no methodology yet</option>' +
+      '<option value="scrum"' + (e.f.method === "scrum" ? " selected" : "") + '>Scrum</option>' +
+      '<option value="waterfall"' + (e.f.method === "waterfall" ? " selected" : "") + '>Waterfall</option>' +
+      '<option value="hybrid"' + (e.f.method === "hybrid" ? " selected" : "") + '>Hybrid</option></select>' +
+      '<span class="help">Methodology sets up default task statuses for projects created from this template. Blank/Scrum/Waterfall/Hybrid are simulated; Waterfall/Hybrid status behavior is an unresolved probe.</span></div>';
+    var actWfs = actives(effWf());
+    h += '<fieldset style="border:none"><legend class="field" style="margin-bottom:6px"><label>Workflows to start</label><span class="help">Each selected workflow creates one task per step when a project is created from this template. Optional — projects can also start workflows later.</span></legend>';
+    if (actWfs.length === 0){
+      h += '<p class="small muted">No active workflow templates. Create one first, or leave this empty.</p>';
+    } else {
+      for (var i=0;i<actWfs.length;i++){
+        var wt = actWfs[i];
+        var on = e.f.wfIds.indexOf(wt.id) > -1;
+        h += '<label class="checkrow" data-tid="ed-wf-' + wt.id + '"><input type="checkbox" data-bind="ed-wf:' + wt.id + '" ' + (on ? "checked" : "") + ' /><span><span class="cr-title">' + esc(wt.name) + '</span><span class="cr-desc">' + wt.steps.length + ' steps → creates ' + wt.steps.length + ' task' + (wt.steps.length===1?"":"s") + '</span></span></label>';
+      }
+    }
+    h += '</fieldset>';
+  } else {
+    h += '<div class="spread"><div class="card-title" id="ed-steps-label">Steps <span class="req">*</span></div><button class="btn btn-outline btn-sm" data-act="ed-add-step" data-tid="ed-add-step">' + ico("plus","icon icon-sm") + 'Add step</button></div>';
+    h += '<div class="stepprev" role="group" aria-labelledby="ed-steps-label">';
+    if (e.errors.stepSummary) h += '<div class="banner banner-danger" style="margin:6px 0" data-tid="ed-step-summary"><span class="icon" data-ico="alert"></span><div class="b-body">' + e.errors.stepSummary + '</div></div>';
+    for (var j=0;j<e.f.steps.length;j++){
+      var stp = e.f.steps[j];
+      var serr = e.errors.steps && e.errors.steps[j];
+      h += '<div class="steprow">';
+      h += '<span class="num">' + (j+1) + '</span>';
+      h += '<div class="fields"><input class="input" data-bind="ed-step-t:' + j + '" value="' + esc(stp.t) + '" placeholder="Step title (required)" aria-label="Step ' + (j+1) + ' title" aria-invalid="' + (serr ? "true" : "false") + '" data-tid="ed-step-t-' + j + '" />' +
+        '<input class="input" data-bind="ed-step-n:' + j + '" value="' + esc(stp.n) + '" placeholder="Optional note" aria-label="Step ' + (j+1) + ' note" />' +
+        (serr ? '<div class="err" role="alert" data-tid="ed-step-err-' + j + '">' + serr + '</div>' : '') + '</div>';
+      h += '<div class="rowtools"><button class="mini-btn" data-act="ed-step-up" data-id="' + j + '" aria-label="Move step ' + (j+1) + ' up" ' + (j===0 ? "disabled" : "") + '>' + ico("chevron-up","icon icon-sm") + '</button>' +
+        '<button class="mini-btn" data-act="ed-step-down" data-id="' + j + '" aria-label="Move step ' + (j+1) + ' down" ' + (j===e.f.steps.length-1 ? "disabled" : "") + '>' + ico("chevron-down","icon icon-sm") + '</button>' +
+        '<button class="mini-btn danger" data-act="ed-step-remove" data-id="' + j + '" aria-label="Remove step ' + (j+1) + '" ' + (e.f.steps.length===1 ? "disabled" : "") + '>' + ico("x","icon icon-sm") + '</button></div>';
+      h += '</div>';
+    }
+    h += '</div>';
+    h += '<p class="small muted">Steps are validated inline on save: empty titles are rejected and the first invalid step is focused — nothing is silently dropped.</p>';
+  }
+  h += '</div>';
+  h += '<div class="dlg-foot"><button class="btn btn-outline" data-act="ed-cancel" data-tid="ed-cancel">Cancel</button>' +
+    '<button class="btn btn-primary" data-act="ed-save" data-tid="ed-save"' + (S.busy === "ed-save" ? " disabled" : "") + '>' + (S.busy === "ed-save" ? ico("spinner","icon spin") + 'Saving…' : (isNew ? "Create template" : "Save changes")) + '</button></div>';
+  h += '</div></div>';
+  return h;
+}
+function edSave(){
+  var e = S.editor; if (!e || S.busy) return;
+  e.errors = {};
+  var name = e.f.name.trim();
+  if (!name){ e.errors.name = "Name is required."; }
+  else if (name.length > 80){ e.errors.name = "Keep it under 80 characters."; }
+  if (e.errors.name){
+    S.focusReq = '[data-tid="ed-name"]';
+    renderOverlays();
+    return;
+  }
+  if (e.kind === "wf"){
+    var bad = {}, firstBad = -1;
+    for (var i=0;i<e.f.steps.length;i++){
+      if (!e.f.steps[i].t.trim()){ bad[i] = "Step title can't be empty."; if (firstBad < 0) firstBad = i; }
+    }
+    if (firstBad >= 0){
+      e.errors.steps = bad;
+      e.errors.stepSummary = "Some step titles are empty. Every step needs a title — empty steps are rejected inline and nothing is silently dropped.";
+      S.focusReq = '[data-tid="ed-step-t-' + firstBad + '"]';
+      renderOverlays();
+      return;
+    }
+  }
+  S.busy = "ed-save";
+  renderOverlays();
+  window.setTimeout(function(){
+    S.busy = null;
+    var rf = e.returnFocus;
+    if (e.kind === "pt"){
+      if (e.mode === "edit" && e.id){
+        // Preserve identity/provenance: mutate the existing record in place instead of replacing it.
+        var cur = null;
+        for (var k=0;k<S.ptTemplates.length;k++){ if (S.ptTemplates[k].id === e.id){ cur = S.ptTemplates[k]; break; } }
+        if (cur){
+          cur.name = name; cur.desc = e.f.desc.trim(); cur.vis = e.f.vis; cur.method = e.f.method;
+          cur.wfIds = e.f.wfIds.slice(); cur.updated = "Just now"; cur.by = PERSONS[S.persona].name;
+        } else {
+          S.ptTemplates.unshift({ id: e.id, name: name, desc: e.f.desc.trim(), vis: e.f.vis, method: e.f.method, wfIds: e.f.wfIds.slice(), status: "active", updated: "Just now", by: PERSONS[S.persona].name });
+        }
+        showToast("Project template saved.", "ok", "pt-saved");
+      } else {
+        S.ptTemplates.unshift({ id: "pt" + Date.now(), name: name, desc: e.f.desc.trim(), vis: e.f.vis, method: e.f.method, wfIds: e.f.wfIds.slice(), status: "active", updated: "Just now", by: PERSONS[S.persona].name });
+        showToast("Project template created.", "ok", "pt-created");
+      }
+    } else {
+      var steps = e.f.steps.map(function(s){ return { t: s.t.trim(), n: s.n.trim() }; });
+      if (e.mode === "edit" && e.id){
+        // Same identity preservation for workflow templates: id and status stay stable.
+        var wcur = null;
+        for (var m=0;m<S.wfTemplates.length;m++){ if (S.wfTemplates[m].id === e.id){ wcur = S.wfTemplates[m]; break; } }
+        if (wcur){
+          wcur.name = name; wcur.desc = e.f.desc.trim(); wcur.steps = steps;
+          wcur.updated = "Just now"; wcur.by = PERSONS[S.persona].name;
+        } else {
+          S.wfTemplates.unshift({ id: e.id, name: name, desc: e.f.desc.trim(), steps: steps, status: "active", updated: "Just now", by: PERSONS[S.persona].name });
+        }
+        showToast("Workflow template saved.", "ok", "wf-saved");
+      } else {
+        S.wfTemplates.unshift({ id: "wf" + Date.now(), name: name, desc: e.f.desc.trim(), steps: steps, status: "active", updated: "Just now", by: PERSONS[S.persona].name });
+        showToast("Workflow template created.", "ok", "wf-created");
+      }
+    }
+    S.editor = null;
+    save();
+    render();
+    focusOrMain(rf);
+  }, 650);
+}
+/* ================= project detail ================= */
+var PROJECT_TABS = [
+  { id:"overview", label:"Overview" },
+  { id:"tasks", label:"Tasks" },
+  { id:"workflows", label:"Workflows" },
+  { id:"board", label:"Board", inert:true },
+  { id:"gantt", label:"Gantt", inert:true },
+  { id:"calendar", label:"Calendar", inert:true },
+  { id:"costs", label:"Costs", inert:true },
+  { id:"roadblocks", label:"Roadblocks", inert:true },
+  { id:"updates", label:"Updates", inert:true },
+  { id:"files", label:"Files", inert:true },
+  { id:"reports", label:"Reports", inert:true },
+  { id:"settings", label:"Settings" }
+];
+function renderProject(){
+  var p = projById(S.projId);
+  if (!p){ S.view = "projects"; S.projId = null; render(); return ""; }
+  var pm = perms();
+  var h = "";
+  h += '<button class="btn btn-ghost btn-sm" data-act="nav" data-view="projects" data-tid="back-projects">' + ico("arrow-left","icon icon-sm") + 'All projects</button>';
+  h += '<div class="page-head mt8"><div><div class="row" style="flex-wrap:wrap"><h1 data-tid="proj-title">' + esc(p.name) + '</h1>' + statusChip(p.status);
+  if (p.fromTemplate){ var ft = ptById(p.fromTemplate); h += '<span class="chip chip-method" data-tid="proj-provenance">' + ico("layers","icon icon-sm") + 'From template: ' + esc(ft ? ft.name : "?") + '</span>'; }
+  if (!pm.startWorkflows) h += '<span class="chip chip-vis">' + ico("eye","icon icon-sm") + 'View-only access</span>';
+  h += '</div><p class="sub">Northwind Labs · Due ' + (p.due || "—") + ' · ' + projectTaskCount(p.id) + ' tasks' + '</p></div></div>';
+  h += partialBanner(p.id);
+  h += '<div class="tabrow" role="tablist" aria-label="Project sections">';
+  for (var i=0;i<PROJECT_TABS.length;i++){
+    var t = PROJECT_TABS[i];
+    var active = S.tab === t.id;
+    if (t.inert){
+      h += '<button class="tab" role="tab" disabled title="Static placeholder — not part of this scoped mockup">' + t.label + '</button>';
+    } else {
+      h += '<button class="tab" role="tab" aria-selected="' + (active ? "true" : "false") + '" data-act="tab" data-v="' + t.id + '" data-tid="tab-' + t.id + '">' + t.label + (t.id === "workflows" ? ' <span class="tab-note">usage-only</span>' : '') + '</button>';
+    }
+  }
+  h += '</div>';
+  if (S.tab === "overview") h += renderOverview(p);
+  else if (S.tab === "workflows") h += renderWorkflowsTab(p, pm);
+  else if (S.tab === "tasks") h += renderTasksTab(p);
+  else if (S.tab === "settings") h += renderSettingsTab(p, pm);
+  else h += '<div class="statebox"><span class="icon-big icon" data-ico="' + (S.tab === "board" ? "clipboard" : "info") + '"></span><div class="st-title">' + tabLabel(S.tab) + '</div><div class="st-body">Static placeholder in this mockup — the scoped redesign covers Overview, Tasks, Workflows, and Settings only. The full tab row is preserved for structure.</div></div>';
+  return h;
+}
+function tabLabel(id){
+  for (var i=0;i<PROJECT_TABS.length;i++){ if (PROJECT_TABS[i].id === id) return PROJECT_TABS[i].label; }
+  return "Tab";
+}
+function partialBanner(pid){
+  var failedWfId = S.partialFails[pid];
+  if (!failedWfId) return "";
+  var wf = wfById(failedWfId);
+  var retrying = S.busy === "retry";
+  return '<div class="banner banner-warning" data-tid="banner-partial"><span class="icon icon-lg" data-ico="alert"></span><div><div class="row" style="flex-wrap:wrap"><span class="b-title">Project created, but 1 workflow couldn\'t start</span><span class="sim-tag">Simulated</span></div><div class="b-body">“' + esc(wf ? wf.name : "?") + '” didn\'t start automatically when the project was created. The project was kept — this is the proposed keep-project + banner behavior, simulated only; no transaction or backend atomicity is claimed. Retry is idempotent: starting this workflow again never creates its tasks twice.</div><div class="b-acts"><button class="btn btn-outline btn-sm" data-act="retry-partial" data-tid="btn-retry-partial"' + (retrying ? ' disabled' : '') + '>' + (retrying ? ico("spinner","icon icon-sm spin") + 'Retrying…' : ico("refresh","icon icon-sm") + 'Retry') + '</button><button class="btn btn-outline btn-sm" data-act="partial-to-workflows" data-tid="btn-partial-to-workflows">' + ico("zap","icon icon-sm") + 'Start from Workflows tab</button></div></div></div>';
+}
+function renderOverview(p){
+  var h = '<div class="grid2">';
+  h += '<div class="card card-pad"><div class="card-title">' + ico("info") + 'Details</div><div class="reviewrow"><span class="rk">Visibility</span><span class="rv">' + visLabel(p.vis) + '</span></div><div class="reviewrow"><span class="rk">Methodology</span><span class="rv">' + methodLabel(p.method) + '</span></div><div class="reviewrow"><span class="rk">Due date</span><span class="rv muted">' + (p.due || "—") + '</span></div><div class="reviewrow"><span class="rk">Tasks</span><span class="rv">' + projectTaskCount(p.id) + '</span></div></div>';
+  if (p.fromTemplate){
+    var ft = ptById(p.fromTemplate);
+    var names = [];
+    if (ft){ for (var i=0;i<ft.wfIds.length;i++){ var wt = wfById(ft.wfIds[i]); if (wt) names.push(wt.name); } }
+    h += '<div class="card card-pad"><div class="card-title">' + ico("layers") + 'Created from template</div><div class="card-sub">This project was created from <b>' + esc(ft ? ft.name : "?") + '</b>. It copied the setup at creation and now lives independently — later template edits never change this project (snapshot semantics).</div><div class="small muted mt8">Workflows started at creation: ' + (names.length ? esc(names.join(", ")) : "none") + '.</div><div class="mt8"><button class="btn btn-ghost btn-sm" data-act="nav" data-view="templates">' + ico("layers","icon icon-sm") + 'View template in hub</button></div></div>';
+  } else {
+    h += '<div class="card card-pad"><div class="card-title">' + ico("zap") + 'Next steps</div><div class="card-sub">Start a workflow to create your first tasks, or invite collaborators.</div><div class="mt8 row"><button class="btn btn-outline btn-sm" data-act="tab" data-v="workflows">' + ico("play","icon icon-sm") + 'Start a workflow</button></div></div>';
+  }
+  h += '</div>';
+  return h;
+}
+function renderWorkflowsTab(p, pm){
+  var h = '<div class="card card-pad" data-tid="wf-explainer"><div class="card-title">' + ico("list-checks") + 'Workflow templates — shared by every project in this workspace</div><div class="card-sub">Each template is an ordered recipe of steps. Starting one creates one task per step in this project — you\'ll track progress on the Tasks tab. This tab is <b>usage-only in Direction A</b>: management moved to the Templates hub.</div><div class="mt8 row" style="flex-wrap:wrap"><button class="btn btn-outline btn-sm" data-act="manage-templates" data-tid="btn-manage-templates">' + ico("layers","icon icon-sm") + 'Manage templates in the Templates hub</button><button class="btn btn-ghost btn-sm" data-act="open-help" data-tid="btn-help-workflows">' + ico("help","icon icon-sm") + 'How do workflows work?</button></div></div>';
+  var starts = S.starts[p.id] || [];
+  if (pm.startWorkflows){
+    var actWfs = actives(effWf());
+    var selWf = S.startSel ? wfById(S.startSel) : null;
+    h += '<div class="card card-pad mt12" data-tid="start-panel"><div class="card-title">' + ico("play") + 'Start a workflow</div><div class="card-sub">Review the steps. Starting creates a task for each one in this project.</div>';
+    h += '<div class="field mt12"><label for="start-wf-select">Workflow template</label><select id="start-wf-select" class="select" data-bind="start-wf" data-tid="start-wf-select" aria-describedby="start-wf-help">' +
+      '<option value="">Choose a workflow template…</option>';
+    for (var i=0;i<actWfs.length;i++){
+      h += '<option value="' + actWfs[i].id + '"' + (S.startSel === actWfs[i].id ? " selected" : "") + '>' + esc(actWfs[i].name) + ' — ' + actWfs[i].steps.length + ' step' + (actWfs[i].steps.length===1?"":"s") + '</option>';
+    }
+    h += '</select><span class="help" id="start-wf-help">Archived templates are hidden from this picker. Only Active templates can be started (the server rejects archived ones in the proposal).</span></div>';
+    if (selWf){
+      h += '<div class="mt12"><div class="bold small">Review — ' + selWf.steps.length + ' tasks will be created</div><div class="stepprev" data-tid="start-review">';
+      for (var j=0;j<selWf.steps.length;j++){
+        h += '<div class="sp"><span class="num">' + (j+1) + '</span><span>' + esc(selWf.steps[j].t) + (selWf.steps[j].n ? '<div class="note">' + esc(selWf.steps[j].n) + '</div>' : '') + '</span></div>';
+      }
+      h += '</div><label class="checkrow"><input type="checkbox" data-bind="start-confirm" ' + (S.startConfirm ? "checked" : "") + ' data-tid="start-confirm" /><span><span class="cr-title">I\'ve reviewed these steps</span><span class="cr-desc">Starting will create ' + selWf.steps.length + ' task' + (selWf.steps.length===1?"":"s") + ' in this project right away.</span></span></label></div>';
+    }
+    h += '<div class="row mt12"><button class="btn btn-primary" data-act="start-workflow" data-tid="btn-start"' + ((!S.startSel || !S.startConfirm || S.busy === "start") ? " disabled" : "") + '>' + (S.busy === "start" ? ico("spinner","icon spin") + 'Starting…' : ico("zap") + 'Start workflow') + '</button></div>';
+    h += '</div>';
+  } else {
+    h += '<div class="banner banner-muted mt12" data-tid="wf-perm-note"><span class="icon icon-lg" data-ico="lock"></span><div><div class="b-title">Project manager access is required to start a workflow</div><div class="b-body">You can view this project\'s workflows, but only people with manager authority on the project can start one. (Read-only member view — switch persona to try starting.)</div></div></div>';
+  }
+  if (pm.viewHistory){
+    h += '<div class="card card-pad mt12" data-tid="history-card"><div class="card-title">' + ico("clock") + 'Recent starts</div><div class="card-sub">Durable history: each row records a template applied to this project and links to the tasks it created.</div>';
+    if (starts.length === 0){
+      h += '<div class="statebox mt8" style="padding:22px"><span class="icon-big icon" data-ico="clock"></span><div class="st-title">No workflows started in this project yet</div><div class="st-body">Start one above — its tasks and this history row will persist.</div></div>';
+    } else {
+      h += '<div class="table-wrap mt8"><table class="tbl" style="min-width:480px"><thead><tr><th>Workflow</th><th>Started</th><th>Tasks</th></tr></thead><tbody>';
+      for (var k=0;k<starts.length;k++){
+        var s = starts[k];
+        var swf = wfById(s.wfId);
+        h += '<tr data-tid="history-row-' + k + '"><td class="cell-main"><div class="t">' + esc(swf ? swf.name : "?") + '</div></td><td class="muted">' + s.date + '</td><td><button class="btn btn-ghost btn-sm" data-act="view-tasks" data-sid="' + s.id + '" data-tid="link-view-tasks-' + k + '">View ' + s.tasks.length + ' task' + (s.tasks.length===1?"":"s") + '</button></td></tr>';
+      }
+      h += '</tbody></table></div>';
+    }
+    h += '</div>';
+  }
+  h += '<p class="tiny muted mt12" data-tid="wf-toast-note">Feedback discipline: exactly one toast per start, plus this durable history row. Starting is instant task generation — there is no workflow run to track.</p>';
+  return h;
+}
+function renderTasksTab(p){
+  var starts = S.starts[p.id] || [];
+  var h = "";
+  var allTasks = projectTasks(p.id);
+  if (allTasks.length === 0){
+    h += '<div class="statebox" data-tid="tasks-empty"><span class="icon-big icon" data-ico="clipboard"></span><div class="st-title">No tasks yet</div><div class="st-body">Start a workflow to create tasks from its steps — every step becomes a task.</div><button class="btn btn-outline" data-act="tab" data-v="workflows">' + ico("play","icon icon-sm") + 'Go to Workflows</button></div>';
+    return h;
+  }
+  var filteredSid = S.taskFilterSid && S.taskFilterSid !== S.projId ? S.taskFilterSid : null;
+  for (var i=0;i<starts.length;i++){
+    var s = starts[i];
+    if (filteredSid && s.id !== filteredSid) continue;
+    var swf = wfById(s.wfId);
+    h += '<div class="card card-pad mt12" data-tid="tasks-group-' + i + '"><div class="spread"><div class="card-title">' + ico("list-checks") + 'Tasks from “' + esc(swf ? swf.name : "?") + '”</div><span class="tiny muted">Started ' + s.date + '</span></div><div class="table-wrap mt8"><table class="tbl" style="min-width:420px"><thead><tr><th>Task</th><th>Status</th></tr></thead><tbody>';
+    for (var j=0;j<s.tasks.length;j++){
+      var tk = s.tasks[j];
+      h += '<tr><td>' + esc(tk.title) + '</td><td>' + (tk.status === "done" ? '<span class="chip chip-done">Done</span>' : (tk.status === "doing" ? '<span class="chip chip-progress">In progress</span>' : '<span class="chip chip-planning">To do</span>')) + '</td></tr>';
+    }
+    h += '</tbody></table></div></div>';
+  }
+  if (filteredSid){ h += '<div class="row mt12"><button class="btn btn-ghost btn-sm" data-act="tab" data-v="tasks">Show all task groups</button></div>'; }
+  h += '<p class="tiny muted mt12">Synthetic task lists — created instantly by workflow starts in this mockup.</p>';
+  return h;
+}
+function renderSettingsTab(p, pm){
+  if (!S.pendingSettings || S.pendingSettings.forId !== p.id){
+    S.pendingSettings = { forId: p.id, vis: p.vis, method: p.method };
+  }
+  var ps = S.pendingSettings;
+  var h = '<div class="card card-pad"><div class="card-title">' + ico("settings") + 'General</div>';
+  h += '<div class="field"><label for="set-vis">Visibility</label><select id="set-vis" class="select" data-bind="set-vis">' +
+    '<option value="private"' + (ps.vis === "private" ? " selected" : "") + '>Private</option><option value="company"' + (ps.vis === "company" ? " selected" : "") + '>Company wide</option></select></div>';
+  h += '<div class="field"><label for="set-method">Methodology</label><select id="set-method" class="select" data-bind="set-method">' +
+    '<option value="blank"' + (ps.method === "blank" ? " selected" : "") + '>Blank — no methodology yet</option><option value="scrum"' + (ps.method === "scrum" ? " selected" : "") + '>Scrum</option><option value="waterfall"' + (ps.method === "waterfall" ? " selected" : "") + '>Waterfall</option><option value="hybrid"' + (ps.method === "hybrid" ? " selected" : "") + '>Hybrid</option></select>' +
+    '<span class="help">Changing methodology never moves existing tasks (add-only status presets).</span></div>';
+  h += '<button class="btn btn-primary" data-act="save-settings" data-tid="btn-save-settings">Save settings</button>';
+  h += '<p class="tiny muted mt8">Saves announce with a toast (“Settings saved.”) — the redesign replaces today\'s silent inline save note.</p>';
+  h += '</div>';
+  h += '<div class="card card-pad mt12" data-tid="save-as-tpl-card"><div class="card-title">' + ico("layers") + 'Save as project template</div><div class="card-sub">Capture this project\'s visibility and methodology as a reusable project template in the Templates hub.</div>';
+  if (pm.manageTemplates){
+    h += '<div class="mt8"><button class="btn btn-outline" data-act="save-as-template" data-tid="btn-save-as-template">' + ico("plus","icon icon-sm") + 'Save as project template</button></div>';
+  } else {
+    h += '<p class="small muted mt8">' + ico("lock","icon icon-sm") + ' Managing templates needs <code>tenant.manage_projects</code> — switch to the Org admin persona.</p>';
+  }
+  h += '</div>';
+  return h;
+}
+/* ================= actions: start / retry / settings ================= */
+function doStartWorkflow(){
+  var p = projById(S.projId);
+  var wf = wfById(S.startSel);
+  if (!p || !wf || !S.startConfirm || S.busy) return;
+  // Starting the failed workflow manually is itself a recovery: reconcile the banner after the start.
+  var recovering = S.partialFails[S.projId] === wf.id;
+  S.busy = "start";
+  render();
+  window.setTimeout(function(){
+    S.busy = null;
+    var tasks = [];
+    for (var i=0;i<wf.steps.length;i++) tasks.push({ id: "t" + Date.now() + "-" + i, title: wf.steps[i].t, status: "todo" });
+    var st = { id: "s" + Date.now(), wfId: wf.id, date: "Nov 1, 2026", tasks: tasks };
+    S.starts[S.projId] = [st].concat(S.starts[S.projId] || []);
+    if (recovering) delete S.partialFails[S.projId];
+    S.startSel = null; S.startConfirm = false;
+    save();
+    var msg = "Workflow started · " + tasks.length + " task" + (tasks.length===1?"":"s") + " created.";
+    if (recovering) msg += " Failure reconciled.";
+    showToast(msg, "ok", "start-toast");
+    S.focusReq = '[data-tid="history-row-0"] button';
+    render();
+  }, 600);
+}
+function retryPartial(){
+  var pid = S.projId;
+  var wfId = S.partialFails[pid];
+  if (!wfId || S.busy) return;
+  var wf = wfById(wfId);
+  // Idempotency guard: a retry never creates the same workflow's tasks twice.
+  var already = false, existing = S.starts[pid] || [];
+  for (var a=0;a<existing.length;a++){ if (existing[a].wfId === wfId){ already = true; break; } }
+  if (!wf || already){
+    delete S.partialFails[pid];
+    save();
+    render();
+    showToast(already ? "That workflow is already started — no duplicate tasks were created." : "Nothing left to retry — the failure was already reconciled.", "info", "retry-noop");
+    focusOrMain(S.tab === "workflows" && already ? '[data-tid="history-row-0"] button' : '[data-tid="tab-workflows"]');
+    return;
+  }
+  S.busy = "retry";
+  render();
+  window.setTimeout(function(){
+    S.busy = null;
+    var tasks = [];
+    for (var i=0;i<wf.steps.length;i++) tasks.push({ id: "t" + Date.now() + "-r" + i, title: wf.steps[i].t, status: "todo" });
+    S.starts[pid] = [{ id: "s" + Date.now(), wfId: wf.id, date: "Nov 1, 2026", tasks: tasks }].concat(S.starts[pid] || []);
+    delete S.partialFails[pid];
+    save();
+    showToast("Workflow started · " + tasks.length + " task" + (tasks.length===1?"":"s") + " created. Failure reconciled.", "ok", "retry-toast");
+    render();
+    focusOrMain(S.tab === "workflows" ? '[data-tid="history-row-0"] button' : '[data-tid="tab-workflows"]');
+  }, 600);
+}
+function saveSettings(){
+  var p = projById(S.projId);
+  var ps = S.pendingSettings;
+  if (!p || !ps) return;
+  p.vis = ps.vis; p.method = ps.method; p.updated = "Just now";
+  save();
+  showToast("Settings saved.", "ok", "settings-saved");
+  render();
+}
+/* ================= help dialog & notes drawer ================= */
+function openHelp(){
+  openDialog({
+    title: "How workflows and templates work",
+    desc: "The short version (P0 definitions from the redesign plan). Full article: project-workflows in help.",
+    body: '<div class="stack small"><div><b>Workflow template</b> — a shared, reusable recipe of ordered steps owned by the whole workspace. Starting it in a project instantly creates one task per step.</div>' +
+      '<div><b>Workflow start</b> — the durable record “template X was applied to project Y, creating tasks T1…Tn”. Shown as project history with links to the created tasks.</div>' +
+      '<div><b>Project template</b> (new) — a saved, reusable project setup: default visibility + methodology + optional workflow templates to start automatically at creation.</div>' +
+      '<div><b>Methodology</b> — a named set of default task statuses (e.g. Scrum → Backlog, Sprint, In Progress, Review, Done). Changing it later never moves existing tasks.</div>' +
+      '<div><b>Snapshot semantics</b> — a project created from a template copies the setup once and then stands alone; later template edits never change existing projects.</div></div>',
+    confirmLabel: "Got it"
+  });
+}
+function renderNotes(){
+  var root = document.getElementById("drawer-root");
+  if (!S.notesOpen){ root.innerHTML = ""; return; }
+  var h = '<div class="drawer-overlay" data-act="close-notes" data-tid="notes-overlay"></div><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="notes-title" data-tid="notes-drawer">';
+  h += '<div class="spread"><h2 id="notes-title">Mockup notes / Demo controls</h2><button class="icon-btn" data-act="close-notes" aria-label="Close notes" data-tid="btn-close-notes">' + ico("x") + '</button></div>';
+  h += '<h3>' + ico("settings","icon icon-sm") + 'Stage</h3><p><b>Mockup stage only</b> — Direction A (template-first hub) of the Workflows/Templates UX redesign, plan r3. No product implementation, no repo edits/commits/PRs, no publishing. The Lead publishes after independent testing. Static single file, synthetic data, no backend/network calls.</p>';
+  h += '<h3>' + ico("layers","icon icon-sm") + 'What Direction A changes (structural note)</h3><ul><li>New <b>tenant-level Templates surface</b>: sidebar entry + Templates page hosting both project templates and workflow templates (<code>/templates</code> 404s today).</li><li>Workflow-template <b>management moves</b> from the per-project Workflows tab into this hub.</li><li>The Workflows tab becomes <b>usage-only</b>: start + history, plus a “Manage templates in the Templates hub” link.</li><li>Create-project wizard gains “Start from a template”; the hub and wizard show the same templates — tenant-wide discoverability is the point of this direction.</li><li>Largest blast radius of the two directions: new route + sidebar change + management relocation.</li></ul>';
+  h += '<h3>' + ico("clipboard","icon icon-sm") + 'Synthetic data statement</h3><p>All names, people, dates, counts, and permissions are invented sample data. No tenant ids, credentials, PII, or secrets. State persists in <code>localStorage</code> (draft survives reload, history durable). Reset restores the seed.</p>';
+  h += '<h3>' + ico("alert","icon icon-sm") + 'Simulated paths (explicitly NOT real backend behavior)</h3><ul><li><b>Partial workflow-start failure</b> — scenario “Simulate partial workflow-start failure”: create from a template with ≥2 workflows; the project is kept and one start fails, showing the proposed banner + Retry / Start from Workflows tab. <b>SIMULATED — no transaction/atomicity claim.</b></li><li><b>Permissions</b> — persona switcher simulates Org admin / Project manager / read-only member, mirroring the planned permission boundaries (manage = <code>tenant.manage_projects</code>; start = project manager authority).</li><li><b>Load error</b> — Templates hub error state with Retry (scenario).</li><li><b>Loading delay</b> — skeleton states (scenario).</li><li><b>Backend</b> — none; everything is client-side state.</li></ul>';
+  h += '<h3>' + ico("help","icon icon-sm") + 'Unresolved probes NOT claimed</h3><ul class="probe-list"><li><b>Q3</b> — whether project creation immediately grants the creator manager authority (so auto-started workflows authorize). Shown as proposed; needs probe + integration test.</li><li><b>P-TX</b> — gateway transaction/atomicity for create-from-template and partial failure is not established; keep-project + banner is UI-level only.</li><li><b>H1–H4</b> — deployed-bundle drift (archive confirm, duplicate toast, loading toast) and viewer-via-workspace start authority are unverified.</li><li><b>P-MODES</b> — Teams access mode and Waterfall/Hybrid status behavior were not observed; Teams is shown disabled and labelled not simulated.</li><li><b>P-A11Y</b> — keyboard/focus/labels demonstrated; no screen-reader/axe/contrast certification claimed.</li><li><b>P-MIGRATION</b> — migration numbering/order and merge gates are implementation-phase concerns, not mockup behavior.</li></ul>';
+  h += '<h3>' + ico("zap","icon icon-sm") + 'Journey quick guide</h3><ol style="padding-left:18px"><li>Projects → New project → start from scratch (validation, Back, draft restore on reload, Cancel/discard confirm, review, create toast).</li><li>Templates hub → New project template / workflow template (edit, inline empty-step validation, archive/restore with confirm). Also Settings → “Save as project template” (prefilled).</li><li>New project → Start from a template (picker summary → prefilled wizard → review card → combined toast → Workflows history with task links).</li><li>Project → Workflows tab: shared-library copy, start panel review + checkbox, one toast + history “View N tasks”.</li><li>States: persona = read-only member; scenarios = error / loading / empty; search = filtered-empty.</li><li>Partial failure: scenario select, then create from a template with 2+ workflows.</li></ol>';
+  h += '<h3>' + ico("eye","icon icon-sm") + 'Accessibility in this mockup</h3><p>Dialogs are <code>role="dialog"</code>/<code>alertdialog</code> with names + descriptions, focus is trapped and returned, <span class="kbd">Esc</span> closes the topmost layer, the wizard focuses its first field, a skip link reaches content, toasts are <code>role="status"</code>. Tab through any screen to check order. No WCAG certification is claimed.</p>';
+  h += '<div class="row mt12"><button class="btn btn-outline" data-act="reset-demo" data-tid="btn-reset-notes">' + ico("refresh","icon icon-sm") + 'Reset demo data</button><button class="btn btn-primary" data-act="close-notes">Done</button></div>';
+  h += '</aside>';
+  root.innerHTML = h;
+  bindIcons(root);
+  if (S.focusReq) applyFocus();
+}
+/* ================= event delegation ================= */
+function actEl(target){
+  return target && target.closest ? target.closest("[data-act]") : null;
+}
+function onClick(ev){
+  var el = actEl(ev.target);
+  if (!el) return;
+  var act = el.getAttribute("data-act");
+  var id = el.getAttribute("data-id");
+  var v = el.getAttribute("data-v") || el.getAttribute("data-view");
+  var sid = el.getAttribute("data-sid");
+  switch (act){
+    case "nav": closeSidebar(); S.view = v; S.search = ""; S.projId = null; if (v === "templates") S.sec = S.sec || "project"; render(); break;
+    case "static-nav": showToast("Static in this mockup — " + (el.textContent.trim()) + " is outside the scoped redesign.", "info", "static-nav"); break;
+    case "toggle-sidebar": document.getElementById("sidebar").classList.toggle("open"); document.getElementById("scrim").classList.toggle("show", document.getElementById("sidebar").classList.contains("open")); break;
+    case "close-drawer": closeSidebar(); break;
+    case "toggle-theme": S.theme = S.theme === "dark" ? "light" : "dark"; save(); render(); break;
+    case "open-notes": S.notesOpen = true; renderNotes(); break;
+    case "close-notes": S.notesOpen = false; renderNotes(); break;
+    case "reset-demo": S = defaultStore(); try { localStorage.removeItem(LS_KEY); } catch(e){}; save(); render(); renderNotes(); showToast("Demo data reset.", "info", "reset"); break;
+    case "manage-templates": closeSidebar(); S.view = "templates"; S.sec = "workflow"; S.search = ""; S.projId = null; render(); break;
+    case "open-project": S.view = "project"; S.projId = id; S.tab = "overview"; S.taskFilterSid = null; S.focusReq = '[data-tid="proj-title"]'; render(); break;
+    case "new-project": openWizard("entry-mode", null); break;
+    case "clear-search": S.search = ""; render(); var gs = document.getElementById("global-search"); if (gs) gs.focus(); break;
+    case "sec": S.sec = v; render(); break;
+    case "retry-hub": S.hubErrorCleared = true; showToast("Templates reloaded.", "ok", "hub-reloaded"); render(); break;
+    case "pt-clear-filter": case "wf-clear-filter": S.search = ""; S.ptStatus = "all"; S.wfStatus = "all"; render(); break;
+    case "use-template": openPicker(id); break;
+    case "new-pt": openEditorPT("new", null, null); break;
+    case "new-wf": openEditorWF("new", null); break;
+    case "edit-pt": openEditorPT("edit", id, null); break;
+    case "edit-wf": openEditorWF("edit", id); break;
+    case "archive-pt": confirmArchivePt(id); break;
+    case "restore-pt": confirmRestorePt(id); break;
+    case "archive-wf": confirmArchiveWf(id); break;
+    case "restore-wf": confirmRestoreWf(id); break;
+    case "dlg-cancel": closeDialog(); break;
+    case "dlg-confirm": { var d = S.dialog; var cb = d && d.cb; closeDialog(); if (cb) cb(); break; }
+    case "ed-cancel": closeEditor(); break;
+    case "ed-save": edSave(); break;
+    case "ed-add-step": { var e = S.editor; if (!e) break; e.f.steps.push({t:"",n:""}); e.dirty = true; S.focusReq = '[data-tid="ed-step-t-' + (e.f.steps.length-1) + '"]'; renderOverlays(); break; }
+    case "ed-step-up": case "ed-step-down": case "ed-step-remove": { var e2 = S.editor; if (!e2) break; var i = parseInt(id,10); var ni = i; var st = e2.f.steps;
+      if (act === "ed-step-up" && i > 0){ var a = st[i-1]; st[i-1] = st[i]; st[i] = a; ni = i-1; }
+      else if (act === "ed-step-down" && i < st.length-1){ var b = st[i+1]; st[i+1] = st[i]; st[i] = b; ni = i+1; }
+      else if (act === "ed-step-remove" && st.length > 1){ st.splice(i,1); ni = Math.max(0, i-1); }
+      e2.dirty = true; S.focusReq = '[data-tid="ed-step-t-' + ni + '"]'; renderOverlays(); break; }
+    case "wiz-scratch": { var w = S.wizard; if (!w) break; w.mode = "scratch"; w.templateId = null; w.step = "basics"; w.dirty = false; w.nameErr = false; S.focusReq = '[data-tid="wiz-name"]'; renderOverlays(); break; }
+    case "wiz-browse": openPicker(S.wizard ? S.wizard.templateId : null); break;
+    case "wiz-continue": wizContinue(); break;
+    case "wiz-back": wizBack(); break;
+    case "wiz-create": wizCreate(); break;
+    case "wiz-cancel": wizCancelRequest(); break;
+    case "wiz-continue-draft": { var w2 = S.wizard, dr = S.draft; if (!w2 || !dr) break;
+      w2.mode = dr.templateId ? "template" : "scratch"; w2.templateId = dr.templateId; w2.f = { name:dr.f.name, desc:dr.f.desc, vis:dr.f.vis, method:dr.f.method, due:dr.f.due }; w2.step = "basics"; w2.dirty = true; w2.nameErr = false;
+      S.focusReq = '[data-tid="wiz-name"]'; renderOverlays(); break; }
+    case "wiz-fresh": S.draft = null; save(); renderOverlays(); var wf = document.querySelector('[data-tid="wiz-scratch-btn"]'); if (wf) wf.focus(); break;
+    case "wiz-change-template": openPicker(S.wizard ? S.wizard.templateId : null); break;
+    case "pick-sel": { if (!S.picker) break; S.picker.sel = id; renderOverlays(); break; }
+    case "picker-use": { var pk = S.picker; if (!pk || !pk.sel) break;
+      var t = ptById(pk.sel); if (!t) break;
+      S.picker = null;
+      if (S.wizard){
+        if (S.wizard.step === "review"){
+          S.wizard.mode = "template"; S.wizard.templateId = t.id; S.wizard.step = "review"; S.wizard.dirty = true;
+          S.focusReq = '[data-tid="btn-create-project"]';
+        } else {
+          S.wizard.mode = "template"; S.wizard.templateId = t.id; S.wizard.step = "basics"; S.wizard.dirty = false; S.wizard.nameErr = false;
+          S.wizard.f.vis = t.vis; S.wizard.f.method = t.method;
+          S.focusReq = '[data-tid="wiz-name"]';
+        }
+      } else {
+        S.wizard = { mode:"template", step:"basics", f:{ name:"", desc:"", vis:t.vis, method:t.method, due:"" }, templateId:t.id, dirty:false, nameErr:false };
+        S.focusReq = '[data-tid="wiz-name"]';
+      }
+      renderOverlays(); break; }
+    case "picker-cancel": { var hadWiz = !!S.wizard; S.picker = null; renderOverlays();
+      if (hadWiz){ var fb = document.querySelector('[data-tid="wiz-scratch-btn"], [data-tid="btn-create-project"]'); if (fb) fb.focus(); }
+      else { var m2 = document.getElementById("main-content"); if (m2) m2.focus(); }
+      break; }
+    case "tab": S.tab = v; S.taskFilterSid = null; S.focusReq = '[data-tid="main-content"]'; render(); break;
+    case "start-workflow": doStartWorkflow(); break;
+    case "view-tasks": S.tab = "tasks"; S.taskFilterSid = sid; S.focusReq = '[data-tid="main-content"]'; render(); break;
+    case "retry-partial": retryPartial(); break;
+    case "partial-to-workflows": {
+      var fw = S.partialFails[S.projId];
+      S.tab = "workflows";
+      S.startSel = fw || null;
+      S.startConfirm = false;
+      S.focusReq = fw ? '[data-tid="start-wf-select"]' : '[data-tid="tab-workflows"]';
+      render();
+      break;
+    }
+    case "save-settings": saveSettings(); break;
+    case "save-as-template": { var p = projById(S.projId); if (!p) break;
+      openEditorPT("new", null, { vis: p.vis, method: p.method, note: "Prefilled from project “" + p.name + "”: visibility and methodology were copied. Add a name and choose workflows to start." });
+      break; }
+    case "toast-close": { var tid = el.getAttribute("data-id");
+      for (var x=0;x<S.toasts.length;x++){ if (S.toasts[x].id === tid){ S.toasts.splice(x,1); break; } }
+      renderToasts(); break; }
+    case "open-help": openHelp(); break;
+  }
+}
+function onChange(ev){
+  var el = ev.target;
+  var act = el.getAttribute && el.getAttribute("data-act");
+  if (act){
+    var v = el.value;
+    switch (act){
+      case "persona": S.persona = v; S.startSel = null; S.startConfirm = false; S.pendingSettings = null; save(); render(); break;
+      case "scenario": S.scenario = v; S.hubErrorCleared = false; S.startSel = null; S.startConfirm = false; save(); render(); break;
+      case "pt-status": S.ptStatus = v; render(); break;
+      case "wf-status": S.wfStatus = v; render(); break;
+    }
+    return;
+  }
+  var b = el.getAttribute && el.getAttribute("data-bind");
+  if (!b) return;
+  var bv = el.value;
+  if (b === "wiz-name"){ if (S.wizard){ S.wizard.f.name = bv; S.wizard.dirty = true; S.wizard.nameErr = false; wizSaveDraft(); var c = document.getElementById("wiz-name-count"); if (c) c.textContent = bv.length + "/80"; } }
+  else if (b === "wiz-desc"){ if (S.wizard){ S.wizard.f.desc = bv; S.wizard.dirty = true; wizSaveDraft(); } }
+  else if (b === "wiz-due"){ if (S.wizard){ S.wizard.f.due = bv; S.wizard.dirty = true; wizSaveDraft(); } }
+  else if (b === "wiz-vis"){ if (S.wizard){ S.wizard.f.vis = bv; S.wizard.dirty = true; wizSaveDraft(); } }
+  else if (b === "wiz-method"){ if (S.wizard){ S.wizard.f.method = bv; S.wizard.dirty = true; wizSaveDraft(); } }
+  else if (b === "picker-search"){ if (S.picker){ S.picker.search = bv; S.focusReq = '[data-tid="picker-search"]'; renderOverlays(); } }
+  else if (b === "ed-name"){ if (S.editor){ S.editor.f.name = bv; S.editor.dirty = true; var c2 = document.getElementById("ed-name-count"); if (c2) c2.textContent = bv.length + "/80"; } }
+  else if (b === "ed-desc"){ if (S.editor){ S.editor.f.desc = bv; S.editor.dirty = true; } }
+  else if (b === "ed-vis"){ if (S.editor){ S.editor.f.vis = bv; S.editor.dirty = true; } }
+  else if (b === "ed-method"){ if (S.editor){ S.editor.f.method = bv; S.editor.dirty = true; } }
+  else if (b.indexOf("ed-wf:") === 0){ if (S.editor){ var wid = b.slice(5); var i2 = S.editor.f.wfIds.indexOf(wid); if (el.checked && i2 < 0) S.editor.f.wfIds.push(wid); else if (!el.checked && i2 >= 0) S.editor.f.wfIds.splice(i2,1); S.editor.dirty = true; } }
+  else if (b.indexOf("ed-step-t:") === 0){ if (S.editor){ var i3 = parseInt(b.slice(10),10); if (S.editor.f.steps[i3]){ S.editor.f.steps[i3].t = bv; S.editor.dirty = true; } } }
+  else if (b.indexOf("ed-step-n:") === 0){ if (S.editor){ var i4 = parseInt(b.slice(10),10); if (S.editor.f.steps[i4]){ S.editor.f.steps[i4].n = bv; S.editor.dirty = true; } } }
+  else if (b === "start-wf"){ S.startSel = bv; S.startConfirm = false; S.focusReq = '[data-tid="start-wf-select"]'; render(); }
+  else if (b === "start-confirm"){ S.startConfirm = el.checked; var sb = document.querySelector('[data-tid="btn-start"]'); if (sb) sb.disabled = !(S.startSel && S.startConfirm); }
+  else if (b === "set-vis"){ if (S.pendingSettings) S.pendingSettings.vis = bv; }
+  else if (b === "set-method"){ if (S.pendingSettings) S.pendingSettings.method = bv; }
+}
+function onInput(ev){
+  var el = ev.target;
+  if (el.id === "global-search"){
+    S.search = el.value;
+    if (S.view === "projects" || S.view === "templates") render();
+    return;
+  }
+  onChange(ev);
+}
+function topmostOverlay(){
+  if (S.dialog) return document.querySelector('[data-tid="dlg"]');
+  if (S.editor) return document.querySelector('[data-tid="editor"]');
+  if (S.picker) return document.querySelector('[data-tid="picker"]');
+  if (S.wizard) return document.querySelector('[data-tid="wizard"]');
+  return null;
+}
+function focusablesIn(c){
+  var list = c.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+  return Array.prototype.slice.call(list);
+}
+function onKeydown(ev){
+  var container = topmostOverlay();
+  if (ev.key === "Escape"){
+    if (S.notesOpen){ S.notesOpen = false; renderNotes(); return; }
+    if (S.dialog){ closeDialog(); return; }
+    if (S.editor){ closeEditor(); return; }
+    if (S.picker){ closePicker(); var m = document.getElementById("main-content"); if (m) m.focus(); return; }
+    if (S.wizard){ wizCancelRequest(); return; }
+    return;
+  }
+  if (ev.key === "Tab" && container){
+    var fs = focusablesIn(container);
+    if (fs.length === 0) return;
+    var first = fs[0], last = fs[fs.length-1];
+    if (ev.shiftKey && document.activeElement === first){ ev.preventDefault(); last.focus(); }
+    else if (!ev.shiftKey && document.activeElement === last){ ev.preventDefault(); first.focus(); }
+    else if (!container.contains(document.activeElement)){ ev.preventDefault(); first.focus(); }
+    return;
+  }
+  if ((ev.key === "Enter" || ev.key === " ") && !container){
+    var el = ev.target && ev.target.closest ? ev.target.closest('[role="button"][data-act], [role="radio"][data-act]') : null;
+    if (el && ev.target === el){ ev.preventDefault(); el.click(); }
+  }
+}
+function closeSidebar(){
+  var sb = document.getElementById("sidebar");
+  if (sb){ sb.classList.remove("open"); }
+  var sc = document.getElementById("scrim");
+  if (sc){ sc.classList.remove("show"); }
+}
+/* ================= confirm dialogs (archive / restore) ================= */
+function confirmArchivePt(id){
+  var t = ptById(id); if (!t) return;
+  openDialog({
+    title: 'Archive “' + t.name + '”?',
+    desc: 'Archived templates disappear from “Use template” and the wizard picker, and new projects can\'t be created from them. Projects already created are unaffected. You can restore it later.',
+    confirmLabel: "Archive", destructive: true,
+    cb: function(){ t.status = "archived"; t.updated = "Just now"; save(); showToast("Project template archived.", "ok", "pt-archived"); render(); focusOrMain(['[data-tid="restore-pt-' + id + '"]', '[data-tid="pt-status"]']); },
+    returnFocus: '[data-tid="archive-pt-' + id + '"]'
+  });
+}
+function confirmRestorePt(id){
+  var t = ptById(id); if (!t) return;
+  openDialog({
+    title: 'Restore “' + t.name + '”?',
+    desc: 'It will be visible and usable for new projects again.',
+    confirmLabel: "Restore",
+    cb: function(){ t.status = "active"; t.updated = "Just now"; save(); showToast("Project template restored.", "ok", "pt-restored"); render(); focusOrMain(['[data-tid="archive-pt-' + id + '"]', '[data-tid="pt-status"]']); },
+    returnFocus: '[data-tid="restore-pt-' + id + '"]'
+  });
+}
+function confirmArchiveWf(id){
+  var t = wfById(id); if (!t) return;
+  openDialog({
+    title: 'Archive “' + t.name + '”?',
+    desc: 'Archived workflow templates are hidden from start pickers, and the server rejects starting them (proposed behavior). Existing projects and tasks are unaffected. You can restore it later.',
+    confirmLabel: "Archive", destructive: true,
+    cb: function(){ t.status = "archived"; t.updated = "Just now"; save(); showToast("Workflow template archived.", "ok", "wf-archived"); render(); focusOrMain(['[data-tid="restore-wf-' + id + '"]', '[data-tid="wf-status"]']); },
+    returnFocus: '[data-tid="archive-wf-' + id + '"]'
+  });
+}
+function confirmRestoreWf(id){
+  var t = wfById(id); if (!t) return;
+  openDialog({
+    title: 'Restore “' + t.name + '”?',
+    desc: 'It will appear in start pickers again.',
+    confirmLabel: "Restore",
+    cb: function(){ t.status = "active"; t.updated = "Just now"; save(); showToast("Workflow template restored.", "ok", "wf-restored"); render(); focusOrMain(['[data-tid="archive-wf-' + id + '"]', '[data-tid="wf-status"]']); },
+    returnFocus: '[data-tid="restore-wf-' + id + '"]'
+  });
+}
+/* patch: fix focus target used by openDialog */
+function openDialog(d){
+  S.dialog = d; S.focusReq = '[data-tid="dlg-cancel"]'; renderOverlays();
+}
+/* ================= boot ================= */
+load();
+document.addEventListener("click", onClick);
+document.addEventListener("change", onChange);
+document.addEventListener("input", onInput);
+document.addEventListener("keydown", onKeydown);
+window.addEventListener("resize", function(){ if (window.innerWidth > 980) closeSidebar(); });
+render();
+</script>
+<style>
+code{font-size:12px;background:var(--muted);padding:1px 5px;border-radius:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+</style>
+<script>
+/* ===== patch: fixes applied after first assembly pass ===== */
+function bindIcons(root){
+  if (!root) return;
+  var els = root.querySelectorAll("[data-ico]");
+  for (var i = 0; i < els.length; i++){
+    var e = els[i]; var n = e.getAttribute("data-ico");
+    e.removeAttribute("data-ico");
+    e.innerHTML = '<svg class="' + (e.className || "icon") + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[n] || "") + '</svg>';
+  }
+}
+function updateChrome(){
+  document.documentElement.classList.toggle("dark", S.theme === "dark");
+  var navs = document.querySelectorAll("[data-act='nav']");
+  for (var i=0;i<navs.length;i++){
+    var dv = navs[i].getAttribute("data-view");
+    var cur = (S.view === "project" && dv === "projects") || (dv === S.view && !S.projId);
+    if (cur) navs[i].setAttribute("aria-current","page"); else navs[i].removeAttribute("aria-current");
+  }
+  var p = PERSONS[S.persona];
+  var av = document.getElementById("side-avatar"), av2 = document.getElementById("top-avatar");
+  if (av){ av.textContent = p.initials; }
+  if (av2){ av2.textContent = p.initials; av2.setAttribute("title", p.name + " — " + p.role); }
+  var nm = document.getElementById("side-name"), rl = document.getElementById("side-role");
+  if (nm) nm.textContent = p.name;
+  if (rl) rl.textContent = p.role + " · simulated";
+  var sbox = document.getElementById("global-search");
+  if (sbox){
+    var ph = "Search…";
+    if (S.view === "projects" || (S.view === "project" && !S.projId)) ph = "Search projects…";
+    else if (S.view === "templates") ph = S.sec === "project" ? "Search project templates…" : "Search workflow templates…";
+    sbox.placeholder = ph;
+    if (document.activeElement !== sbox) sbox.value = S.search;
+  }
+  var tb = document.querySelector("[data-act='toggle-theme'] .icon");
+  if (tb) tb.innerHTML = ico(S.theme === "dark" ? "sun" : "moon");
+  var strip = document.querySelector("[data-tid='strip-view']");
+  if (strip){
+    var lbl = S.view === "projects" ? "Projects · " + effProjects().length + " shown" :
+      (S.view === "templates" ? "Templates hub · " + (S.sec === "project" ? "project" : "workflow") + " templates" :
+      "Project detail · " + (S.tab === "overview" ? "Overview" : S.tab === "workflows" ? "Workflows" : S.tab === "tasks" ? "Tasks" : S.tab === "settings" ? "Settings" : "Other tab"));
+    strip.textContent = lbl;
+  }
+  var psel = document.getElementById("persona-select"); if (psel && psel.value !== S.persona) psel.value = S.persona;
+  var ssel = document.getElementById("scenario-select"); if (ssel && ssel.value !== S.scenario) ssel.value = S.scenario;
+}
+function render(){
+  if (!S.sec) S.sec = "project";
+  updateChrome();
+  var main = document.getElementById("main-content");
+  var h = "";
+  if (S.view === "projects") h = renderProjects();
+  else if (S.view === "templates") h = renderTemplates();
+  else if (S.view === "project") h = renderProject();
+  main.innerHTML = h;
+  bindIcons(main);
+  renderOverlays();
+}
+function onKeydown(ev){
+  var container = topmostOverlay();
+  if (ev.key === "Escape"){
+    if (S.notesOpen){ S.notesOpen = false; renderNotes(); return; }
+    if (S.dialog){ closeDialog(); return; }
+    if (S.editor){ closeEditor(); return; }
+    if (S.picker){ closePicker(); var m0 = document.getElementById("main-content"); if (m0) m0.focus(); return; }
+    if (S.wizard){ wizCancelRequest(); return; }
+    return;
+  }
+  if (ev.key === "Tab" && container){
+    var fs = focusablesIn(container);
+    if (fs.length === 0) return;
+    var first = fs[0], last = fs[fs.length-1];
+    if (ev.shiftKey && document.activeElement === first){ ev.preventDefault(); last.focus(); }
+    else if (!ev.shiftKey && document.activeElement === last){ ev.preventDefault(); first.focus(); }
+    else if (!container.contains(document.activeElement)){ ev.preventDefault(); first.focus(); }
+    return;
+  }
+  if (ev.key === "Enter" || ev.key === " "){
+    var t = ev.target;
+    var el = t && t.closest ? t.closest('[role="button"][data-act], [role="radio"][data-act]') : null;
+    if (el){ ev.preventDefault(); el.click(); }
+  }
+}
+bindIcons(document.body);
+render();
+</script>
+</body>
+</html>
