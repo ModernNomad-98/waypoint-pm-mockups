@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WayPoint — Workflows &amp; project templates UX mockup · Direction B</title>
-<meta name="description" content="Static interactive mockup of Direction B (in-place save-as-template) for WayPoint project workflows and project templates. Synthetic data only.">
+<title>WayPoint — Projects, workflows &amp; templates</title>
+<meta name="description" content="Interactive WayPoint prototype for project workflows and templates. Synthetic data only.">
 <style>
 /* ============ Tokens ============ */
 :root{
@@ -285,9 +285,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 .tabrow{display:flex;gap:2px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:thin;margin:0 -4px;padding:0 4px}
 .ptab{position:relative;padding:10px 13px;font-size:13px;color:var(--muted-foreground);border-bottom:2px solid transparent;white-space:nowrap;border-radius:8px 8px 0 0}
 .ptab:hover{color:var(--foreground);background:var(--muted)}
-.ptab[aria-current="page"]{color:var(--primary);border-bottom-color:var(--primary);font-weight:500}
+.ptab[aria-selected="true"]{color:var(--primary);border-bottom-color:var(--primary);font-weight:500}
 .ptab[aria-disabled="true"]{opacity:.45}
-.ptab-out{opacity:.5}
+.ptab-out:not([aria-selected="true"]){opacity:.5}
+.tabpanel{outline:none}
 /* ============ Wizard stepper ============ */
 .stepper{display:flex;align-items:center;gap:0;padding:4px 0 2px}
 .step-item{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
@@ -475,7 +476,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
           <button class="btn btn-primary btn-sm" id="create-btn" aria-haspopup="menu" aria-expanded="false"></button>
           <div class="menu" id="create-menu" role="menu" hidden></div>
         </div>
-        <button class="btn-icon" id="bell-btn" aria-label="Notifications (not part of this mock)"></button>
+        <button class="btn-icon" id="bell-btn" aria-label="Notifications"></button>
         <button class="btn-icon" id="theme-btn" aria-label="Switch colour theme"></button>
         <button class="avatar-btn" id="avatar-btn" aria-label="Account menu" aria-haspopup="menu" aria-expanded="false"></button>
         <div class="menu" id="avatar-menu" role="menu" hidden></div>
@@ -532,9 +533,11 @@ function fmtDate(iso) {
 }
 function relAgo(iso) {
   if (!iso) return '';
-  var d = new Date(iso + 'T00:00:00').getTime();
-  var now = new Date().getTime();
-  var days = Math.round((now - d) / 86400000);
+  var d = new Date(iso + 'T00:00:00');
+  var now = new Date();
+  d.setHours(0, 0, 0, 0);
+  now.setHours(0, 0, 0, 0);
+  var days = Math.round((now.getTime() - d.getTime()) / 86400000);
   if (days <= 0) return 'today';
   if (days === 1) return 'yesterday';
   return days + ' days ago';
@@ -869,12 +872,20 @@ function openDrawer(opts) {
       '<div class="drawer-body">' + opts.body + '</div>' +
     '</div>';
   root.appendChild(overlay);
+  var previouslyFocused = document.activeElement;
   var closed = false;
   function close() {
     if (closed) return; closed = true;
     document.removeEventListener('keydown', onKey, true);
     overlay.remove();
     if (opts.onClose) opts.onClose();
+    setTimeout(function () {
+      var ae = document.activeElement;
+      if (ae && ae !== document.body && ae !== document.documentElement) return;
+      if (previouslyFocused && document.contains(previouslyFocused)) {
+        try { previouslyFocused.focus(); } catch (e) {}
+      }
+    }, 0);
   }
   function onKey(e) { if (e.key === 'Escape') { e.stopPropagation(); close(); } }
   overlay.querySelector('.dialog-close').addEventListener('click', close);
@@ -929,6 +940,7 @@ function parseRoute() {
   return route;
 }
 var renderToken = 0;
+var tabFocusPending = false;
 function renderMain(html) { renderToken++; var m = $('#main-content'); m.innerHTML = html; return renderToken; }
 /* ---------- shell chrome ---------- */
 var searchInput = $('#global-search');
@@ -944,7 +956,7 @@ function renderShell() {
     b.addEventListener('click', function () {
       var item = navByKey(b.getAttribute('data-nav'));
       if (item && item.route) { location.hash = item.route; }
-      else { toast('info', item ? item.label : 'Section', 'Not part of this mock — navigation preserved for context.'); }
+      else { toast('info', item ? item.label : 'Section', 'This section isn\'t available in this preview.'); }
     });
   });
   $('#side-user').innerHTML = '<span class="avatar" aria-hidden="true">' + p.initials + '</span><span class="user-meta"><b>' + esc(p.name) + '</b><i>' + esc(p.email) + '</i></span>';
@@ -971,8 +983,8 @@ function buildCreateMenu() {
     menuItemHtml('Project template', 'layout', !canManageTemplates(), 'create-projtemplate') +
     menuItemHtml('Workflow template', 'listChecks', !canManageTemplates(), 'create-wftemplate') +
     '<div class="menu-sep"></div>' +
-    menuItemHtml('Task — not part of this mock', 'checkSquare', true, '') +
-    menuItemHtml('Note — not part of this mock', 'fileText', true, '');
+    menuItemHtml('Task', 'checkSquare', true, '') +
+    menuItemHtml('Note', 'fileText', true, '');
   $('#create-menu').innerHTML = html;
 }
 function buildAvatarMenu() {
@@ -992,6 +1004,27 @@ function toggleMenu(btn, menu) {
   menu.hidden = !willOpen;
   btn.setAttribute('aria-expanded', String(willOpen));
 }
+function syncSidebarState() {
+  var trigger = $('#sb-trigger');
+  var sidebar = $('#sidebar');
+  var backdrop = $('#side-backdrop');
+  if (!trigger || !sidebar || !backdrop) return;
+  var mobile = window.innerWidth <= 900;
+  var open = document.body.classList.contains('sb-open');
+  if (!mobile) { document.body.classList.remove('sb-open'); backdrop.hidden = true; }
+  if (mobile && !open) sidebar.setAttribute('inert', ''); else sidebar.removeAttribute('inert');
+  trigger.setAttribute('aria-expanded', String(mobile ? open : !document.body.classList.contains('sb-collapsed')));
+}
+function closeSidebar(restoreFocus) {
+  document.body.classList.remove('sb-open');
+  var backdrop = $('#side-backdrop');
+  if (backdrop) backdrop.hidden = true;
+  syncSidebarState();
+  if (restoreFocus) {
+    var trigger = $('#sb-trigger');
+    if (trigger) trigger.focus();
+  }
+}
 function bindShell() {
   var skip = $('.skip-link');
   skip.addEventListener('click', function (e) {
@@ -1000,17 +1033,38 @@ function bindShell() {
   });
   var trigger = $('#sb-trigger');
   trigger.addEventListener('click', function () {
-    if (window.innerWidth > 900) { document.body.classList.toggle('sb-collapsed'); }
-    else { document.body.classList.toggle('sb-open'); $('#side-backdrop').hidden = !document.body.classList.contains('sb-open'); trigger.setAttribute('aria-expanded', String(document.body.classList.contains('sb-open'))); }
+    if (window.innerWidth > 900) {
+      document.body.classList.toggle('sb-collapsed');
+      syncSidebarState();
+    } else {
+      var opening = !document.body.classList.contains('sb-open');
+      document.body.classList.toggle('sb-open', opening);
+      $('#side-backdrop').hidden = !opening;
+      syncSidebarState();
+      if (opening) {
+        var first = $all('[data-nav]', $('#sidebar'))[0];
+        if (first) first.focus();
+      }
+    }
   });
-  $('#side-backdrop').addEventListener('click', function () { document.body.classList.remove('sb-open'); $('#side-backdrop').hidden = true; });
+  $('#side-backdrop').addEventListener('click', function () { closeSidebar(true); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (window.innerWidth <= 900 && document.body.classList.contains('sb-open')) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      closeSidebar(true);
+    }
+  });
+  window.addEventListener('resize', syncSidebarState);
+  syncSidebarState();
   var createBtn = $('#create-btn');
   createBtn.addEventListener('click', function (e) { e.stopPropagation(); toggleMenu(createBtn, $('#create-menu')); });
   $('#create-menu').addEventListener('click', function (e) {
     var item = e.target.closest('[data-create]');
     if (!item) return;
     closeMenus();
-    if (item.getAttribute('aria-disabled') === 'true') { toast('info', 'Not part of this mock', 'This create type is out of scope.'); return; }
+    if (item.getAttribute('aria-disabled') === 'true') { toast('info', 'Not available', 'This type isn\'t available in this preview.'); return; }
     var key = item.getAttribute('data-create');
     if (key === 'create-project') openWizard(null);
     else if (key === 'create-projtemplate') openProjectTemplateDialog(null);
@@ -1024,8 +1078,8 @@ function bindShell() {
     closeMenus();
     var key = item.getAttribute('data-create');
     if (key === 'avatar-help') openHelp('workflows');
-    else if (key === 'avatar-whatsnew') toast('info', 'What\'s new', 'Not part of this mock.');
-    else if (key === 'avatar-profile') toast('info', 'Profile settings', 'Not part of this mock.');
+    else if (key === 'avatar-whatsnew') toast('info', 'What\'s new', 'This isn\'t available in this preview.');
+    else if (key === 'avatar-profile') toast('info', 'Profile settings', 'This isn\'t available in this preview.');
   });
   document.addEventListener('click', function () { closeMenus(); });
   $('#theme-btn').addEventListener('click', function () {
@@ -1033,13 +1087,13 @@ function bindShell() {
     saveDB();
     renderShell();
   });
-  $('#bell-btn').addEventListener('click', function () { toast('info', 'Notifications', 'Not part of this mock.'); });
+  $('#bell-btn').addEventListener('click', function () { toast('info', 'Notifications', 'This isn\'t available in this preview.'); });
   searchInput.addEventListener('input', function () {
     DB.searchQuery = searchInput.value;
     if (ROUTE.page === 'projects') { renderMain(renderProjectsPage()); bindProjectsPage($('#main-content')); }
   });
   searchInput.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && ROUTE.page !== 'projects') { toast('info', 'Search filters the Projects page', 'Open Projects to search projects and templates in this mock.'); }
+    if (e.key === 'Enter' && ROUTE.page !== 'projects') { toast('info', 'Search applies to Projects', 'Open Projects to search projects and templates.'); }
     if (e.key === 'Escape' && searchInput.value) { searchInput.value = ''; DB.searchQuery = ''; if (ROUTE.page === 'projects') { renderMain(renderProjectsPage()); bindProjectsPage($('#main-content')); } }
   });
   $('#persona-select').addEventListener('change', function () {
@@ -1053,7 +1107,7 @@ function bindShell() {
     simErrorOverride = false;
     saveDB();
     renderPage();
-    if (DB.scenario === 'simfail') toast('info', 'Partial-failure scenario ON', 'The next project created from a template will simulate one failed workflow start. SIMULATED — no transaction or backend behavior is claimed.');
+    if (DB.scenario === 'simfail') toast('info', 'Partial-failure scenario ON', 'The next project created from a template will simulate one failed workflow start.');
     if (DB.scenario === 'first-run') toast('info', 'First-run scenario', 'Templates are hidden to show the first-run empty states.');
     if (DB.scenario === 'error') toast('info', 'Error scenario', 'Template lists will show the error state once. Use Retry to recover.');
   });
@@ -1062,10 +1116,14 @@ function bindShell() {
     searchInput.value = '';
     location.hash = '#/projects';
     renderPage();
-    toast('success', 'Mock data reset', 'All synthetic data restored to defaults.');
+    toast('success', 'Data reset', 'Sample projects, templates and history restored.');
   });
   $('#notes-btn').addEventListener('click', function () { openNotes(); });
-  window.addEventListener('hashchange', function () { renderPage(); focusAfterNav(); });
+  window.addEventListener('hashchange', function () {
+    renderPage();
+    focusAfterNav();
+    if (window.innerWidth <= 900) closeSidebar(false);
+  });
 }
 /* ---------- breadcrumbs ---------- */
 function renderBreadcrumbs() {
@@ -1098,6 +1156,11 @@ function renderPage() {
 }
 function focusAfterNav() {
   if (ROUTE.page === 'wizard') return;
+  if (tabFocusPending && ROUTE.page === 'project') {
+    tabFocusPending = false;
+    var tab = $('.ptab[aria-selected="true"]');
+    if (tab) { tab.focus(); return; }
+  }
   var h = $('#page-h1');
   if (h) h.focus();
 }
@@ -1107,12 +1170,12 @@ function renderProjectsPage() {
   var html = '<div class="page-head">' +
     '<div><h1 class="page-title" id="page-h1" tabindex="-1">' + (templatesSeg ? 'Templates' : 'Projects') + '</h1>' +
     '<p class="page-sub">' + (templatesSeg
-      ? 'Reusable project setups — default visibility, methodology and optional workflows. Projects are snapshots, so editing a template never changes existing projects.'
+      ? 'Reusable project setups — default visibility, methodology and optional workflows. Editing a template never changes projects already created from it.'
       : 'Track project work across the workspace. Project templates live on this page too — switch to the Templates view.') + '</p></div>' +
     '<div class="page-actions">' +
     (canCreateProjects()
       ? '<button class="btn btn-primary" id="new-project-btn" data-testid="new-project-btn">' + icon('plus', 'ic-sm') + ' New Project</button>'
-      : '<span class="perm-note" style="border:0;background:none;padding:0">' + icon('lock', 'ic-sm') + ' Project creation requires permission</span>') +
+      : '<span class="perm-note" style="border:0;background:none;padding:0">' + icon('lock', 'ic-sm') + ' You need permission to create projects</span>') +
     '</div></div>';
   html += '<div class="seg mb-4" role="group" aria-label="Projects or Templates view" style="margin-bottom:14px">' +
     '<button class="seg-btn" data-seg="projects" aria-pressed="' + (ROUTE.seg === 'projects') + '" data-testid="seg-projects">' + icon('folder', 'ic-sm') + ' Projects <span class="seg-count">' + DB.projects.length + '</span></button>' +
@@ -1220,7 +1283,7 @@ function renderTemplatesTab() {
   });
   var html = '<div class="page-head" style="margin-bottom:10px">' +
     '<div><h2 class="card-title" id="tpl-heading">' + icon('layout', 'ic') + ' Project templates</h2>' +
-    '<p class="card-desc" style="margin-top:4px;max-width:680px">Saved project setups: a default visibility and methodology, plus optional workflows that start automatically when a project is created from the template. Projects are snapshots — editing a template later never changes existing projects. Workflow templates are managed in each project\'s <a href="#/projects/p1/workflows" data-go="wf-tab">Workflows tab</a>.</p></div>' +
+    '<p class="card-desc" style="margin-top:4px;max-width:680px">Saved project setups: a default visibility and methodology, plus optional workflows that start automatically when a project is created from the template. Editing a template never changes projects already created from it. Workflow templates are managed in each project\'s <a href="#/projects/p1/workflows" data-go="wf-tab">Workflows tab</a>.</p></div>' +
     '<div class="page-actions">' +
     (manager ? '<button class="btn btn-primary" id="new-tpl-btn" data-testid="new-tpl-btn">' + icon('plus', 'ic-sm') + ' New template</button>' : '') +
     '<button class="btn btn-ghost" data-help="templates">' + icon('help', 'ic-sm') + ' Learn about templates</button>' +
@@ -1262,7 +1325,7 @@ function renderTemplatesTab() {
   html += '<div class="card"><div class="table-scroll" data-testid="templates-table"><table class="tbl">' +
     '<thead><tr><th>Template</th><th>Visibility</th><th>Methodology</th><th>Workflows at creation</th><th>Updated</th><th>Status</th><th></th></tr></thead>' +
     '<tbody>' + rows + '</tbody></table></div>' +
-    '<div class="card-foot" style="border-top:1px solid var(--border)"><span class="muted text-xs">Archived templates can\'t be used for new projects. Template reads are available to every workspace member; manage actions need the Manage projects permission.</span></div>' +
+    '<div class="card-foot" style="border-top:1px solid var(--border)"><span class="muted text-xs">Archived templates can\'t be used for new projects. Everyone can view templates; managing them needs the Manage projects permission.</span></div>' +
     '</div>';
   return html;
 }
@@ -1344,7 +1407,7 @@ function freshWizard(template) {
 function renderWizardPage() {
   if (!canCreateProjects()) {
     return '<div class="page-head"><h1 class="page-title" id="page-h1" tabindex="-1">New project</h1></div>' +
-      emptyStateHtml('You don\'t have permission to create projects', 'Project creation requires the create-projects permission. Ask a workspace admin to grant it, or switch persona in the Mock controls strip.',
+      emptyStateHtml('You don\'t have permission to create projects', 'Ask a workspace admin to grant you project-creation permission.',
       '<a class="btn btn-outline" href="#/projects">' + icon('arrowLeft', 'ic-sm') + ' Back to Projects</a>', 'lock');
   }
   if (!WZ || WZ.key !== location.hash) {
@@ -1370,7 +1433,7 @@ function renderWizardPage() {
   }
   var h = '<div class="page-head">' +
     '<div><h1 class="page-title" id="page-h1" tabindex="-1">New project</h1>' +
-    '<p class="page-sub">Four steps — your draft is saved automatically in this browser and survives a reload.</p></div>' +
+    '<p class="page-sub">Four steps. Your draft is saved automatically in this browser.</p></div>' +
     '<div class="page-actions"><button class="btn btn-ghost" data-wz-cancel="1">Cancel</button></div></div>' +
     '<div class="card" data-testid="wizard"><div class="card-body">' +
     wizardStepperHtml(WZ.step) +
@@ -1420,7 +1483,7 @@ function wizardBasicsHtml() {
   var h = '<div class="flex gap-2 items-center mb-2"><h2 class="card-title" style="font-size:14px">Basics</h2></div>' +
     '<div style="max-width:560px">' +
     '<label class="label" for="wz-name">Project name <span style="color:var(--destructive)" aria-hidden="true">*</span></label>' +
-    '<input class="input" id="wz-name" maxlength="80" value="' + esc(WZ.name) + '" aria-required="true" aria-invalid="' + (err ? 'true' : 'false') + '" aria-describedby="wz-name-err wz-name-hint"' + (WZ.justOpened && !WZ.showDraftPrompt ? ' data-autofocus' : '') + '>' +
+    '<input class="input" id="wz-name" maxlength="80" value="' + esc(WZ.name) + '" aria-required="true" aria-invalid="' + (err ? 'true' : 'false') + '" aria-describedby="' + (err ? 'wz-name-err ' : '') + 'wz-name-hint"' + (WZ.justOpened && !WZ.showDraftPrompt ? ' data-autofocus' : '') + '>' +
     (err ? '<div class="field-error" id="wz-name-err" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(err) + '</div>' : '') +
     '<p class="hint" id="wz-name-hint">Up to 80 characters. Names can be changed later in Settings.</p>' +
     '<div class="mt-3"><label class="label" for="wz-desc">Description <span class="muted">(optional)</span></label>' +
@@ -1521,7 +1584,7 @@ function fromTemplateCardHtml(t) {
     (wfs.length
       ? 'After creation, ' + wfs.length + ' workflow' + (wfs.length === 1 ? '' : 's') + ' will create ' + m + ' task' + (m === 1 ? '' : 's') + ' — ' + wfs.map(function (w) { return esc(w.name); }).join(', ') + '.'
       : 'No workflows are attached to this template, so none will start automatically.') +
-    '<br>Snapshot semantics: editing the template later never changes this project.</p></div>';
+    '<br>Editing the template later won\'t change this project.</p></div>';
 }
 function bindWizardPage(root) {
   if (!canCreateProjects()) return;
@@ -1639,11 +1702,11 @@ function wizardCreate() {
     };
     var started = 0, taskCount = 0, failed = [];
     if (template) {
-      (template.wfIds || []).forEach(function (wfId, idx) {
-        var wf = getWf(wfId);
-        if (!wf || wf.status !== 'active') return;
-        if (DB.scenario === 'simfail' && idx === 1) { failed.push(wf); return; }
-        var tasks = wf.steps.map(function (s, si) { return { id: uid('t'), title: s.title }; });
+      var templateWfs = (template.wfIds || []).map(function (wfId) { return getWf(wfId); }).filter(function (wf) { return wf && wf.status === 'active'; });
+      var failIdx = DB.scenario === 'simfail' && templateWfs.length ? Math.min(1, templateWfs.length - 1) : -1;
+      templateWfs.forEach(function (wf, idx) {
+        if (idx === failIdx) { failed.push(wf); return; }
+        var tasks = wf.steps.map(function (s) { return { id: uid('t'), title: s.title }; });
         DB.history.unshift({ id: uid('h'), projectId: project.id, wfId: wf.id, wfName: wf.name, startedAt: '2026-11-01', by: persona().name, status: 'started', tasks: tasks });
         project.tasks += tasks.length; taskCount += tasks.length; started++;
       });
@@ -1656,10 +1719,14 @@ function wizardCreate() {
     saveDB(); clearDraft(); WZ = null;
     var msg = 'Project created';
     if (template) {
-      msg = 'Project created · ' + taskCount + ' task' + (taskCount === 1 ? '' : 's') + ' created from ' + started + ' workflow' + (started === 1 ? '' : 's');
-      if (failed.length) msg += ' · ' + failed.length + ' workflow failed';
+      if (failed.length && !started) {
+        msg = 'Project created · 0 tasks · ' + failed.length + ' workflow' + (failed.length === 1 ? '' : 's') + ' failed to start';
+      } else {
+        msg = 'Project created · ' + taskCount + ' task' + (taskCount === 1 ? '' : 's') + ' created from ' + started + ' workflow' + (started === 1 ? '' : 's');
+        if (failed.length) msg += ' · ' + failed.length + ' workflow' + (failed.length === 1 ? '' : 's') + ' failed';
+      }
     }
-    toast(failed.length ? 'warning' : 'success', msg, template ? 'Using template «' + template.name + '». One toast, even when workflows auto-start.' : '');
+    toast(failed.length ? 'warning' : 'success', msg, template ? 'Using template «' + template.name + '».' : '');
     location.hash = '#/projects/' + project.id + (template ? '/workflows' : '/overview');
   }, 900);
 }
@@ -1729,17 +1796,21 @@ function renderProjectPage() {
     (pr.fromTemplate ? ' · from template «' + esc((getPt(pr.fromTemplate) || {}).name || 'deleted') + '»' : '') + '</p></div>' +
     '<div class="page-actions"><a class="btn btn-ghost btn-sm" href="#/projects">' + icon('arrowLeft', 'ic-sm') + ' All projects</a></div></div>';
   h += partialBannerHtml(pr);
+  var knownTab = TABS.some(function (name) { return TAB_KEYS[name] === ROUTE.tab; });
   h += '<div class="tabrow" role="tablist" aria-label="Project tabs" style="margin-bottom:16px">' +
     TABS.map(function (name) {
       var key = TAB_KEYS[name];
       var active = ROUTE.tab === key;
       var scoped = key === 'overview' || key === 'workflows' || key === 'settings';
-      return '<button class="ptab' + (scoped ? '' : ' ptab-out') + '" role="tab" data-ptab="' + key + '"' + (active ? ' aria-current="page"' : '') + '>' + name + '</button>';
+      return '<button class="ptab' + (scoped ? '' : ' ptab-out') + '" role="tab" id="ptab-' + key + '" data-ptab="' + key + '" aria-selected="' + active + '" aria-controls="ptabpanel" tabindex="' + (active ? '0' : '-1') + '">' + name + '</button>';
     }).join('') + '</div>';
+  var panelLabel = knownTab ? ' aria-labelledby="ptab-' + ROUTE.tab + '"' : ' aria-label="Project tab"';
+  h += '<div class="tabpanel" role="tabpanel" id="ptabpanel"' + panelLabel + ' tabindex="0">';
   if (ROUTE.tab === 'overview') h += renderOverviewTab(pr);
   else if (ROUTE.tab === 'workflows') h += renderWorkflowsTab(pr);
   else if (ROUTE.tab === 'settings') h += renderSettingsTab(pr);
   else h += placeholderTab(pr);
+  h += '</div>';
   return h;
 }
 function partialBannerHtml(pr) {
@@ -1751,14 +1822,14 @@ function partialBannerHtml(pr) {
     '<span class="banner-actions">' +
     '<button class="btn btn-sm btn-outline" data-retry-wf="' + esc(failed[0].id) + '">' + icon('refresh', 'ic-sm') + ' Retry</button>' +
     '<button class="btn btn-sm btn-primary" data-goto-start="' + esc(failed[0].id) + '">' + icon('arrowRight', 'ic-sm') + ' Start from Workflows tab</button></span>' +
-    '<span class="muted text-xs" style="display:block;margin-top:6px">SIMULATED partial failure — no transaction or backend behavior is claimed.</span></div></div>';
+    '</div></div>';
 }
 function placeholderTab(pr) {
   var name = cap(ROUTE.tab);
   return '<div class="card"><div class="empty" style="padding:44px 16px">' +
     '<div class="empty-ic">' + icon('layers', 'ic-lg') + '</div>' +
-    '<h3>' + name + ' is outside this mock</h3>' +
-    '<p>Direction B scopes to the Workflows and Settings tabs plus the create-project and template journeys. ' + name + ' keeps its existing WayPoint behavior.</p>' +
+    '<h3>' + name + ' isn\'t available in this preview</h3>' +
+    '<p>Use the Workflows tab to start a workflow and review its history.</p>' +
     '<div class="mt-3"><a class="btn btn-outline btn-sm" href="#/projects/' + esc(pr.id) + '/workflows">' + icon('arrowRight', 'ic-sm') + ' Go to Workflows</a></div></div></div>';
 }
 function renderOverviewTab(pr) {
@@ -1770,11 +1841,10 @@ function renderOverviewTab(pr) {
     '<div class="metric"><b>' + (pr.due ? fmtDate(pr.due) : '—') + '</b><span>Due</span></div>' +
     '<div class="metric"><b>' + METHODOLOGIES[pr.methodology] + '</b><span>Methodology</span></div></div></div></div>';
   h += '<div class="card" data-testid="next-steps">' +
-    '<div class="card-head"><div class="card-title">' + icon('sparkles', 'ic') + ' Next steps <span class="chip chip-neutral">proposed · P12</span></div></div>' +
+    '<div class="card-head"><div class="card-title">' + icon('sparkles', 'ic') + ' Next steps</div></div>' +
     '<div class="card-body" style="display:flex;gap:8px;flex-wrap:wrap">' +
     '<button class="btn btn-outline btn-sm" data-goto="workflows">' + icon('listChecks', 'ic-sm') + ' Start a workflow</button>' +
-    '<button class="btn btn-outline btn-sm" data-invite="1">' + icon('users', 'ic-sm') + ' Invite collaborators</button></div>' +
-    '<div class="card-foot" style="border-top:1px solid var(--border)"><span class="muted text-xs">Optional card — ships only if the owner approves P12.</span></div></div>';
+    '<button class="btn btn-outline btn-sm" data-invite="1">' + icon('users', 'ic-sm') + ' Invite collaborators</button></div></div>';
   return h;
 }
 /* ---------- workflows tab ---------- */
@@ -1795,7 +1865,7 @@ function renderWorkflowsTab(pr) {
     }, 900);
   }
   var h = '<div class="helper" style="margin-bottom:12px" data-testid="wf-intro">' + icon('info', 'ic') +
-    '<span><b>Workflow templates are shared by every project in this workspace.</b> Starting one creates a task for each step in this project — you track the work on the Tasks tab. There is no separate run to track. ' +
+    '<span><b>Workflow templates are shared across the workspace.</b> Starting one creates a task for each step in this project; track the work on the Tasks tab. ' +
     '<a href="#" data-help="workflows">What are workflows?</a> · Project templates live on the <a href="#/projects/templates">Projects page → Templates</a>.</span></div>';
   if (loading) {
     h += '<div class="stack">' + skeletonCardHtml('workflows') + skeletonCardHtml('workflows') + '</div>';
@@ -1820,7 +1890,7 @@ function wfTemplatesCardHtml(canManage, manager) {
   var h = '<div class="card" data-testid="wf-templates-card">' +
     '<div class="card-head" style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">' +
     '<div style="flex:1;min-width:220px"><div class="card-title">' + icon('listChecks', 'ic') + ' Workflow templates</div>' +
-    '<div class="card-desc">Ordered step recipes, managed here per project but shared workspace-wide.' + (canManage ? '' : ' Management needs the Manage projects permission.') + '</div></div>' +
+    '<div class="card-desc">Reusable step lists shared by every project.' + (canManage ? '' : ' Managing them needs the Manage projects permission.') + '</div></div>' +
     (canManage && !(WF_FORM && WF_FORM.open) ? '<button class="btn btn-primary btn-sm" data-wf-new="1">' + icon('plus', 'ic-sm') + ' New template</button>' : '') +
     '</div>';
   if (WF_FORM && WF_FORM.open) {
@@ -2031,7 +2101,7 @@ function renderStartPanel(pr, manager) {
       '<span class="banner-actions"><button class="btn btn-sm btn-outline" data-view-tasks="' + esc(WFS.started.id) + '">' + icon('eye', 'ic-sm') + ' View tasks</button></span></div></div>';
   }
   h += '</div>' +
-    '<div class="card-foot"><span class="muted text-xs" style="margin-right:auto">' + (manager ? 'One confirmation, one toast, one history row.' : 'View only') + '</span>' +
+    '<div class="card-foot"><span class="muted text-xs" style="margin-right:auto">' + (manager ? 'Every start is recorded in Recent starts.' : 'View only') + '</span>' +
     '<button class="btn btn-primary" data-wfs-start="1" data-testid="wfs-start"' + ((!manager || !selected || !WFS.confirmed || WFS.busy) ? ' disabled' : '') + '>' +
     (WFS.busy ? '<span class="spin"></span> Starting…' : 'Start workflow') + '</button></div></div>';
   return h;
@@ -2039,7 +2109,7 @@ function renderStartPanel(pr, manager) {
 function renderHistoryCard(pr, manager) {
   var h = '<div class="card" data-testid="history-card">' +
     '<div class="card-head"><div class="card-title">' + icon('activity', 'ic') + ' Recent starts</div>' +
-    '<div class="card-desc">Workflows applied to this project. Task links are durable after reload.</div></div>' +
+    '<div class="card-desc">Workflow starts in this project, newest first.</div></div>' +
     '<div class="card-body" style="padding:6px 16px 10px">';
   if (!manager) {
     h += '<div class="perm-note" style="margin-top:8px">' + icon('eye', 'ic') + '<span>Start history is visible to project managers.</span></div>';
@@ -2067,7 +2137,7 @@ function renderHistoryCard(pr, manager) {
   return h;
 }
 function openTaskList(hist) {
-  var body = '<p class="muted text-xs" style="margin-bottom:10px">Created ' + relAgo(hist.startedAt) + ' in this project. In the product, each row links to the task.</p>' +
+  var body = '<p class="muted text-xs" style="margin-bottom:10px">Created ' + relAgo(hist.startedAt) + ' in this project.</p>' +
     '<div class="card" style="box-shadow:none;background:var(--background)"><div class="card-body" style="padding:8px 12px">' +
     '<ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column">' +
     hist.tasks.map(function (t, i) {
@@ -2076,7 +2146,7 @@ function openTaskList(hist) {
     }).join('') + '</ul></div></div>';
   openDialog({
     title: hist.tasks.length + ' tasks from «' + esc(hist.wfName) + '»',
-    description: 'Durable task links from the workflow start record.',
+    description: 'Tasks created by this workflow start.',
     body: body,
     footer: '<div class="spacer"></div><button class="btn btn-outline" data-task-close="1">Close</button>',
     onMount: function (dialog, close) { dialog.querySelector('[data-task-close]').addEventListener('click', function () { close('ok'); }); }
@@ -2107,7 +2177,7 @@ function startWorkflow(pr) {
     pr.bannerFailures = (pr.bannerFailures || []).filter(function (id) { return id !== wf.id; });
     saveDB();
     WFS = { pid: pr.id, selectedId: '', confirmed: false, busy: false, started: row };
-    toast('success', 'Workflow started', tasks.length + ' task' + (tasks.length === 1 ? '' : 's') + ' created from «' + wf.name + '». One toast — history below has the task links.');
+    toast('success', 'Workflow started', tasks.length + ' task' + (tasks.length === 1 ? '' : 's') + ' created from «' + wf.name + '». Task links are in Recent starts.');
     renderPage();
   }, 700);
 }
@@ -2130,7 +2200,7 @@ function retryFailedWorkflow(pr, wfId) {
     pr.tasks += tasks.length;
     pr.bannerFailures = (pr.bannerFailures || []).filter(function (id) { return id !== wfId; });
     saveDB();
-    toast('success', 'Workflow started', tasks.length + ' task' + (tasks.length === 1 ? '' : 's') + ' created from «' + wf.name + '». Retry is safe — no duplicates.');
+    toast('success', 'Workflow started', tasks.length + ' task' + (tasks.length === 1 ? '' : 's') + ' created from «' + wf.name + '».');
     renderPage();
   }, 700);
 }
@@ -2146,7 +2216,7 @@ function renderSettingsTab(pr) {
     '<div class="card-body" style="max-width:560px">' +
     '<label class="label" for="st-name">Project name</label><input class="input" id="st-name" value="' + esc(SETTINGS.name) + '">' +
     '<div class="mt-3"><label class="label" for="st-desc">Description</label><textarea class="textarea" id="st-desc">' + esc(SETTINGS.desc) + '</textarea></div></div>' +
-    '<div class="card-foot"><span class="muted text-xs" style="margin-right:auto">' + (SETTINGS.saving === 'general' ? 'Saving…' : 'Saves announce with a toast.') + '</span>' +
+    '<div class="card-foot"><span class="muted text-xs" style="margin-right:auto">' + (SETTINGS.saving === 'general' ? 'Saving…' : 'Changes apply to this project.') + '</span>' +
     '<button class="btn btn-primary" data-st-save="general">' + (SETTINGS.saving === 'general' ? '<span class="spin"></span> Saving…' : 'Save') + '</button></div></div>';
   h += '<div class="card"><div class="card-head"><div class="card-title">' + icon('lock', 'ic') + ' Access</div>' +
     '<div class="card-desc">Who can see this project?</div></div>' +
@@ -2175,7 +2245,7 @@ function renderSettingsTab(pr) {
     '<div class="card-body">' +
     (manager
       ? '<button class="btn btn-primary" data-save-as-tpl="1">' + icon('layout', 'ic-sm') + ' Save as project template</button>' +
-        '<p class="hint">Templates are snapshots — later edits never change projects created from them.</p>'
+        '<p class="hint">Editing a template later won\'t change projects already created from it.</p>'
       : '<div class="perm-note">' + icon('shield', 'ic') + '<span>Requires the <b>Manage projects</b> permission.</span></div>') +
     '</div></div>';
   return h;
@@ -2196,7 +2266,7 @@ function stSave(pr, which) {
     saveDB();
     SETTINGS.saving = null;
     renderPage();
-    toast('success', 'Settings saved', 'Announced with a toast (replaces the silent inline save).');
+    toast('success', 'Settings saved', 'Your changes are saved.');
   }, 500);
 }
 /* ---------- project template dialog (new / edit / save-as) ---------- */
@@ -2232,7 +2302,7 @@ function renderProjectTemplateDialog() {
     '<div><label class="label" for="ptd-vis">Default visibility</label>' +
     '<select class="select" id="ptd-vis"><option value="private"' + (d.visibility === 'private' ? ' selected' : '') + '>Private</option>' +
     '<option value="workspace"' + (d.visibility === 'workspace' ? ' selected' : '') + '>Company wide</option></select>' +
-    '<p class="hint">v1 templates support Private and Company wide only.</p></div>' +
+    '<p class="hint">Templates support Private and Company wide visibility.</p></div>' +
     '<div><label class="label" for="ptd-meth">Methodology</label>' +
     '<select class="select" id="ptd-meth">' + Object.keys(METHODOLOGIES).map(function (k) {
       return '<option value="' + k + '"' + (d.methodology === k ? ' selected' : '') + '>' + METHODOLOGIES[k] + '</option>';
@@ -2250,7 +2320,7 @@ function renderProjectTemplateDialog() {
   openDialog({
     title: d.editing ? 'Edit project template' : 'New project template',
     description: d.editing
-      ? 'Update the template. Existing projects keep their snapshot — edits never change them.'
+      ? 'Update the template. Existing projects keep the setup they were created with.'
       : 'Capture a repeatable project setup: default visibility, methodology and optional workflows that start automatically.',
     wide: true,
     body: body,
@@ -2285,7 +2355,7 @@ function renderProjectTemplateDialog() {
               existing.visibility = d.visibility; existing.methodology = d.methodology;
               existing.wfIds = d.wfIds.slice(); existing.updatedBy = persona().name; existing.updatedAt = '2026-11-01';
             }
-            toast('success', 'Project template updated', 'Existing projects keep their snapshot.');
+            toast('success', 'Project template updated', 'Existing projects are unchanged.');
           } else {
             var pt = { id: uid('pt'), name: d.name.trim(), desc: d.desc.trim(), visibility: d.visibility, methodology: d.methodology, wfIds: d.wfIds.slice(), status: 'active', updatedBy: persona().name, updatedAt: '2026-11-01' };
             DB.projTemplates.unshift(pt);
@@ -2303,7 +2373,7 @@ function renderProjectTemplateDialog() {
 function archiveProjectTemplate(pt) {
   confirmDialog({
     title: 'Archive template?',
-    description: '«' + pt.name + '» will be hidden from the create-project picker and can\'t be used for new projects. Existing projects are unaffected — templates are snapshots. You can restore it anytime.',
+    description: '«' + pt.name + '» will be hidden from the create-project picker and can\'t be used for new projects. Existing projects are unaffected. You can restore it anytime.',
     confirmLabel: 'Archive', destructive: true,
     onConfirm: function () {
       pt.status = 'archived';
@@ -2330,40 +2400,38 @@ function restoreProjectTemplate(pt) {
 function openHelp(section) {
   var body =
     '<section id="help-what"><h3>What are workflows?</h3>' +
-    '<p>A <b>workflow template</b> is a shared recipe of ordered steps owned by the whole workspace. Starting one in a project instantly creates one task per step — the tasks are the work; there is no separate run to track. Workflow templates are managed in each project\'s Workflows tab, and every active template is available in every project.</p>' +
-    '<p class="muted">A <b>workflow start</b> is the durable record "template X was applied to project Y on date Z, creating tasks T1…Tn". It appears in Recent starts with links to the created tasks.</p></section>' +
+    '<p>A <b>workflow template</b> is a reusable, ordered list of steps shared across the workspace. Starting one in a project creates one task per step, so the tasks are the work. Workflow templates are managed in each project\'s Workflows tab, and every active template is available in every project.</p>' +
+    '<p class="muted">A <b>workflow start</b> records which template was applied, when, and which tasks it created. It appears in Recent starts with links to those tasks.</p></section>' +
     '<section id="help-start"><h3>Starting a workflow</h3>' +
     '<ul><li>Choose a template (active templates only; archived ones are hidden).</li>' +
     '<li>Review the steps — each step becomes one task.</li>' +
-    '<li>Confirm the checkbox and start. You get one toast and one history row.</li>' +
+    '<li>Confirm the checkbox and start. Each start appears in Recent starts.</li>' +
     '<li>Project manager access is required to start a workflow.</li></ul></section>' +
     '<section id="help-templates"><h3>Project templates</h3>' +
-    '<p>A <b>project template</b> is a saved project setup — default visibility and methodology, plus optional workflows that start automatically at creation. Applying copies values into the new project; the project then lives independently (snapshot semantics).</p>' +
+    '<p>A <b>project template</b> saves a default visibility and methodology, plus optional workflows that start automatically at creation. The new project copies those settings and then lives independently.</p>' +
     '<ul><li>Create one from any project\'s Settings → "Save as project template", or from the Projects page → Templates → New template.</li>' +
-    '<li>v1 templates support Private and Company wide visibility only.</li>' +
+    '<li>Templates support Private and Company wide visibility.</li>' +
     '<li>Creating from a template prefills the wizard; the Review step shows what will happen.</li></ul></section>' +
     '<section id="help-perms"><h3>Permissions</h3>' +
-    '<ul><li>Template manage (create/edit/archive/restore): active member + <b>Manage projects</b> permission.</li>' +
-    '<li>Creating projects (from scratch or template): <b>create projects</b> permission.</li>' +
-    '<li>Starting workflows: project manager authority.</li>' +
-    '<li>Reading templates: any workspace member.</li></ul></section>' +
-    '<section id="help-sim"><h3>What is simulated in this mock</h3>' +
-    '<p class="muted">Loading delays, backend errors, permission checks and the partial-failure path are simulated locally. No transaction or backend behavior is claimed.</p></section>';
+    '<ul><li>Managing templates (create, edit, archive, restore): a workspace member with the <b>Manage projects</b> permission.</li>' +
+    '<li>Creating projects (from scratch or a template): the project-creation permission.</li>' +
+    '<li>Starting workflows: project manager access.</li>' +
+    '<li>Viewing templates: any workspace member.</li></ul></section>';
   openDrawer({ title: 'Workflows & templates — help', body: body, sectionId: 'help-' + (section || 'what') });
 }
 function openNotes() {
   openDialog({
     title: 'Mockup notes / Demo controls',
-    description: 'Everything here is a static, synthetic-data mock. Read before evaluating.',
+    description: 'Static, synthetic-data prototype. Read before evaluating.',
     wide: true,
     body:
       '<div class="stack" style="gap:10px">' +
       '<div class="helper">' + icon('info', 'ic') + '<span><b>Implementation stage:</b> mockup-stage work only. No product implementation, no repo edits/commits/PRs, no publishing. The Lead publishes only after independent testing.</span></div>' +
       '<div class="helper">' + icon('users', 'ic') + '<span><b>Synthetic data:</b> every project, template, person and number is invented. No real tenant ids, emails, PII or secrets. No backend or network calls; this file works offline.</span></div>' +
-      '<div class="helper">' + icon('alert', 'ic') + '<span><b>Simulated paths:</b> the partial-failure path (keep project + banner + Retry), all permission states, loading skeletons and error states are simulated via the Mock controls strip. The partial-failure path is labelled SIMULATED — no transaction or backend behavior is claimed.</span></div>' +
-      '<div class="helper">' + icon('shield', 'ic') + '<span><b>NOT claimed (unresolved probes):</b> P-Q3 (creator manager authority on auto-start), P-TX (gateway transaction/atomicity), P-H1–H4 (deployed-bundle drift, viewer-via-workspace start authority), P-MODES (Waterfall/Hybrid status behavior, Teams access mode), P-A11Y (no screen-reader/axe/contrast certification — keyboard, focus and dialog descriptions only), P-MIGRATION (migration numbering/order).</span></div>' +
+      '<div class="helper">' + icon('alert', 'ic') + '<span><b>Simulated paths:</b> loading skeletons, first-run empty states, the template-load error and Retry, and all permission states are driven by the Mock controls strip. <b>Partial failure:</b> when the scenario is on, the next project created from a template fails one workflow start. With two or more active workflows the second fails; with a single workflow it fails. The project is kept, the start is recorded as failed, and Retry or Start from Workflows reconciles that same record without duplicating tasks. The mock strip carries the SIMULATED label; product surfaces show the recovery banner only. No transaction or backend behavior is claimed.</span></div>' +
+      '<div class="helper">' + icon('shield', 'ic') + '<span><b>Not claimed (unresolved probes):</b> P-Q3 (creator manager authority on auto-start), P-TX (gateway transaction/atomicity), P-H1–H4 (deployed-bundle drift, viewer-via-workspace start authority), P-MODES (Waterfall/Hybrid status behavior, Teams access mode), P-A11Y (no screen-reader/axe/contrast certification — keyboard, focus and dialog descriptions only), P-MIGRATION (migration numbering/order).</span></div>' +
       '<div class="helper">' + icon('refresh', 'ic') + '<span><b>Reset:</b> the Reset data button clears localStorage/sessionStorage (drafts included) and restores the seed data. Drafts live in sessionStorage, so reloading the page mid-wizard offers Continue draft / Start fresh.</span></div>' +
-      '<div class="helper">' + icon('check', 'ic') + '<span><b>Keyboard:</b> Tab and Shift+Tab cycle inside dialogs, Escape closes dialogs and cancels the wizard (with discard confirmation), the first field is focused when the wizard or a dialog opens, and the skip link reaches the content.</span></div>' +
+      '<div class="helper">' + icon('check', 'ic') + '<span><b>Keyboard:</b> project tabs expose selected state, roving tabindex, Arrow keys and Home/End. At narrow widths the sidebar opens as an overlay and Escape closes it, returning focus to the toggle. Dialogs trap focus; Escape closes dialogs and drawers and returns focus. The wizard focuses its first field; the skip link reaches the content.</span></div>' +
       '</div>',
     footer: '<div class="spacer"></div><button class="btn btn-primary" data-notes-close="1">Got it</button>',
     onMount: function (dialog, close) { dialog.querySelector('[data-notes-close]').addEventListener('click', function () { close('ok'); }); }
@@ -2371,10 +2439,33 @@ function openNotes() {
 }
 /* ---------- bindings ---------- */
 function bindProjectPage(root) {
-  $all('[data-ptab]', root).forEach(function (b) {
-    b.addEventListener('click', function () {
-      var key = b.getAttribute('data-ptab');
-      location.hash = '#/projects/' + ROUTE.projectId + '/' + key;
+  var projectTabs = $all('[data-ptab]', root);
+  function goToProjectTab(key) {
+    if (!key) return;
+    if (ROUTE.tab === key) {
+      var current = $('.ptab[aria-selected="true"]', root);
+      if (current) current.focus();
+      return;
+    }
+    tabFocusPending = true;
+    location.hash = '#/projects/' + ROUTE.projectId + '/' + key;
+  }
+  projectTabs.forEach(function (b, idx) {
+    b.addEventListener('click', function () { goToProjectTab(b.getAttribute('data-ptab')); });
+    b.addEventListener('keydown', function (e) {
+      var next = -1;
+      if (e.key === 'ArrowRight') next = (idx + 1) % projectTabs.length;
+      else if (e.key === 'ArrowLeft') next = (idx - 1 + projectTabs.length) % projectTabs.length;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = projectTabs.length - 1;
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToProjectTab(b.getAttribute('data-ptab')); return; }
+      else return;
+      e.preventDefault();
+      var target = projectTabs[next];
+      projectTabs.forEach(function (t) { t.setAttribute('tabindex', '-1'); });
+      target.setAttribute('tabindex', '0');
+      target.focus();
+      goToProjectTab(target.getAttribute('data-ptab'));
     });
   });
   $all('[data-retry-wf]', root).forEach(function (b) {
@@ -2392,7 +2483,7 @@ function bindProjectPage(root) {
     b.addEventListener('click', function () { location.hash = '#/projects/' + ROUTE.projectId + '/' + b.getAttribute('data-goto'); });
   });
   $all('[data-invite]', root).forEach(function (b) {
-    b.addEventListener('click', function () { toast('info', 'Invite collaborators', 'Not part of this mock.'); });
+    b.addEventListener('click', function () { toast('info', 'Invite collaborators', 'This isn\'t available in this preview.'); });
   });
   $all('[data-help]', root).forEach(function (b) {
     b.addEventListener('click', function (e) { e.preventDefault(); openHelp(b.getAttribute('data-help')); });

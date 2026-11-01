@@ -342,7 +342,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
       <div class="brand-mark" aria-hidden="true">W</div>
       <div>
         <div class="brand-name">WayPoint</div>
-        <div class="tiny muted">Northwind Labs <span class="tiny" style="opacity:.75">(synthetic)</span></div>
+        <div class="tiny muted">Northwind Labs</div>
       </div>
     </div>
     <nav class="nav" aria-label="Primary">
@@ -356,7 +356,6 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
       <div class="persona-chip"><span class="avatar" id="side-avatar">AR</span>
         <div><div class="bold" id="side-name">Alex Rivera</div><div class="tiny" id="side-role">Org admin</div></div>
       </div>
-      <div class="tiny" style="opacity:.75">Static interactive mockup — no real data, no backend.</div>
     </div>
   </aside>
   <div class="scrim" id="scrim" data-act="close-drawer"></div>
@@ -665,13 +664,13 @@ function renderProjects(){
   var pm = perms();
   var all = filtered(effProjects(), S.search);
   var h = "";
-  h += '<div class="page-head"><div><h1>Projects</h1><p class="sub">' + all.length + ' project' + (all.length===1?"":"s") + ' · Northwind Labs (synthetic tenant)</p></div>';
+  h += '<div class="page-head"><div><h1>Projects</h1><p class="sub">' + all.length + ' project' + (all.length===1?"":"s") + '</p></div>';
   h += '<div class="actions">';
   if (pm.createProjects) h += '<button class="btn btn-primary" data-act="new-project" data-tid="btn-new-project">' + ico("plus") + 'New project</button>';
   else h += '<span class="chip chip-vis">' + ico("lock") + ' View-only</span>';
   h += '</div></div>';
   if (!pm.createProjects){
-    h += '<div class="banner banner-info mt8" data-tid="banner-no-create"><span class="icon icon-lg" data-ico="info"></span><div><div class="b-title">You can view projects</div><div class="b-body">Creating projects needs <code>tenant.projects.create</code> or <code>tenant.manage_projects</code>. Switch persona in the mockup controls to try the create journey.</div></div></div>';
+    h += '<div class="banner banner-info mt8" data-tid="banner-no-create"><span class="icon icon-lg" data-ico="info"></span><div><div class="b-title">You can view projects</div><div class="b-body">Your role can view projects but not create them. Ask a workspace admin for project-creation access.</div></div></div>';
   }
   if (S.search){
     h += '<div class="row mt12 small"><span class="muted">Showing results for “<b>' + esc(S.search) + '</b>”</span><button class="btn btn-ghost btn-sm" data-act="clear-search" data-tid="btn-clear-search">' + ico("x") + 'Clear search</button></div>';
@@ -679,18 +678,18 @@ function renderProjects(){
   if (S.scenario === "loading"){
     h += '<div class="table-wrap mt12" aria-hidden="true"><table class="tbl"><thead><tr><th>Project</th><th>Status</th><th>Methodology</th><th>Visibility</th><th>Tasks</th></tr></thead><tbody>';
     for (var i=0;i<4;i++) h += '<tr><td><div class="skeleton" style="width:60%;height:12px"></div></td><td><div class="skeleton" style="width:70px;height:12px"></div></td><td><div class="skeleton" style="width:56px;height:12px"></div></td><td><div class="skeleton" style="width:80px;height:12px"></div></td><td><div class="skeleton" style="width:24px;height:12px"></div></td></tr>';
-    h += '</tbody></table></div><p class="small muted mt12" role="status">Loading projects… (simulated delay)</p>';
+    h += '</tbody></table></div><p class="small muted mt12" role="status">Loading projects…</p>';
     return h;
   }
   if (all.length === 0){
     if (S.search){
-      h += '<div class="statebox mt12" data-tid="empty-filtered"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No projects match “' + esc(S.search) + '”</div><div class="st-body">This is a filtered-empty state — different from an empty workspace. Check the spelling or clear the search.</div><button class="btn btn-outline" data-act="clear-search">Clear search</button></div>';
+      h += '<div class="statebox mt12" data-tid="empty-filtered"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No projects match “' + esc(S.search) + '”</div><div class="st-body">Check the spelling, or clear the search to see all projects.</div><button class="btn btn-outline" data-act="clear-search">Clear search</button></div>';
     } else if (S.scenario === "empty") {
-      h += '<div class="statebox mt12" data-tid="empty-first-run"><span class="icon-big icon" data-ico="folder"></span><div class="st-title">No projects yet</div><div class="st-body">This is the first-run empty state. Projects you create (or create from a template) will appear here.</div>';
+      h += '<div class="statebox mt12" data-tid="empty-first-run"><span class="icon-big icon" data-ico="folder"></span><div class="st-title">No projects yet</div><div class="st-body">Projects you create — or create from a template — will appear here.</div>';
       if (pm.createProjects) h += '<button class="btn btn-primary" data-act="new-project">' + ico("plus") + 'Create your first project</button>';
       h += '</div>';
     } else {
-      h += '<div class="statebox mt12"><span class="icon-big icon" data-ico="folder"></span><div class="st-title">No projects</div><div class="st-body">Unexpected empty list. Reset demo data in the mockup controls to restore the sample.</div></div>';
+      h += '<div class="statebox mt12"><span class="icon-big icon" data-ico="folder"></span><div class="st-title">No projects</div><div class="st-body">Projects you create will appear here.</div></div>';
     }
     return h;
   }
@@ -708,7 +707,7 @@ function renderProjects(){
     h += '</tr>';
   }
   h += '</tbody></table></div>';
-  h += '<p class="tiny muted mt12">Click a row to open the project. Projects listed are synthetic sample data.</p>';
+  h += '<p class="tiny muted mt12">Click a row to open the project.</p>';
   return h;
 }
 /* ================= Templates hub (Direction A — NEW surface) ================= */
@@ -724,25 +723,24 @@ function renderTemplates(){
     h += '<span class="chip chip-vis">' + ico("lock") + ' View-only</span>';
   }
   h += '</div></div>';
-  h += '<div class="banner banner-info" data-tid="banner-direction-a"><span class="icon icon-lg" data-ico="info"></span><div><div class="b-title">New in Direction A — a tenant-level Templates hub</div><div class="b-body">Today workflow templates live only inside each project\'s Workflows tab. This direction adds this hub (sidebar entry + page) so templates are discoverable workspace-wide, and makes the Workflows tab usage-only (start + history) with a link back here. <button class="btn btn-ghost btn-sm" style="height:24px;padding:0 6px;margin-left:2px" data-act="open-notes">Read mockup notes</button></div></div></div>';
   var cntP = effPt().length, cntW = effWf().length;
   h += '<div class="row mt16"><div class="segmented" role="tablist" aria-label="Template kinds">';
   h += '<button class="seg" role="tab" aria-selected="' + (S.sec==="project"?"true":"false") + '" data-act="sec" data-v="project" data-tid="sec-project">' + ico("layers","icon icon-sm") + 'Project templates (' + cntP + ')</button>';
   h += '<button class="seg" role="tab" aria-selected="' + (S.sec==="workflow"?"true":"false") + '" data-act="sec" data-v="workflow" data-tid="sec-workflow">' + ico("list-checks","icon icon-sm") + 'Workflow templates (' + cntW + ')</button>';
   h += '</div></div>';
   if (S.scenario === "hub-error" && !S.hubErrorCleared){
-    h += '<div class="statebox mt12" data-tid="hub-error"><span class="icon-big icon" data-ico="alert"></span><div class="st-title">Couldn\'t load templates</div><div class="st-body">Simulated load error on the Templates hub. Your data is untouched — retry recovers.</div><button class="btn btn-outline" data-act="retry-hub" data-tid="btn-retry-hub">' + ico("refresh") + 'Retry</button></div>';
+    h += '<div class="statebox mt12" data-tid="hub-error"><span class="icon-big icon" data-ico="alert"></span><div class="st-title">Couldn\'t load templates <span class="sim-tag">Simulated</span></div><div class="st-body">Something went wrong loading templates. Nothing was lost — try again.</div><button class="btn btn-outline" data-act="retry-hub" data-tid="btn-retry-hub">' + ico("refresh") + 'Retry</button></div>';
     return h;
   }
   if (S.scenario === "loading"){
     h += '<div class="table-wrap mt12" aria-hidden="true"><table class="tbl"><thead><tr><th>Template</th><th>Status</th><th>Updated</th></tr></thead><tbody>';
     for (var i=0;i<4;i++) h += '<tr><td><div class="skeleton" style="width:55%;height:12px"></div></td><td><div class="skeleton" style="width:60px;height:12px"></div></td><td><div class="skeleton" style="width:80px;height:12px"></div></td></tr>';
-    h += '</tbody></table></div><p class="small muted mt12" role="status">Loading templates… (simulated delay)</p>';
+    h += '</tbody></table></div><p class="small muted mt12" role="status">Loading templates…</p>';
     return h;
   }
   if (S.sec === "project") h += renderPTsection(pm);
   else h += renderWFsection(pm);
-  h += '<p class="tiny muted mt12" data-tid="perm-note">Template permission mirror: read = any active member · manage (edit/archive/restore) = <code>tenant.manage_projects</code> · "Use template" = <code>tenant.projects.create</code>. No permission widening in this direction.</p>';
+  h += '<p class="tiny muted mt12" data-tid="perm-note">Members can view and use templates. Workspace admins can create, edit, and archive them.</p>';
   return h;
 }
 function renderPTsection(pm){
@@ -753,14 +751,14 @@ function renderPTsection(pm){
   if (statusF !== "all") list = list.filter(function(t){ return t.status === statusF; });
   var hdr = '<div class="spread mt12"><div class="row"><label class="tiny bold muted" for="pt-status">Status:</label><select id="pt-status" class="select" style="width:auto;height:32px" data-act="pt-status" data-tid="pt-status">' +
     '<option value="all"' + (statusF==="all"?" selected":"") + '>All</option><option value="active"' + (statusF==="active"?" selected":"") + '>Active</option><option value="archived"' + (statusF==="archived"?" selected":"") + '>Archived</option></select></div>' +
-    '<button class="btn btn-ghost btn-sm" data-act="open-notes">' + ico("help","icon icon-sm") + 'What are project templates?</button></div>';
+    '<button class="btn btn-ghost btn-sm" data-act="open-help">' + ico("help","icon icon-sm") + 'What are project templates?</button></div>';
   h += hdr;
   if (!pm.manageTemplates){
-    h += '<div class="banner banner-muted mt12"><span class="icon" data-ico="info"></span><div class="b-body">You can view and (if you can create projects) use templates. <b>Managing them needs <code>tenant.manage_projects</code></b> — switch to the Org admin persona to edit, archive, or create templates.</div></div>';
+    h += '<div class="banner banner-muted mt12"><span class="icon" data-ico="info"></span><div class="b-body">You can view and use templates. <b>Only workspace admins can create, edit, or archive them.</b></div></div>';
   }
   if (list.length === 0){
     if (S.search || statusF !== "all"){
-      h += '<div class="statebox mt12" data-tid="pt-filtered-empty"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No project templates match</div><div class="st-body">Filtered-empty state: adjust the search or the status filter to see more.</div><button class="btn btn-outline" data-act="pt-clear-filter">Clear filters</button></div>';
+      h += '<div class="statebox mt12" data-tid="pt-filtered-empty"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No project templates match</div><div class="st-body">Try a different search or status filter.</div><button class="btn btn-outline" data-act="pt-clear-filter">Clear filters</button></div>';
     } else if (all.length === 0){
       h += '<div class="statebox mt12" data-tid="pt-empty"><span class="icon-big icon" data-ico="layers"></span><div class="st-title">No project templates yet</div><div class="st-body">A project template captures a reusable setup: default visibility, methodology, and workflow templates to start automatically at project creation.</div>';
       if (pm.manageTemplates) h += '<button class="btn btn-primary" data-act="new-pt">' + ico("plus") + 'Create a project template</button>';
@@ -778,7 +776,7 @@ function renderPTsection(pm){
     h += '<tr data-tid="pt-row-' + t.id + '">';
     h += '<td class="cell-main"><div class="t">' + esc(t.name) + '</div><div class="d">' + esc(t.desc) + '</div></td>';
     h += '<td>' + visLabel(t.vis) + '</td><td class="muted">' + methodLabel(t.method) + '</td>';
-    h += '<td class="muted">' + (wfs.length ? wfs.length + ' (' + tplSteps(t) + ' steps)' : "None") + '</td>';
+    h += '<td class="muted">' + (wfs.length ? '<div>' + wfs.length + ' workflow' + (wfs.length===1?"":"s") + ' · ' + tplSteps(t) + ' steps</div><div class="tiny muted">' + esc(wfs.join(", ")) + '</div>' : "None") + '</td>';
     h += '<td class="muted">' + t.updated + '</td>';
     h += '<td>' + (t.status === "active" ? '<span class="chip chip-done">Active</span>' : '<span class="chip chip-archived">Archived</span>') + '</td>';
     h += '<td><div class="acts">';
@@ -792,25 +790,25 @@ function renderPTsection(pm){
     h += '</div></td></tr>';
   }
   h += '</tbody></table></div>';
-  h += '<p class="small muted mt12" data-tid="pt-snapshot-note">Snapshot semantics: later edits to a template never change projects already created from it. Workflows listed here start automatically when a project is created from the template.</p>';
+  h += '<p class="small muted mt12" data-tid="pt-snapshot-note">Changes to a template only affect projects created after the change. Workflows listed here start automatically when a project is created from the template.</p>';
   return h;
 }
 function renderWFsection(pm){
   var h = "";
-  h += '<div class="banner banner-muted mt12" data-tid="wf-shared-explainer"><span class="icon icon-lg" data-ico="list-checks"></span><div><div class="b-title">Workflow templates are recipes shared by every project in this workspace</div><div class="b-body">Each template is an ordered list of steps. Starting one in a project instantly creates one task per step — the tasks are the work; there is no separate run to track. Archived templates are hidden from start pickers, and the server rejects starting them (proposed behavior).</div></div></div>';
+  h += '<div class="banner banner-muted mt12" data-tid="wf-shared-explainer"><span class="icon icon-lg" data-ico="list-checks"></span><div><div class="b-title">Workflow templates are recipes shared by every project in this workspace</div><div class="b-body">Each template is an ordered list of steps. Starting one in a project creates one task per step — the tasks are the work; there is no separate run to track. Archived templates can\'t be started.</div></div></div>';
   var statusF = S.wfStatus || "all";
   var all = effWf();
   var list = filtered(all, S.search);
   if (statusF !== "all") list = list.filter(function(t){ return t.status === statusF; });
   h += '<div class="spread mt12"><div class="row"><label class="tiny bold muted" for="wf-status">Status:</label><select id="wf-status" class="select" style="width:auto;height:32px" data-act="wf-status" data-tid="wf-status">' +
     '<option value="all"' + (statusF==="all"?" selected":"") + '>All</option><option value="active"' + (statusF==="active"?" selected":"") + '>Active</option><option value="archived"' + (statusF==="archived"?" selected":"") + '>Archived</option></select></div>' +
-    '<button class="btn btn-ghost btn-sm" data-act="open-notes">' + ico("help","icon icon-sm") + 'How do workflows work?</button></div>';
+    '<button class="btn btn-ghost btn-sm" data-act="open-help" data-tid="btn-help-wf-hub">' + ico("help","icon icon-sm") + 'How do workflows work?</button></div>';
   if (!pm.manageTemplates){
-    h += '<div class="banner banner-muted mt12"><span class="icon" data-ico="info"></span><div class="b-body">You can view workflow templates and start them inside projects. <b>Managing them needs <code>tenant.manage_projects</code></b>.</div></div>';
+    h += '<div class="banner banner-muted mt12"><span class="icon" data-ico="info"></span><div class="b-body">You can view workflow templates and start them inside projects. <b>Only workspace admins can create, edit, or archive them.</b></div></div>';
   }
   if (list.length === 0){
     if (S.search || statusF !== "all"){
-      h += '<div class="statebox mt12" data-tid="wf-filtered-empty"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No workflow templates match</div><div class="st-body">Filtered-empty state: adjust the search or the status filter.</div><button class="btn btn-outline" data-act="wf-clear-filter">Clear filters</button></div>';
+      h += '<div class="statebox mt12" data-tid="wf-filtered-empty"><span class="icon-big icon" data-ico="search"></span><div class="st-title">No workflow templates match</div><div class="st-body">Try a different search or status filter.</div><button class="btn btn-outline" data-act="wf-clear-filter">Clear filters</button></div>';
     } else if (all.length === 0){
       h += '<div class="statebox mt12" data-tid="wf-empty"><span class="icon-big icon" data-ico="list-checks"></span><div class="st-title">No workflow templates yet</div><div class="st-body">Create a step recipe once, then start it in any project to generate its tasks.</div>';
       if (pm.manageTemplates) h += '<button class="btn btn-primary" data-act="new-wf">' + ico("plus") + 'Create a workflow template</button>';
@@ -838,7 +836,6 @@ function renderWFsection(pm){
     h += '</div></td></tr>';
   }
   h += '</tbody></table></div>';
-  h += '<p class="small muted mt12" data-tid="wf-usage-note">In Direction A this page is the management home for workflow templates; the per-project Workflows tab is usage-only (start + history). Start pickers list Active templates only.</p>';
   return h;
 }
 /* ================= dialog renderer ================= */
@@ -926,10 +923,10 @@ function wizEntryBody(w){
   var h = "";
   if (S.draft){
     var tName = S.draft.f.name ? "“" + esc(S.draft.f.name) + "”" : "untitled";
-    h += '<div class="banner banner-info" data-tid="wiz-draft-banner"><span class="icon icon-lg" data-ico="clock"></span><div><div class="b-title">Unfinished draft</div><div class="b-body">You have a draft (' + tName + ') saved from earlier. Drafts survive reload — one slot per workspace in this proposal.</div><div class="b-acts"><button class="btn btn-primary btn-sm" data-act="wiz-continue-draft" data-tid="btn-continue-draft">Continue draft</button><button class="btn btn-outline btn-sm" data-act="wiz-fresh" data-tid="btn-start-fresh">Start fresh</button></div></div></div>';
+    h += '<div class="banner banner-info" data-tid="wiz-draft-banner"><span class="icon icon-lg" data-ico="clock"></span><div><div class="b-title">Unfinished draft</div><div class="b-body">You have a draft (' + tName + ') saved from earlier.</div><div class="b-acts"><button class="btn btn-primary btn-sm" data-act="wiz-continue-draft" data-tid="btn-continue-draft">Continue draft</button><button class="btn btn-outline btn-sm" data-act="wiz-fresh" data-tid="btn-start-fresh">Start fresh</button></div></div></div>';
   }
   h += '<div class="entrycards">';
-  h += '<div class="entrycard" data-act="wiz-scratch" data-tid="wiz-scratch-btn" tabindex="0" role="button" aria-label="Start from scratch"><div class="ec-title">' + ico("folder-plus","icon-lg") + 'Start from scratch</div><div class="ec-desc">Set up name, access, and planning yourself — the usual four steps.</div><div class="ec-meta"><span>Basics → Access → Planning → Review</span></div></div>';
+  h += '<div class="entrycard" data-act="wiz-scratch" data-tid="wiz-scratch-btn" tabindex="0" role="button" aria-label="Start from scratch"><div class="ec-title">' + ico("folder-plus","icon-lg") + 'Start from scratch</div><div class="ec-desc">Set up name, access, and planning, then review.</div><div class="ec-meta"><span>Basics → Access → Planning → Review</span></div></div>';
   var recents = actives(effPt()).slice(0,3);
   h += '<div class="entrycard"><div class="ec-title">' + ico("layers","icon-lg") + 'Start from a template</div><div class="ec-desc">Begin with a saved setup: visibility, methodology, and workflows that start automatically.</div><div class="ec-meta">';
   if (recents.length){
@@ -940,7 +937,7 @@ function wizEntryBody(w){
   }
   h += '</div><button class="btn btn-outline" style="margin-top:auto;align-self:flex-start" data-act="wiz-browse" data-tid="wiz-browse-btn">' + ico("search") + 'Browse all templates</button></div>';
   h += '</div>';
-  h += '<p class="small muted mt12">Either way you get the same wizard — a template just prefills it. You can edit anything a template fills in before creating.</p>';
+  h += '<p class="small muted mt12">A template just prefills these steps — you can change anything before creating.</p>';
   return h;
 }
 function wizBasicsBody(w){
@@ -952,16 +949,16 @@ function wizBasicsBody(w){
     (w.nameErr ? '<div class="err" id="wiz-name-err" role="alert">Name is required.</div>' : (over ? '<div class="err" id="wiz-name-err" role="alert">Keep it under 80 characters.</div>' : '<span class="sr-only" id="wiz-name-err"></span>')) +
     '</div>' +
     '<div class="field"><label for="wiz-desc">Description <span class="muted">(optional)</span></label><textarea id="wiz-desc" class="textarea" data-bind="wiz-desc" placeholder="What is this project for?">' + esc(f.desc) + '</textarea></div>' +
-    '<p class="small muted">Validation is live: leaving the name empty and pressing Continue shows an inline error and keeps you on this step.</p>';
+    '<p class="small muted">Use a name your team will recognize.</p>';
 }
 function wizAccessBody(w){
   var f = w.f;
   return '<fieldset style="border:none"><legend class="field" style="margin-bottom:8px"><label>Visibility <span class="req">*</span></label><span class="help">Choose who can see this project.</span></legend>' +
     '<label class="radiocard ' + (f.vis === "private" ? "selected" : "") + '" data-tid="wiz-vis-private"><input type="radio" name="wiz-vis" value="private" data-bind="wiz-vis" ' + (f.vis === "private" ? "checked" : "") + ' /><span><span class="rc-title">Private</span><span class="rc-desc">Only people invited to the project can see it.</span></span></label>' +
     '<label class="radiocard ' + (f.vis === "company" ? "selected" : "") + '" style="margin-top:9px" data-tid="wiz-vis-company"><input type="radio" name="wiz-vis" value="company" data-bind="wiz-vis" ' + (f.vis === "company" ? "checked" : "") + ' /><span><span class="rc-title">Company wide</span><span class="rc-desc">Everyone in the workspace can see it.</span></span></label>' +
-    '<label class="radiocard" style="margin-top:9px;opacity:.6;cursor:not-allowed" title="Teams access mode was not observed in this mockup pass — unresolved probe (modes)."><input type="radio" name="wiz-vis" value="teams" disabled /><span><span class="rc-title">Teams <span class="chip chip-archived" style="font-size:10px">not simulated</span></span><span class="rc-desc">Teams access mode exists in WayPoint but wasn\'t observed for this mockup (unresolved probe P-MODES).</span></span></label>' +
+    '<label class="radiocard" style="margin-top:9px;opacity:.6;cursor:not-allowed" title="Teams visibility is not available in this demo."><input type="radio" name="wiz-vis" value="teams" disabled /><span><span class="rc-title">Teams <span class="chip chip-archived" style="font-size:10px">Not in demo</span></span><span class="rc-desc">Not available in this demo — choose Private or Company wide.</span></span></label>' +
     '</fieldset>' +
-    (w.mode === "template" ? '<p class="small muted mt12">Prefilled from the template — you can change it. Template visibility supports Private and Company wide only in this proposal.</p>' : '<p class="small muted mt12">Default is Private (unchanged from today).</p>');
+    (w.mode === "template" ? '<p class="small muted mt12">Prefilled from the template — you can change it.</p>' : '<p class="small muted mt12">Default is Private (unchanged from today).</p>');
 }
 function wizPlanningBody(w){
   var f = w.f;
@@ -972,8 +969,8 @@ function wizPlanningBody(w){
     '<option value="hybrid"' + (f.method === "hybrid" ? " selected" : "") + '>Hybrid</option></select>' +
     '<span class="help">Methodology sets up default task statuses (for example Scrum → Backlog, Sprint, In Progress, Review, Done). You can change it later without moving existing tasks.</span></div>' +
     '<div class="field"><label for="wiz-due">Due date <span class="muted">(optional)</span></label><input id="wiz-due" class="input" type="text" data-bind="wiz-due" data-tid="wiz-due" value="' + esc(f.due) + '" placeholder="e.g. Nov 14, 2026" /></div>' +
-    '<div class="field"><label class="row"><input type="checkbox" disabled checked style="opacity:.5" aria-label="Budget setup not simulated" /><span>Track budget <span class="muted">(off — not simulated in this mockup)</span></span></label></div>' +
-    '<div class="banner banner-muted"><span class="icon" data-ico="list-checks"></span><div class="b-body"><b>Workflows cross-reference:</b> workflow templates can be started anytime from the project\'s Workflows tab — each step becomes a task. A project template can also start them automatically at creation.</div></div>';
+    '<div class="field"><label class="row"><input type="checkbox" disabled checked style="opacity:.5" aria-label="Budget setup not available" /><span>Track budget <span class="muted">(not available in this demo)</span></span></label></div>' +
+    '<div class="banner banner-muted"><span class="icon" data-ico="list-checks"></span><div class="b-body"><b>Workflows:</b> workflow templates can be started anytime from the project\'s Workflows tab — each step becomes a task. A project template can also start them automatically at creation.</div></div>';
 }
 function wizReviewBody(w){
   var f = w.f;
@@ -1116,11 +1113,11 @@ function renderPicker(){
   var q = pk.search.toLowerCase();
   if (q) list = list.filter(function(t){ return t.name.toLowerCase().indexOf(q) > -1 || (t.desc||"").toLowerCase().indexOf(q) > -1; });
   var h = '<div class="dlg-overlay" data-tid="picker-overlay"><div class="dlg dlg-wide" role="dialog" aria-modal="true" aria-labelledby="picker-title" aria-describedby="picker-desc" data-tid="picker">';
-  h += '<div class="dlg-head"><div class="dlg-title" id="picker-title">Start from a template</div><div class="dlg-desc" id="picker-desc">Templates are shared by every project in this workspace. Pick one — it will prefill the wizard; you can still change anything before creating.</div></div>';
+  h += '<div class="dlg-head"><div class="dlg-title" id="picker-title">Start from a template</div><div class="dlg-desc" id="picker-desc">Templates are shared by every project in this workspace. Pick one to prefill the setup; you can still change anything before creating.</div></div>';
   h += '<div class="dlg-body">';
   h += '<div class="searchbox" style="max-width:none;width:100%"><span class="icon" data-ico="search"></span><input data-tid="picker-search" type="search" data-bind="picker-search" value="' + esc(pk.search) + '" placeholder="Search templates…" aria-label="Search project templates" /></div>';
   if (list.length === 0){
-    h += '<div class="statebox mt12"><span class="icon-big icon" data-ico="layers"></span><div class="st-title">' + (pk.search ? "No templates match “" + esc(pk.search) + "”" : "No active project templates") + '</div><div class="st-body">' + (pk.search ? "Filtered-empty state — try another search." : "Templates are created in the Templates hub. Create one first, or continue from scratch.") + '</div><div class="row"><button class="btn btn-outline" data-act="picker-cancel">Start from scratch instead</button></div></div>';
+    h += '<div class="statebox mt12"><span class="icon-big icon" data-ico="layers"></span><div class="st-title">' + (pk.search ? "No templates match “" + esc(pk.search) + "”" : "No active project templates") + '</div><div class="st-body">' + (pk.search ? "Try another search." : "Templates are created in the Templates hub. Create one first, or continue from scratch.") + '</div><div class="row"><button class="btn btn-outline" data-act="picker-cancel">Start from scratch instead</button></div></div>';
   } else {
     h += '<div class="pickgrid mt12">';
     for (var i=0;i<list.length;i++){
@@ -1136,14 +1133,14 @@ function renderPicker(){
     h += '</div>';
   }
   h += '</div>';
-  h += '<div class="dlg-foot"><button class="btn btn-outline" data-act="picker-cancel">Cancel</button><button class="btn btn-primary" data-act="picker-use" data-tid="picker-use" ' + (pk.sel ? "" : "disabled") + '>' + ico("play") + 'Use this template</button></div>';
+  h += '<div class="dlg-foot"><button class="btn btn-outline" data-act="picker-cancel" data-tid="picker-cancel">Cancel</button><button class="btn btn-primary" data-act="picker-use" data-tid="picker-use" ' + (pk.sel ? "" : "disabled") + '>' + ico("play") + 'Use this template</button></div>';
   h += '</div></div>';
   return h;
 }
 /* ================= template editors ================= */
 function openEditorPT(mode, id, prefill){
   var f = { name:"", desc:"", vis:"private", method:"blank", wfIds:[] };
-  if (mode === "edit" && id){ var t = ptById(id); if (t){ f = { name:t.name, desc:t.desc, vis:t.vis, method:t.method, wfIds:t.wfIds.slice() }; } }
+  if (mode === "edit" && id){ var t = ptById(id); if (t){ var known = []; for (var wi=0; wi<t.wfIds.length; wi++){ var ref = t.wfIds[wi]; if (wfById(ref) && known.indexOf(ref) < 0) known.push(ref); } f = { name:t.name, desc:t.desc, vis:t.vis, method:t.method, wfIds: known }; } }
   if (prefill) f = { name:"", desc:"", vis: prefill.vis, method: prefill.method, wfIds:[] };
   var returnFocus = prefill ? '[data-tid="btn-save-as-template"]' : (mode === "edit" && id ? '[data-tid="edit-pt-' + id + '"]' : '[data-tid="btn-new-pt"]');
   S.editor = { kind:"pt", mode:mode, id:id || null, f:f, dirty:false, errors:{}, prefillNote: prefill ? prefill.note : null, returnFocus: returnFocus };
@@ -1206,13 +1203,13 @@ function renderEditor(){
     h += '<fieldset style="border:none"><legend class="field" style="margin-bottom:6px"><label>Default visibility</label></legend>' +
       '<label class="radiocard ' + (e.f.vis === "private" ? "selected" : "") + '"><input type="radio" name="ed-vis" value="private" data-bind="ed-vis" ' + (e.f.vis === "private" ? "checked" : "") + ' /><span><span class="rc-title">Private</span><span class="rc-desc">Projects created from this template start private.</span></span></label>' +
       '<label class="radiocard ' + (e.f.vis === "company" ? "selected" : "") + '" style="margin-top:9px"><input type="radio" name="ed-vis" value="company" data-bind="ed-vis" ' + (e.f.vis === "company" ? "checked" : "") + ' /><span><span class="rc-title">Company wide</span><span class="rc-desc">Projects created from this template start visible to the whole workspace.</span></span></label>' +
-      '<p class="small muted" style="margin-top:8px">Teams are chosen per project, not stored in templates — you can switch a created project to Teams after creation (v1 proposal).</p></fieldset>';
+      '<p class="small muted" style="margin-top:8px">Teams visibility is set per project and isn\'t stored in templates.</p></fieldset>';
     h += '<div class="field"><label for="ed-method">Default methodology</label><select id="ed-method" class="select" data-bind="ed-method" data-tid="ed-method">' +
       '<option value="blank"' + (e.f.method === "blank" ? " selected" : "") + '>Blank — no methodology yet</option>' +
       '<option value="scrum"' + (e.f.method === "scrum" ? " selected" : "") + '>Scrum</option>' +
       '<option value="waterfall"' + (e.f.method === "waterfall" ? " selected" : "") + '>Waterfall</option>' +
       '<option value="hybrid"' + (e.f.method === "hybrid" ? " selected" : "") + '>Hybrid</option></select>' +
-      '<span class="help">Methodology sets up default task statuses for projects created from this template. Blank/Scrum/Waterfall/Hybrid are simulated; Waterfall/Hybrid status behavior is an unresolved probe.</span></div>';
+      '<span class="help">Methodology sets default task statuses for projects created from this template.</span></div>';
     var actWfs = actives(effWf());
     h += '<fieldset style="border:none"><legend class="field" style="margin-bottom:6px"><label>Workflows to start</label><span class="help">Each selected workflow creates one task per step when a project is created from this template. Optional — projects can also start workflows later.</span></legend>';
     if (actWfs.length === 0){
@@ -1243,7 +1240,7 @@ function renderEditor(){
       h += '</div>';
     }
     h += '</div>';
-    h += '<p class="small muted">Steps are validated inline on save: empty titles are rejected and the first invalid step is focused — nothing is silently dropped.</p>';
+    h += '<p class="small muted">Every step needs a title before you can save.</p>';
   }
   h += '</div>';
   h += '<div class="dlg-foot"><button class="btn btn-outline" data-act="ed-cancel" data-tid="ed-cancel">Cancel</button>' +
@@ -1269,7 +1266,7 @@ function edSave(){
     }
     if (firstBad >= 0){
       e.errors.steps = bad;
-      e.errors.stepSummary = "Some step titles are empty. Every step needs a title — empty steps are rejected inline and nothing is silently dropped.";
+      e.errors.stepSummary = "Some steps need a title. Add a title to each highlighted step.";
       S.focusReq = '[data-tid="ed-step-t-' + firstBad + '"]';
       renderOverlays();
       return;
@@ -1281,19 +1278,21 @@ function edSave(){
     S.busy = null;
     var rf = e.returnFocus;
     if (e.kind === "pt"){
+      var cleanWfIds = [];
+      for (var wq=0; wq<e.f.wfIds.length; wq++){ var wref = e.f.wfIds[wq]; if (wfById(wref) && cleanWfIds.indexOf(wref) < 0) cleanWfIds.push(wref); }
       if (e.mode === "edit" && e.id){
         // Preserve identity/provenance: mutate the existing record in place instead of replacing it.
         var cur = null;
         for (var k=0;k<S.ptTemplates.length;k++){ if (S.ptTemplates[k].id === e.id){ cur = S.ptTemplates[k]; break; } }
         if (cur){
           cur.name = name; cur.desc = e.f.desc.trim(); cur.vis = e.f.vis; cur.method = e.f.method;
-          cur.wfIds = e.f.wfIds.slice(); cur.updated = "Just now"; cur.by = PERSONS[S.persona].name;
+          cur.wfIds = cleanWfIds.slice(); cur.updated = "Just now"; cur.by = PERSONS[S.persona].name;
         } else {
-          S.ptTemplates.unshift({ id: e.id, name: name, desc: e.f.desc.trim(), vis: e.f.vis, method: e.f.method, wfIds: e.f.wfIds.slice(), status: "active", updated: "Just now", by: PERSONS[S.persona].name });
+          S.ptTemplates.unshift({ id: e.id, name: name, desc: e.f.desc.trim(), vis: e.f.vis, method: e.f.method, wfIds: cleanWfIds.slice(), status: "active", updated: "Just now", by: PERSONS[S.persona].name });
         }
         showToast("Project template saved.", "ok", "pt-saved");
       } else {
-        S.ptTemplates.unshift({ id: "pt" + Date.now(), name: name, desc: e.f.desc.trim(), vis: e.f.vis, method: e.f.method, wfIds: e.f.wfIds.slice(), status: "active", updated: "Just now", by: PERSONS[S.persona].name });
+        S.ptTemplates.unshift({ id: "pt" + Date.now(), name: name, desc: e.f.desc.trim(), vis: e.f.vis, method: e.f.method, wfIds: cleanWfIds.slice(), status: "active", updated: "Just now", by: PERSONS[S.persona].name });
         showToast("Project template created.", "ok", "pt-created");
       }
     } else {
@@ -1351,9 +1350,9 @@ function renderProject(){
     var t = PROJECT_TABS[i];
     var active = S.tab === t.id;
     if (t.inert){
-      h += '<button class="tab" role="tab" disabled title="Static placeholder — not part of this scoped mockup">' + t.label + '</button>';
+      h += '<button class="tab" role="tab" disabled title="Not available in this preview">' + t.label + '</button>';
     } else {
-      h += '<button class="tab" role="tab" aria-selected="' + (active ? "true" : "false") + '" data-act="tab" data-v="' + t.id + '" data-tid="tab-' + t.id + '">' + t.label + (t.id === "workflows" ? ' <span class="tab-note">usage-only</span>' : '') + '</button>';
+      h += '<button class="tab" role="tab" aria-selected="' + (active ? "true" : "false") + '" data-act="tab" data-v="' + t.id + '" data-tid="tab-' + t.id + '">' + t.label  + '</button>';
     }
   }
   h += '</div>';
@@ -1361,7 +1360,7 @@ function renderProject(){
   else if (S.tab === "workflows") h += renderWorkflowsTab(p, pm);
   else if (S.tab === "tasks") h += renderTasksTab(p);
   else if (S.tab === "settings") h += renderSettingsTab(p, pm);
-  else h += '<div class="statebox"><span class="icon-big icon" data-ico="' + (S.tab === "board" ? "clipboard" : "info") + '"></span><div class="st-title">' + tabLabel(S.tab) + '</div><div class="st-body">Static placeholder in this mockup — the scoped redesign covers Overview, Tasks, Workflows, and Settings only. The full tab row is preserved for structure.</div></div>';
+  else h += '<div class="statebox"><span class="icon-big icon" data-ico="' + (S.tab === "board" ? "clipboard" : "info") + '"></span><div class="st-title">' + tabLabel(S.tab) + '</div><div class="st-body">This section is not available in this preview.</div></div>';
   return h;
 }
 function tabLabel(id){
@@ -1373,7 +1372,7 @@ function partialBanner(pid){
   if (!failedWfId) return "";
   var wf = wfById(failedWfId);
   var retrying = S.busy === "retry";
-  return '<div class="banner banner-warning" data-tid="banner-partial"><span class="icon icon-lg" data-ico="alert"></span><div><div class="row" style="flex-wrap:wrap"><span class="b-title">Project created, but 1 workflow couldn\'t start</span><span class="sim-tag">Simulated</span></div><div class="b-body">“' + esc(wf ? wf.name : "?") + '” didn\'t start automatically when the project was created. The project was kept — this is the proposed keep-project + banner behavior, simulated only; no transaction or backend atomicity is claimed. Retry is idempotent: starting this workflow again never creates its tasks twice.</div><div class="b-acts"><button class="btn btn-outline btn-sm" data-act="retry-partial" data-tid="btn-retry-partial"' + (retrying ? ' disabled' : '') + '>' + (retrying ? ico("spinner","icon icon-sm spin") + 'Retrying…' : ico("refresh","icon icon-sm") + 'Retry') + '</button><button class="btn btn-outline btn-sm" data-act="partial-to-workflows" data-tid="btn-partial-to-workflows">' + ico("zap","icon icon-sm") + 'Start from Workflows tab</button></div></div></div>';
+  return '<div class="banner banner-warning" data-tid="banner-partial"><span class="icon icon-lg" data-ico="alert"></span><div><div class="row" style="flex-wrap:wrap"><span class="b-title">Project created, but 1 workflow couldn\'t start</span><span class="sim-tag">Simulated</span></div><div class="b-body">“' + esc(wf ? wf.name : "?") + '” didn\'t start automatically when the project was created. The project was kept and its other workflows are unaffected. Retry starts it now — retrying never duplicates tasks.</div><div class="b-acts"><button class="btn btn-outline btn-sm" data-act="retry-partial" data-tid="btn-retry-partial"' + (retrying ? ' disabled' : '') + '>' + (retrying ? ico("spinner","icon icon-sm spin") + 'Retrying…' : ico("refresh","icon icon-sm") + 'Retry') + '</button><button class="btn btn-outline btn-sm" data-act="partial-to-workflows" data-tid="btn-partial-to-workflows">' + ico("zap","icon icon-sm") + 'Start from Workflows tab</button></div></div></div>';
 }
 function renderOverview(p){
   var h = '<div class="grid2">';
@@ -1382,7 +1381,7 @@ function renderOverview(p){
     var ft = ptById(p.fromTemplate);
     var names = [];
     if (ft){ for (var i=0;i<ft.wfIds.length;i++){ var wt = wfById(ft.wfIds[i]); if (wt) names.push(wt.name); } }
-    h += '<div class="card card-pad"><div class="card-title">' + ico("layers") + 'Created from template</div><div class="card-sub">This project was created from <b>' + esc(ft ? ft.name : "?") + '</b>. It copied the setup at creation and now lives independently — later template edits never change this project (snapshot semantics).</div><div class="small muted mt8">Workflows started at creation: ' + (names.length ? esc(names.join(", ")) : "none") + '.</div><div class="mt8"><button class="btn btn-ghost btn-sm" data-act="nav" data-view="templates">' + ico("layers","icon icon-sm") + 'View template in hub</button></div></div>';
+    h += '<div class="card card-pad"><div class="card-title">' + ico("layers") + 'Created from template</div><div class="card-sub">This project was created from <b>' + esc(ft ? ft.name : "?") + '</b>. It copied the setup at creation and now lives independently — later template edits don\'t change this project.</div><div class="small muted mt8">Workflows started at creation: ' + (names.length ? esc(names.join(", ")) : "none") + '.</div><div class="mt8"><button class="btn btn-ghost btn-sm" data-act="nav" data-view="templates">' + ico("layers","icon icon-sm") + 'View template in hub</button></div></div>';
   } else {
     h += '<div class="card card-pad"><div class="card-title">' + ico("zap") + 'Next steps</div><div class="card-sub">Start a workflow to create your first tasks, or invite collaborators.</div><div class="mt8 row"><button class="btn btn-outline btn-sm" data-act="tab" data-v="workflows">' + ico("play","icon icon-sm") + 'Start a workflow</button></div></div>';
   }
@@ -1390,7 +1389,7 @@ function renderOverview(p){
   return h;
 }
 function renderWorkflowsTab(p, pm){
-  var h = '<div class="card card-pad" data-tid="wf-explainer"><div class="card-title">' + ico("list-checks") + 'Workflow templates — shared by every project in this workspace</div><div class="card-sub">Each template is an ordered recipe of steps. Starting one creates one task per step in this project — you\'ll track progress on the Tasks tab. This tab is <b>usage-only in Direction A</b>: management moved to the Templates hub.</div><div class="mt8 row" style="flex-wrap:wrap"><button class="btn btn-outline btn-sm" data-act="manage-templates" data-tid="btn-manage-templates">' + ico("layers","icon icon-sm") + 'Manage templates in the Templates hub</button><button class="btn btn-ghost btn-sm" data-act="open-help" data-tid="btn-help-workflows">' + ico("help","icon icon-sm") + 'How do workflows work?</button></div></div>';
+  var h = '<div class="card card-pad" data-tid="wf-explainer"><div class="card-title">' + ico("list-checks") + 'Workflow templates — shared by every project in this workspace</div><div class="card-sub">Each template is an ordered recipe of steps. Starting one creates one task per step in this project — track progress on the Tasks tab. Templates are managed in the Templates hub.</div><div class="mt8 row" style="flex-wrap:wrap"><button class="btn btn-outline btn-sm" data-act="manage-templates" data-tid="btn-manage-templates">' + ico("layers","icon icon-sm") + 'Manage templates in the Templates hub</button><button class="btn btn-ghost btn-sm" data-act="open-help" data-tid="btn-help-workflows">' + ico("help","icon icon-sm") + 'How do workflows work?</button></div></div>';
   var starts = S.starts[p.id] || [];
   if (pm.startWorkflows){
     var actWfs = actives(effWf());
@@ -1401,7 +1400,7 @@ function renderWorkflowsTab(p, pm){
     for (var i=0;i<actWfs.length;i++){
       h += '<option value="' + actWfs[i].id + '"' + (S.startSel === actWfs[i].id ? " selected" : "") + '>' + esc(actWfs[i].name) + ' — ' + actWfs[i].steps.length + ' step' + (actWfs[i].steps.length===1?"":"s") + '</option>';
     }
-    h += '</select><span class="help" id="start-wf-help">Archived templates are hidden from this picker. Only Active templates can be started (the server rejects archived ones in the proposal).</span></div>';
+    h += '</select><span class="help" id="start-wf-help">Archived templates can\'t be started and don\'t appear here.</span></div>';
     if (selWf){
       h += '<div class="mt12"><div class="bold small">Review — ' + selWf.steps.length + ' tasks will be created</div><div class="stepprev" data-tid="start-review">';
       for (var j=0;j<selWf.steps.length;j++){
@@ -1412,10 +1411,10 @@ function renderWorkflowsTab(p, pm){
     h += '<div class="row mt12"><button class="btn btn-primary" data-act="start-workflow" data-tid="btn-start"' + ((!S.startSel || !S.startConfirm || S.busy === "start") ? " disabled" : "") + '>' + (S.busy === "start" ? ico("spinner","icon spin") + 'Starting…' : ico("zap") + 'Start workflow') + '</button></div>';
     h += '</div>';
   } else {
-    h += '<div class="banner banner-muted mt12" data-tid="wf-perm-note"><span class="icon icon-lg" data-ico="lock"></span><div><div class="b-title">Project manager access is required to start a workflow</div><div class="b-body">You can view this project\'s workflows, but only people with manager authority on the project can start one. (Read-only member view — switch persona to try starting.)</div></div></div>';
+    h += '<div class="banner banner-muted mt12" data-tid="wf-perm-note"><span class="icon icon-lg" data-ico="lock"></span><div><div class="b-title">Project manager access is required to start a workflow</div><div class="b-body">You can view this project\'s workflows, but only people with manager access can start one.</div></div></div>';
   }
   if (pm.viewHistory){
-    h += '<div class="card card-pad mt12" data-tid="history-card"><div class="card-title">' + ico("clock") + 'Recent starts</div><div class="card-sub">Durable history: each row records a template applied to this project and links to the tasks it created.</div>';
+    h += '<div class="card card-pad mt12" data-tid="history-card"><div class="card-title">' + ico("clock") + 'Recent starts</div><div class="card-sub">Each row records a template applied to this project, with a link to the tasks it created.</div>';
     if (starts.length === 0){
       h += '<div class="statebox mt8" style="padding:22px"><span class="icon-big icon" data-ico="clock"></span><div class="st-title">No workflows started in this project yet</div><div class="st-body">Start one above — its tasks and this history row will persist.</div></div>';
     } else {
@@ -1429,7 +1428,6 @@ function renderWorkflowsTab(p, pm){
     }
     h += '</div>';
   }
-  h += '<p class="tiny muted mt12" data-tid="wf-toast-note">Feedback discipline: exactly one toast per start, plus this durable history row. Starting is instant task generation — there is no workflow run to track.</p>';
   return h;
 }
 function renderTasksTab(p){
@@ -1453,7 +1451,7 @@ function renderTasksTab(p){
     h += '</tbody></table></div></div>';
   }
   if (filteredSid){ h += '<div class="row mt12"><button class="btn btn-ghost btn-sm" data-act="tab" data-v="tasks">Show all task groups</button></div>'; }
-  h += '<p class="tiny muted mt12">Synthetic task lists — created instantly by workflow starts in this mockup.</p>';
+  h += '<p class="tiny muted mt12">Tasks are generated from workflow steps.</p>';
   return h;
 }
 function renderSettingsTab(p, pm){
@@ -1468,13 +1466,12 @@ function renderSettingsTab(p, pm){
     '<option value="blank"' + (ps.method === "blank" ? " selected" : "") + '>Blank — no methodology yet</option><option value="scrum"' + (ps.method === "scrum" ? " selected" : "") + '>Scrum</option><option value="waterfall"' + (ps.method === "waterfall" ? " selected" : "") + '>Waterfall</option><option value="hybrid"' + (ps.method === "hybrid" ? " selected" : "") + '>Hybrid</option></select>' +
     '<span class="help">Changing methodology never moves existing tasks (add-only status presets).</span></div>';
   h += '<button class="btn btn-primary" data-act="save-settings" data-tid="btn-save-settings">Save settings</button>';
-  h += '<p class="tiny muted mt8">Saves announce with a toast (“Settings saved.”) — the redesign replaces today\'s silent inline save note.</p>';
   h += '</div>';
   h += '<div class="card card-pad mt12" data-tid="save-as-tpl-card"><div class="card-title">' + ico("layers") + 'Save as project template</div><div class="card-sub">Capture this project\'s visibility and methodology as a reusable project template in the Templates hub.</div>';
   if (pm.manageTemplates){
     h += '<div class="mt8"><button class="btn btn-outline" data-act="save-as-template" data-tid="btn-save-as-template">' + ico("plus","icon icon-sm") + 'Save as project template</button></div>';
   } else {
-    h += '<p class="small muted mt8">' + ico("lock","icon icon-sm") + ' Managing templates needs <code>tenant.manage_projects</code> — switch to the Org admin persona.</p>';
+    h += '<p class="small muted mt8">' + ico("lock","icon icon-sm") + ' Only workspace admins can save project templates.</p>';
   }
   h += '</div>';
   return h;
@@ -1547,12 +1544,12 @@ function saveSettings(){
 function openHelp(){
   openDialog({
     title: "How workflows and templates work",
-    desc: "The short version (P0 definitions from the redesign plan). Full article: project-workflows in help.",
+    desc: "The building blocks, in one place.",
     body: '<div class="stack small"><div><b>Workflow template</b> — a shared, reusable recipe of ordered steps owned by the whole workspace. Starting it in a project instantly creates one task per step.</div>' +
-      '<div><b>Workflow start</b> — the durable record “template X was applied to project Y, creating tasks T1…Tn”. Shown as project history with links to the created tasks.</div>' +
+      '<div><b>Workflow start</b> — the record of template X being applied to project Y, creating tasks T1…Tn. Project history links to the created tasks.</div>' +
       '<div><b>Project template</b> (new) — a saved, reusable project setup: default visibility + methodology + optional workflow templates to start automatically at creation.</div>' +
       '<div><b>Methodology</b> — a named set of default task statuses (e.g. Scrum → Backlog, Sprint, In Progress, Review, Done). Changing it later never moves existing tasks.</div>' +
-      '<div><b>Snapshot semantics</b> — a project created from a template copies the setup once and then stands alone; later template edits never change existing projects.</div></div>',
+      '<div><b>Template changes</b> — a project created from a template copies the setup once and then stands alone; later template edits don\'t change existing projects.</div></div>',
     confirmLabel: "Got it"
   });
 }
@@ -1568,6 +1565,7 @@ function renderNotes(){
   h += '<h3>' + ico("help","icon icon-sm") + 'Unresolved probes NOT claimed</h3><ul class="probe-list"><li><b>Q3</b> — whether project creation immediately grants the creator manager authority (so auto-started workflows authorize). Shown as proposed; needs probe + integration test.</li><li><b>P-TX</b> — gateway transaction/atomicity for create-from-template and partial failure is not established; keep-project + banner is UI-level only.</li><li><b>H1–H4</b> — deployed-bundle drift (archive confirm, duplicate toast, loading toast) and viewer-via-workspace start authority are unverified.</li><li><b>P-MODES</b> — Teams access mode and Waterfall/Hybrid status behavior were not observed; Teams is shown disabled and labelled not simulated.</li><li><b>P-A11Y</b> — keyboard/focus/labels demonstrated; no screen-reader/axe/contrast certification claimed.</li><li><b>P-MIGRATION</b> — migration numbering/order and merge gates are implementation-phase concerns, not mockup behavior.</li></ul>';
   h += '<h3>' + ico("zap","icon icon-sm") + 'Journey quick guide</h3><ol style="padding-left:18px"><li>Projects → New project → start from scratch (validation, Back, draft restore on reload, Cancel/discard confirm, review, create toast).</li><li>Templates hub → New project template / workflow template (edit, inline empty-step validation, archive/restore with confirm). Also Settings → “Save as project template” (prefilled).</li><li>New project → Start from a template (picker summary → prefilled wizard → review card → combined toast → Workflows history with task links).</li><li>Project → Workflows tab: shared-library copy, start panel review + checkbox, one toast + history “View N tasks”.</li><li>States: persona = read-only member; scenarios = error / loading / empty; search = filtered-empty.</li><li>Partial failure: scenario select, then create from a template with 2+ workflows.</li></ol>';
   h += '<h3>' + ico("eye","icon icon-sm") + 'Accessibility in this mockup</h3><p>Dialogs are <code>role="dialog"</code>/<code>alertdialog</code> with names + descriptions, focus is trapped and returned, <span class="kbd">Esc</span> closes the topmost layer, the wizard focuses its first field, a skip link reaches content, toasts are <code>role="status"</code>. Tab through any screen to check order. No WCAG certification is claimed.</p>';
+  h += '<h3>' + ico("clipboard","icon icon-sm") + 'Moved out of product surfaces (review note)</h3><p>The product UI shows task guidance only. These build/probe details intentionally live here.</p><ul><li><b>Feedback discipline</b> — exactly one confirmation and one toast per workflow start, plus the durable history row; retries never duplicate it.</li><li><b>Permission keys</b> — manage templates = <code>tenant.manage_projects</code>; create projects = <code>tenant.projects.create</code>; start = project manager authority. No permission widening in this direction.</li><li><b>Engineering phrasing removed</b> — “snapshot semantics”, “usage-only in Direction A”, “filtered-empty / first-run state”, permission-key banners, probe IDs (Q3, P-TX, P-MODES), “silently dropped”, and toast/validation rationale are not shown in the product.</li><li><b>Implementation stage</b> — mockup only; no product code, repo edits, commits, or publishing. Direction A structural notes are above.</li></ul>';
   h += '<div class="row mt12"><button class="btn btn-outline" data-act="reset-demo" data-tid="btn-reset-notes">' + ico("refresh","icon icon-sm") + 'Reset demo data</button><button class="btn btn-primary" data-act="close-notes">Done</button></div>';
   h += '</aside>';
   root.innerHTML = h;
@@ -1587,7 +1585,7 @@ function onClick(ev){
   var sid = el.getAttribute("data-sid");
   switch (act){
     case "nav": closeSidebar(); S.view = v; S.search = ""; S.projId = null; if (v === "templates") S.sec = S.sec || "project"; render(); break;
-    case "static-nav": showToast("Static in this mockup — " + (el.textContent.trim()) + " is outside the scoped redesign.", "info", "static-nav"); break;
+    case "static-nav": showToast("This section is not part of the preview.", "info", "static-nav"); break;
     case "toggle-sidebar": document.getElementById("sidebar").classList.toggle("open"); document.getElementById("scrim").classList.toggle("show", document.getElementById("sidebar").classList.contains("open")); break;
     case "close-drawer": closeSidebar(); break;
     case "toggle-theme": S.theme = S.theme === "dark" ? "light" : "dark"; save(); render(); break;
@@ -1702,7 +1700,7 @@ function onChange(ev){
   else if (b === "ed-desc"){ if (S.editor){ S.editor.f.desc = bv; S.editor.dirty = true; } }
   else if (b === "ed-vis"){ if (S.editor){ S.editor.f.vis = bv; S.editor.dirty = true; } }
   else if (b === "ed-method"){ if (S.editor){ S.editor.f.method = bv; S.editor.dirty = true; } }
-  else if (b.indexOf("ed-wf:") === 0){ if (S.editor){ var wid = b.slice(5); var i2 = S.editor.f.wfIds.indexOf(wid); if (el.checked && i2 < 0) S.editor.f.wfIds.push(wid); else if (!el.checked && i2 >= 0) S.editor.f.wfIds.splice(i2,1); S.editor.dirty = true; } }
+  else if (b.indexOf("ed-wf:") === 0){ if (S.editor){ var wid = b.slice(6); var i2 = S.editor.f.wfIds.indexOf(wid); if (el.checked && i2 < 0) S.editor.f.wfIds.push(wid); else if (!el.checked && i2 >= 0) S.editor.f.wfIds.splice(i2,1); S.editor.dirty = true; } }
   else if (b.indexOf("ed-step-t:") === 0){ if (S.editor){ var i3 = parseInt(b.slice(10),10); if (S.editor.f.steps[i3]){ S.editor.f.steps[i3].t = bv; S.editor.dirty = true; } } }
   else if (b.indexOf("ed-step-n:") === 0){ if (S.editor){ var i4 = parseInt(b.slice(10),10); if (S.editor.f.steps[i4]){ S.editor.f.steps[i4].n = bv; S.editor.dirty = true; } } }
   else if (b === "start-wf"){ S.startSel = bv; S.startConfirm = false; S.focusReq = '[data-tid="start-wf-select"]'; render(); }
@@ -1812,6 +1810,15 @@ document.addEventListener("change", onChange);
 document.addEventListener("input", onInput);
 document.addEventListener("keydown", onKeydown);
 window.addEventListener("resize", function(){ if (window.innerWidth > 980) closeSidebar(); });
+document.addEventListener("keydown", function(ev){
+  if (ev.key !== "Escape" || S.notesOpen || topmostOverlay()) return;
+  var sb = document.getElementById("sidebar");
+  if (sb && sb.classList.contains("open")){
+    closeSidebar();
+    var hb = document.querySelector('[data-tid="btn-hamburger"]');
+    if (hb) hb.focus();
+  }
+});
 render();
 </script>
 <style>
