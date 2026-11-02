@@ -524,6 +524,12 @@ function esc(s) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 function uid(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 8); }
+function focusAfterRender(id) {
+  setTimeout(function () {
+    var el = id ? document.getElementById(id) : null;
+    if (el) { try { el.focus(); } catch (e) {} }
+  }, 0);
+}
 function fmtDate(iso) {
   if (!iso) return '—';
   var d = new Date(iso + 'T00:00:00');
@@ -1225,6 +1231,14 @@ function errorCardHtml(kind) {
     '<div class="mt-3"><button class="btn btn-outline" data-act="retry">' + icon('refresh', 'ic-sm') + ' Retry</button></div>' +
     '</div></div>';
 }
+function retryTemplateLoad() {
+  simErrorOverride = true;
+  renderPage();
+  var target = (ROUTE.page === 'project' && ROUTE.tab === 'workflows')
+    ? document.getElementById('wf-templates-heading')
+    : document.getElementById('tpl-heading');
+  if (target) { try { target.focus(); } catch (e) {} }
+}
 function emptyStateHtml(title, desc, actionHtml, ic) {
   return '<div class="card" style="margin-top:4px"><div class="empty" data-testid="empty-state">' +
     '<div class="empty-ic">' + icon(ic || 'folder', 'ic-lg') + '</div>' +
@@ -1282,7 +1296,7 @@ function renderTemplatesTab() {
     return !q || (t.name + ' ' + t.desc + ' ' + METHODOLOGIES[t.methodology]).toLowerCase().indexOf(q) > -1;
   });
   var html = '<div class="page-head" style="margin-bottom:10px">' +
-    '<div><h2 class="card-title" id="tpl-heading">' + icon('layout', 'ic') + ' Project templates</h2>' +
+    '<div><h2 class="card-title" id="tpl-heading" tabindex="-1">' + icon('layout', 'ic') + ' Project templates</h2>' +
     '<p class="card-desc" style="margin-top:4px;max-width:680px">Saved project setups: a default visibility and methodology, plus optional workflows that start automatically when a project is created from the template. Editing a template never changes projects already created from it. Workflow templates are managed in each project\'s <a href="#/projects/p1/workflows" data-go="wf-tab">Workflows tab</a>.</p></div>' +
     '<div class="page-actions">' +
     (manager ? '<button class="btn btn-primary" id="new-tpl-btn" data-testid="new-tpl-btn">' + icon('plus', 'ic-sm') + ' New template</button>' : '') +
@@ -1345,7 +1359,7 @@ function bindProjectsPage(root) {
     b.addEventListener('click', function () { searchInput.value = ''; DB.searchQuery = ''; renderMain(renderProjectsPage()); bindProjectsPage($('#main-content')); });
   });
   $all('[data-act="retry"]', root).forEach(function (b) {
-    b.addEventListener('click', function () { simErrorOverride = true; renderPage(); });
+    b.addEventListener('click', retryTemplateLoad);
   });
   $all('[data-open]', root).forEach(function (b) {
     b.addEventListener('click', function (e) { e.preventDefault(); location.hash = '#/projects/' + b.getAttribute('data-open'); });
@@ -1664,7 +1678,7 @@ function bindWizardPage(root) {
 function wizardContinue() {
   if (WZ.busy) return;
   WZ.err = {};
-  if (WZ.step === 0 && !WZ.name.trim()) { WZ.err.name = 'Project name is required.'; renderPage(); return; }
+  if (WZ.step === 0 && !WZ.name.trim()) { WZ.err.name = 'Project name is required.'; renderPage(); focusAfterRender('wz-name'); return; }
   if (WZ.step === 1 && WZ.visibility === 'teams' && !WZ.teamIds.length) { WZ.err.teams = 'Select at least one team for this access mode.'; renderPage(); return; }
   if (WZ.step === 2 && WZ.startDate && WZ.dueDate && WZ.startDate > WZ.dueDate) { WZ.err.dates = 'Start date must be before the due date.'; renderPage(); return; }
   WZ.step++; WZ.justStepped = true;
@@ -1689,7 +1703,7 @@ function wizardCancel() {
 }
 function wizardCreate() {
   if (WZ.busy) return;
-  if (!WZ.name.trim()) { WZ.err = { name: 'Project name is required.' }; WZ.step = 0; renderPage(); return; }
+  if (!WZ.name.trim()) { WZ.err = { name: 'Project name is required.' }; WZ.step = 0; renderPage(); focusAfterRender('wz-name'); return; }
   WZ.busy = true;
   renderPage();
   setTimeout(function () {
@@ -1889,7 +1903,7 @@ function renderWorkflowsTab(pr) {
 function wfTemplatesCardHtml(canManage, manager) {
   var h = '<div class="card" data-testid="wf-templates-card">' +
     '<div class="card-head" style="display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap">' +
-    '<div style="flex:1;min-width:220px"><div class="card-title">' + icon('listChecks', 'ic') + ' Workflow templates</div>' +
+    '<div style="flex:1;min-width:220px"><div class="card-title" id="wf-templates-heading" tabindex="-1">' + icon('listChecks', 'ic') + ' Workflow templates</div>' +
     '<div class="card-desc">Reusable step lists shared by every project.' + (canManage ? '' : ' Managing them needs the Manage projects permission.') + '</div></div>' +
     (canManage && !(WF_FORM && WF_FORM.open) ? '<button class="btn btn-primary btn-sm" data-wf-new="1">' + icon('plus', 'ic-sm') + ' New template</button>' : '') +
     '</div>';
@@ -1935,8 +1949,8 @@ function wfFormHtml() {
   var errName = f.err && f.err.name;
   var h = '<div data-testid="wf-form">' +
     '<label class="label" for="wf-f-name">Template name <span style="color:var(--destructive)" aria-hidden="true">*</span></label>' +
-    '<input class="input" id="wf-f-name" maxlength="80" value="' + esc(f.name) + '" aria-invalid="' + (errName ? 'true' : 'false') + '" data-autofocus>' +
-    (errName ? '<div class="field-error" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(errName) + '</div>' : '') +
+    '<input class="input" id="wf-f-name" maxlength="80" value="' + esc(f.name) + '" aria-invalid="' + (errName ? 'true' : 'false') + '"' + (errName ? ' aria-describedby="wf-f-name-err"' : '') + ' data-autofocus>' +
+    (errName ? '<div class="field-error" id="wf-f-name-err" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(errName) + '</div>' : '') +
     '<div class="mt-3"><label class="label" for="wf-f-desc">Description <span class="muted">(optional)</span></label>' +
     '<textarea class="textarea" id="wf-f-desc" style="min-height:56px">' + esc(f.desc) + '</textarea></div>' +
     '<div class="mt-3"><span class="label">Steps <span style="color:var(--destructive)" aria-hidden="true">*</span></span>' +
@@ -2293,8 +2307,8 @@ function renderProjectTemplateDialog() {
       '<span>This project uses Teams access. Teams are chosen per project, so the template will default to <b>Private</b>. You can switch the new project to Teams after creation.</span></div>';
   }
   body += '<label class="label" for="ptd-name">Template name <span style="color:var(--destructive)" aria-hidden="true">*</span></label>' +
-    '<input class="input" id="ptd-name" maxlength="80" value="' + esc(d.name) + '" data-autofocus aria-invalid="' + (d.err.name ? 'true' : 'false') + '">' +
-    (d.err.name ? '<div class="field-error" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(d.err.name) + '</div>' : '') +
+    '<input class="input" id="ptd-name" maxlength="80" value="' + esc(d.name) + '" data-autofocus aria-invalid="' + (d.err.name ? 'true' : 'false') + '"' + (d.err.name ? ' aria-describedby="ptd-name-err"' : '') + '>' +
+    (d.err.name ? '<div class="field-error" id="ptd-name-err" role="alert">' + icon('alert', 'ic-sm') + ' ' + esc(d.err.name) + '</div>' : '') +
     '<p class="hint">Up to 80 characters.</p>' +
     '<div class="mt-3"><label class="label" for="ptd-desc">Description <span class="muted">(optional)</span></label>' +
     '<textarea class="textarea" id="ptd-desc" style="min-height:56px">' + esc(d.desc) + '</textarea></div>' +
@@ -2467,6 +2481,9 @@ function bindProjectPage(root) {
       target.focus();
       goToProjectTab(target.getAttribute('data-ptab'));
     });
+  });
+  $all('[data-act="retry"]', root).forEach(function (b) {
+    b.addEventListener('click', retryTemplateLoad);
   });
   $all('[data-retry-wf]', root).forEach(function (b) {
     b.addEventListener('click', function () { retryFailedWorkflow(getProject(ROUTE.projectId), b.getAttribute('data-retry-wf')); });
